@@ -1,0 +1,802 @@
+{
+ "host": "virtualyoutuber.fandom.com",
+ "general": {
+  "sitename": "Virtual YouTuber Wiki",
+  "mainpage": "Virtual YouTuber Wiki"
+ },
+ "namespaces": [
+  {
+   "id": 0,
+   "name": ""
+  },
+  {
+   "id": 1,
+   "name": "Talk"
+  },
+  {
+   "id": 2,
+   "name": "User"
+  },
+  {
+   "id": 3,
+   "name": "User talk"
+  },
+  {
+   "id": 4,
+   "name": "Virtual YouTuber Wiki"
+  },
+  {
+   "id": 5,
+   "name": "Virtual YouTuber Wiki talk"
+  },
+  {
+   "id": 6,
+   "name": "File"
+  },
+  {
+   "id": 7,
+   "name": "File talk"
+  },
+  {
+   "id": 8,
+   "name": "MediaWiki"
+  },
+  {
+   "id": 9,
+   "name": "MediaWiki talk"
+  },
+  {
+   "id": 10,
+   "name": "Template"
+  },
+  {
+   "id": 11,
+   "name": "Template talk"
+  },
+  {
+   "id": 12,
+   "name": "Help"
+  },
+  {
+   "id": 13,
+   "name": "Help talk"
+  },
+  {
+   "id": 14,
+   "name": "Category"
+  },
+  {
+   "id": 15,
+   "name": "Category talk"
+  },
+  {
+   "id": 110,
+   "name": "Forum"
+  },
+  {
+   "id": 111,
+   "name": "Forum talk"
+  },
+  {
+   "id": 112,
+   "name": "Draft"
+  },
+  {
+   "id": 113,
+   "name": "Draft talk"
+  },
+  {
+   "id": 420,
+   "name": "GeoJson"
+  },
+  {
+   "id": 421,
+   "name": "GeoJson talk"
+  },
+  {
+   "id": 500,
+   "name": "User blog"
+  },
+  {
+   "id": 501,
+   "name": "User blog comment"
+  },
+  {
+   "id": 502,
+   "name": "Blog"
+  },
+  {
+   "id": 503,
+   "name": "Blog talk"
+  },
+  {
+   "id": 828,
+   "name": "Module"
+  },
+  {
+   "id": 829,
+   "name": "Module talk"
+  },
+  {
+   "id": 1200,
+   "name": "Message Wall"
+  },
+  {
+   "id": 1201,
+   "name": "Thread"
+  },
+  {
+   "id": 1202,
+   "name": "Message Wall Greeting"
+  },
+  {
+   "id": 1203,
+   "name": "Message Wall Greeting Talk"
+  },
+  {
+   "id": 2000,
+   "name": "Board"
+  },
+  {
+   "id": 2001,
+   "name": "Board Thread"
+  },
+  {
+   "id": 2002,
+   "name": "Topic"
+  },
+  {
+   "id": 2900,
+   "name": "Map"
+  },
+  {
+   "id": 2901,
+   "name": "Map talk"
+  }
+ ],
+ "changes": [
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "IRyS",
+   "pageid": 21876,
+   "revid": 586906,
+   "old_revid": 584105,
+   "rcid": 588175,
+   "user": "Fireburishi",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 62947,
+   "newlen": 63341,
+   "timestamp": "2026-10-13T21:18:27Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Ookami Mio",
+   "pageid": 2347,
+   "revid": 586824,
+   "old_revid": 585964,
+   "rcid": 588094,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 60547,
+   "newlen": 60558,
+   "timestamp": "2026-10-13T15:40:48Z",
+   "comment": "fix",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Machina X Flayon",
+   "pageid": 42500,
+   "revid": 586796,
+   "old_revid": 586735,
+   "rcid": 588066,
+   "user": "MyPastel31",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 40326,
+   "newlen": 40328,
+   "timestamp": "2026-10-13T14:35:20Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Sakura Miko",
+   "pageid": 1463,
+   "revid": 586791,
+   "old_revid": 578694,
+   "rcid": 588061,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 83264,
+   "newlen": 83345,
+   "timestamp": "2026-10-13T13:44:19Z",
+   "comment": "Blooming Cinderella youtube music link",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Sorashina Sopia",
+   "pageid": 123382,
+   "revid": 586738,
+   "old_revid": 585153,
+   "rcid": 588008,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 16700,
+   "newlen": 16772,
+   "timestamp": "2026-10-13T04:25:50Z",
+   "comment": "300k",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Machina X Flayon",
+   "pageid": 42500,
+   "revid": 586735,
+   "old_revid": 586725,
+   "rcid": 588005,
+   "user": "Akibubu",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 39987,
+   "newlen": 40326,
+   "timestamp": "2026-10-13T04:20:58Z",
+   "comment": "added nickname;;",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Machina X Flayon",
+   "pageid": 42500,
+   "revid": 586725,
+   "old_revid": 585235,
+   "rcid": 587994,
+   "user": "Akibubu",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 39972,
+   "newlen": 39987,
+   "timestamp": "2026-10-13T03:53:50Z",
+   "comment": "added nickname;;",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Hoshimachi Suisei",
+   "pageid": 543,
+   "revid": 586662,
+   "old_revid": 573598,
+   "rcid": 587931,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 94617,
+   "newlen": 95689,
+   "timestamp": "2026-10-12T19:41:25Z",
+   "comment": "new 3D costume during the event \"X VORDER RUNWAY.\"",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "AZKi",
+   "pageid": 2307,
+   "revid": 586651,
+   "old_revid": 576544,
+   "rcid": 587920,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 52023,
+   "newlen": 52464,
+   "timestamp": "2026-10-12T18:32:13Z",
+   "comment": "hololive Dreams 2D model and costume",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Otonose Kanade",
+   "pageid": 52847,
+   "revid": 586576,
+   "old_revid": 585965,
+   "rcid": 587845,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 25932,
+   "newlen": 26292,
+   "timestamp": "2026-10-12T15:49:47Z",
+   "comment": "third original song",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Hyakuto Kyoko",
+   "pageid": 123376,
+   "revid": 586487,
+   "old_revid": 585152,
+   "rcid": 587756,
+   "user": "Haram999",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 12233,
+   "newlen": 12633,
+   "timestamp": "2026-10-12T06:40:57Z",
+   "comment": "300k",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  }
+ ],
+ "page": {
+  "title": "IRyS",
+  "pageid": 21876,
+  "text": "{{Tabs|IRyS|Gallery|Discography|options=draw_line}}\n{{Character\n|title1             = IRyS\n|image1             = <gallery>\nIRyS 2022 Portrait.png|Main\nIRyS Portrait.png|Original\n</gallery>\n|caption1           = HiRyS~ It's IRyS~\n|original_name      = ███████ Irys<br>アイリス\n|nick_name          = HOPE<br>YabaIRyS<br>SeisoRyS<br>The Hot Pink One (ENreco)\n|debut_date         = YouTube: 2021/07/11\n|retirement_date    = \n|character_designer = Illustration:<br>[https://twitter.com/shiru redjuice] (Main)<ref>{{Link|url=https://twitter.com/shiru/status/1412622699000516615|title=Make a wish for Inari #IRyS #ProjectHOPE #hololiveEnglish|author=Yamasaki, T.|account=@shiru|date=2021, July 6|type=Tweet|site=Twitter}}</ref><br>[https://twitter.com/yako_mashiro Yako Mashiro] (Fourth Costume)<ref>{{Link|url=https://twitter.com/yako_mashiro/status/1755173038889566710|title=【お仕事】 ホロライブEN所属 IRySさんの新衣装のデザインを担当させて頂きました！|author=Mashiro, Y.|account=@yako_mashiro|date=2024, February 7|type=Tweet|site=Twitter}}</ref><br>Live2D:<br> [https://twitter.com/BrianTsuii Brian Tsui] (Current/base)<ref>{{Link|url=https://twitter.com/BrianTsuii/status/1596700922242965504|title=【お仕事告知】ホロライブENの IRyS の新ビジュアルモデルを担当させて頂きましたー！ Live2D commission for Hololive EN IRyS (@irys_en) new visual model!|author=Tsui, B.|account=@BrianTsuii|date=2022, November 26|type=Tweet|site=Twitter}}</ref><br> [https://twitter.com/AkatsukiEnma Akatsuki Enma] (New Year)<ref>{{Link|url=https://twitter.com/AkatsukiEnma/status/1614351614344835072|title=Live2D commission for Hololive EN IRyS (@irys_en) New Year outfit!|author=Akatsuki, E.|account=@AkatsukiEnma|date=2023, January 14|type=Tweet|site=Twitter}}</ref><br> [https://twitter.com/noka_nodoka Noka Nodoka] (Third Costume)<ref>{{Link|url=https://twitter.com/noka_nodoka/status/1713776885057171543|title=ご紹介ありがとうございます😭🙏！！IRySさんの新衣装のLive2D担当させていただきました。めちゃかわいい|author=Noka, N.|account=@noka_nodoka|date=2023, October 16|type=Tweet|site=Twitter}}</ref><br>[https://twitter.com/jenny178888 jenny] (Monster Hunter Stories 3 Costume)<ref>{{Link|url=https://twitter.com/jenny178888/status/2052706197925704113|title=【 work 】 ホロライブEN IRyS さん (#irys_en) のモンスターハンターコラボ衣装のLive2Dを担当させていただきました！💎✨✨ ベースモデル：Brian Tsui 先生 (#BrianTsuii)|author=jenny|account=@jenny178888|date=2026, May 8|type=Tweet|site=Twitter}}</ref><br> [https://twitter.com/rariemonn765 rariemonn] (Original)<ref>{{Link|url=https://twitter.com/rariemonn765/status/1414044289357606919|title=I rigged Live2D model of IRyS, who belong to hololive EN singer|author=rariemonn|account=@rariemonn765|date=2021, July 11|type=Tweet|site=Twitter}}</ref><br>'''\"Beeg Smol\" Design''':<br>Illustration: [[Tsukumo Sana]]<br>3D Model: [https://twitter.com/SeafoamBoi SeafoamBoy]<ref>{{Link|url=https://twitter.com/SeafoamBoi/status/1549924860566069252|title=And once again, I was responsible for modelling both the all the avatars and the entire environment. Thank you Sana for trusting me with your designs, and I hope you all enjoyed the map!|author=SeafoamBoi|date=2022, July 20|type=Tweet|site=Twitter}}</ref>\n|affiliation        = [[hololive]]\n|channel            = [https://www.youtube.com/@irys YouTube]\n|social_media       = [https://twitter.com/irys_en Twitter]\n|official_website   = [https://hololive.hololivepro.com/en/talents/irys hololive.hololivepro.com]\n|gender             = Female\n|age                = As long as hope has been in your heart<ref name=\"Intro\">{{Link|url=https://youtu.be/WTU3TIZRUCM?t=657|title=【DEBUT STREAM】Hope has descended! #irysdebutstream|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 11|type=Video|site=YouTube}}</ref>\n|birthday           = 7 March<ref name=\"Intro\"/>\n|height             = {{Height|cm=162}}<ref name=\"profile\"/><br>{{Height|cm=166}} with heels<ref name=\"Intro\"/>\n|weight             = \n|blood_type         = \n|zodiac_sign        = Pisces\n|fan_name           = IRyStocrats\n|emoji              = 💎\n}}\n\n'''IRyS''' is a female English-speaking Virtual Singer associated with [[hololive]] debuting in 2021 as the sole member of \"Project: HOPE.\" \n\nOn 9 October 2023, she joined the unit \"hololive English -Promise-\" alongside [[Ceres Fauna]], [[Ouro Kronii]], [[Nanashi Mumei]] and [[Hakos Baelz]].\n\nHer unit's name was changed to \"hololive -Promise-\" after every branch was merged into hololive in September 2026.\n\n== Introduction video ==\n[[File:【DEBUT STREAM】Hope has descended! -irysdebutstream|thumb|none|360px|IRyS introduction.]]\n\n== Profile ==\n<tabber>\nRevision = \n<div style=\"height:auto;\">\n{| class=\"article-table\" style=\"width: 100%;\"\n! hololive.hololivepro.com\n|-\n|\n\"HiRyS, it’s IRyS! Your seiso nephilim here to fill the world with hopium!\"\n\nA Nephilim who was once the embodiment of hope back in \"The Paradise\".\n\nWhile she has left to set off on an adventure, she continues to deliver hope through her lyrics and songs, with determination in her voice.\n \nShe also bears the precarious and unstable dual nature of a half-demon and half-angel; this phenomenon can be observed on rare occasions, in the form of the most unpredictably yaba—*ahem*, \"surprising\", comments from IRyS herself. Bewildering those around her is but another unexpected charm of her duality.<ref name=\"profile\">{{Link|url=https://hololive.hololivepro.com/en/talents/irys|title=Profile on hololive.hololivepro.com|date=2023, October|site=hololive.hololivepro.com}}</ref>\n|}\n</div>\n|-| Original = \n<div style=\"height:auto;\">\n{| class=\"article-table\" style=\"width: 100%;\"\n! hololive.hololivepro.com\n|-\n|\nIRyS, a half-demon, half-angel also known as a Nephilim, once brought hope to “The Paradise” during the ancient age. Her full name is ███████ Irys. This current era, riddled with despair and desperation, has brought upon her second awakening. She has arrived to deliver hope, with her feelings put into her lyrics and songs, and determination in her voice.\n\nThough she tends to retain her Nephilim form, she is still quite young within her race. With emotion and “other factors,” it is possible that her form may lean to either side. When that occurs, she bears a brief change in her appearance.\n\nShe does not speak of the events that preceded her second awakening. She faces ever forward, perhaps because she is Hope Incarnate, though no one knows for sure. Or could it be...\n\n“The future is not what helps people; the future is made with our own hands.\n\nSalvation is hypocrisy. If people know they are to be saved, they simply will not try.\n\nFrom the depths of despair: a glimmer of light, the warmth of recovery.\n\nAs long as we are with hope, we live. We stand tall.”<ref>{{Link|url=https://www.reddit.com/r/Hololive/comments/p5tgcx/press_release_the_five_members_of_hololive|title=[Press Release] 🎉The Five Members of Hololive English -Council- to Begin Activities From Tuesday, August 17!🎉|site=Reddit}}</ref>\n|}\n</div>\n</tabber>\n\n== Personality ==\nIRyS is a sweet, somewhat shy girl who holds positivity close to her heart, looking on the brighter side of things while encouraging others to do the same. At the same time, she often displays a more \"sadistic\" side with a penchant for violence and (often unintentionally) saying questionable things. The duality of her personality is often joked about by her fans as the dichotomy between her angelic and demonic sides. IRyS can't help but talk from time to time through pervy nuances, even by accident.\n\nHer speaking voice is high-pitched, soft and calm, akin to [[Yukihana Lamy]]'s, though she can produce a more powerful and deeper tone when singing, similarly to [[Tokoyami Towa]]'s vocal capability.\n\n== Appearance ==\nIRyS has a slender and lithe build with a youthful, delicate frame. Her skin is light brown, providing a stark contrast to the vibrant colors of her hair and outfit.\nHer most defining physical characteristics are centered around her head, showcasing a hybrid, otherworldly nature. She possesses long, pointed elven ears and two small, sharp black horns that protrude from her hairline. Her eyes are large and expressive, with striking heterochromia; her right eye is a bright cyan blue, while her left is a deep purple. This is all framed by voluminous, floor-length magenta hair. Floating above her head is a non-traditional halo composed of several white, crystalline, star-like shapes.\nHer physique is characterized by long, slim limbs. Her long legs are a prominent feature of her silhouette. Sprouting from her upper back are two sets of wings: a small, delicate pair of iridescent, translucent wings near her shoulders, and larger, flowing magenta appendages that extend from her lower back.\n\n== History ==\n=== Background ===\nOn 30 November 2020, hololive's official Twitter account announced the start of auditions for a VSinger for hololive English; auditions were open until 29 January JST.<ref>{{Link|url=https://twitter.com/hololive_En/status/1333247389231026176|title=Hololive English opens VTuber (VSinger) Auditions! Do you think you have what it takes to be the next global singing phenomenon?|author=hololive Official|account=@hololive_En|date=2020, November 30|type=Tweet|site=Twitter}}</ref>\n\nOn 7 July 2021, a premiere countdown started on the hololive English channel titled \"#CountdownWitnesser #hololiveEnglish.\" As the 8 hour countdown reached its end, a new video was released on the channel. This video was an animated teaser video revealing IRyS as part of \"Project: HOPE\", as well as becoming the first VSinger introduced to hololive English.<ref>{{Link|url=https://youtu.be/xx9G-XrxLR4|title=#CountdownWitnesser #hololiveEnglish|author=|account=hololive English|date=2021, July 7|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://youtu.be/242NgSGBo54|title=【Debut PV】Hope is present【hololive English VSinger】|author=|account=hololive English|date=2021, July 7|type=Video|site=YouTube}}</ref>\n\nHer Twitter account was created in February 2021, while her YouTube channel was created on 20 May 2021. After making her first tweet on 7 July, her YouTube channel and Twitter account were restricted due to excessive activity.<ref>{{Link|url=https://twitter.com/irys_en/status/1412577406322282501|title=<nowiki>||:</nowiki>|author=IRyS|account=@irys_en|date=2021, July 7|type=Tweet|site=Twitter}}</ref><ref>{{Link|url=https://twitter.com/hololive_En/status/1412589241234694146|title=<nowiki>[Notice] The newly revealed #IRyS has had her Twitter account and YouTube channel restricted due to excessive activity. We apologize for any inconvenience, and we ask that you please be patient until the restriction is removed.</nowiki>|author=hololive Official|account=@hololive_En|date=2021, July 7|type=Tweet|site=Twitter}}</ref> In the following days prior to her debut IRyS reached 200,000 subscribers on her YouTube channel.\n\nOn 11 July 2021, just hours before her debut stream, the restriction on her Twitter account was lifted.<ref>{{Link|url=https://twitter.com/irys_en/status/1413864378735099909|title=FREEDOM|author=IRyS|account=@irys_en|date=2021, July 11|type=Tweet|site=Twitter}}</ref> IRyS debuted with an introductory stream on her YouTube channel later the same day, where she presented a short version of her first original song and PV \"[https://youtu.be/rDyZ3VgjcCE Caesura of Despair.]\" IRyS also announced that she would release her first EP ''𝄆 Caesura of Despair'' the next day on 12 July on various streaming platforms.<ref>{{Link|url=https://youtu.be/WTU3TIZRUCM|title=【DEBUT STREAM】Hope has descended! #irysdebutstream|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 11|type=Video|site=YouTube}}</ref>  She also crossed the 300,000 YouTube subscribers milestone after her debut.\n\n=== 2021 ===\nOn 12 July, she reached 400,000 subscribers on YouTube channel during her second stream.<ref>{{Link|url=https://youtu.be/ieaReLukLJQ?t=6215|title=【One Hand Clapping】B-but how do you clap with one hand?|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 12|type=Video|site=YouTube}}</ref>\n\nOn 18 July, one week after her debut, IRyS reached 500,000 subscribers on YouTube, surpassing [[Gawr Gura]]'s record of 13 days. This record was later topped by holoJP's Gen 6th member [[Sakamata Chloe]]. IRyS is the 39th hololive member to reach this milestone. On the same day, she released her first solo cover song \"[https://youtu.be/fCf4mFiR--w Inochi]\" by [[AZKi]].\n\nOn 29 July, IRyS held her first official collaboration with another hololive member, playing Just Shapes & Beats with [[Mori Calliope]].<ref>{{Link|url=https://youtu.be/BN3O2ELkwqg|title=【JUST SHAPES & BEATS】IRyS Collab! Just Irystocrats and DeadBEATS, Am I Right. hah #hololiveEnglish|author=Mori, C.|account=Mori Calliope Ch. hololive-EN|date=2021,July 29|type=Video|site=YouTube}}</ref>\n\nOn 13 August, IRyS announced the opening of her channel's membership feature.<ref>{{Link|url=https://youtu.be/ict9WsQuzCA|title=【MEMBERSHIP GRAND OPENING!!】Come On In!! |author=IRyS|account=IRyS Ch. hololive-EN|date=2022, August 13|type=Video|site=YouTube}}</ref>\n\nOn 24 August, IRyS reached 600,000 subscribers on YouTube.\n\nOn 10 November, IRyS reached 700,000 subscribers on YouTube.<ref>{{Link|url=https://twitter.com/irys_en/status/1458326772101967872|title=Thank you so much for 700k YouTube subscribers!! WooHoo!!🥳 This is all thanks to everyone's support heartwarming support|author=IRyS|account=@irys_en|date=2021, November 10|type=Tweet|site=Twitter}}</ref>\n\nOn 26 December, IRyS released a new original song \"[https://youtu.be/y2vrlxmOp7U Sparks of Joy].\"\n\n=== 2022 ===\nOn 12 January, IRyS released her second EP \"Journey.\"\n\nOn 22 January, IRyS announced that she would go on \"at least a one week\" break from streaming due to the worsening of her throat's condition.<ref>{{Link|url=https://twitter.com/irys_en/status/1484812054519181313|title=<nowiki>[Announcement]</nowiki> Couldn't fit it all in a single tweet so here's an image you can squint at instead!!|author=IRyS|account=@irys_en|date=2022, January 22|type=Tweet|site=Twitter}}</ref>\n\nOn 6 February, IRyS returned to her activities.\n\nOn 28 March, she reached 800,000 subscribers on her YouTube channel during a singing endurance stream.<ref>{{Link|url=https://youtu.be/TdYFeuMXkLc|title=【Karaoke Endurance】Singing until 801k Subs!|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, March 28|type=Video|site=YouTube}}</ref>\n\nOn 11 July, IRyS released her third EP \"Quarter Bravery.\"\n\nOn 20 July, during a stream on Mumei's channel -Council- and IRyS debuted \"Beeg Smol\" 3D models designed by Sana.<ref>{{Link|url=https://youtu.be/bFjuKhG2Hzc|title=【COUNCIL+IRYS】??! DEBUT|author=Nanashi, M.|account=Nanashi Mumei Ch. hololive-EN|date=2022, July 20|type=Video|site=YouTube}}</ref>\n\nOn 24 November, IRyS announced that she would get a new 2D model.<ref>{{Link|url=https://youtu.be/mx1tixhhAPo|title=【HiRyS!】I'M BACK WITH BIG NEWS :D【Announcement】|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, November 24|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://twitter.com/hololivepro_EN/status/1595598333611249664|title=<nowiki>BIG NEWS!!! IRyS ( @irys_en ) will reveal her new design this weekend! Set your alarm and stay tuned! 📅Nov 26, 5 PM PST | 10 AM JST (+1Day) You're gonna love it!💎</nowiki>|author=hololive production|account=@hololivepro_EN|date=2022, November 24|type=Tweet|site=Twitter}}</ref>\n\nOn 26 November, IRyS debuted her new main 2D model. IRyS' color palette is much brighter. IRyS now has two halos: a white one and a black one both hovering above her head. Her hair is a lot less curly and each lock is much more defined, with her hair color now being a bright magenta with a red lock. IRyS retains her low helix twintails, but with less layers and they are not tied together at the tips like they used to, instead they are decorated with black ribbons. IRyS horns are smaller, which she claims it is because of how well she has behaved. Her nose is also smaller. For her clothing, IRyS wears a shoulderless white dress with black straps that shows her cleavage. The dress is decorated with a black and magenta ribbon and black four pointed stars. She retains the brooch from her previous model. The upper portion of her sleeves are dark purple with small decorations resembling her mascots Bloom & Gloom and \"Project HOPE\" logos. She wears a diagonal belt that is decorated with the two anemone flowers the one on her left is the same that her previous model had above her skirt, but with light yellow near its petal's center. The inner portion of her dress' skirt is red. IRyS wears long socks with a gradient from black to magenta decorated with embedded jewels and purple shoes.<ref>{{Link|url=https://youtu.be/eogSzuZ-7gw?t=2663|title=【IRyS NEW DESIGN REVEAL】HOPE 2.0 is Coming Down To Earth!【#AWholeNewHOPE】|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, November 26|type=Video|site=YouTube}}</ref>\n\nOn 29 November, IRyS reached 900,000 subscribers on her YouTube channel during a singing endurance stream.<ref>{{Link|url=https://youtu.be/ksUKrIahznk|title=【KARAOKE ENDURANCE】Singing until 900k Subs!|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, November 29|type=Video|site=YouTube}}</ref>\n\nOn 13 December, hololive's Twitter account announced that IRyS would be taking a break to recover from COVID-19.<ref>{{Link|url=https://twitter.com/hololivepro_EN/status/1602545047412654080|title=<nowiki>[Notice] hololive English member IRyS has tested positive for COVID-19. Her symptoms are not severe, but she will be taking a few days to recover. Thank you for your understanding.</nowiki>|author=hololive production|account=@hololivepro_EN|date=2022, December 13|type=Tweet|site=Twitter}}</ref><ref>{{Link|url=https://twitter.com/irys_en/status/1602592645024714752|title=As the announcement has mentioned, I tested positive for Covid today and won’t be able to stream for a bit >< the cough and phlegm are being rly feisty and my fever won’t go away but I should be fine before long!! Thank you for all the gws!!🙏🥺💕|author=IRyS|account=@irys_en|date=2022, December 13|type=Tweet|site=Twitter}}</ref>\n\nOn 19 December, IRyS returned to her activities.<ref>{{Link|url=https://youtu.be/PC79zXLsXek|title=【I'm Back】I have (sorta) Recovered!!|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, December 19|type=Video|site=YouTube}}</ref>\n\n=== 2023 ===\nOn 11 January, IRyS announced that she would get her new year costume.<ref>{{Link|url=https://youtu.be/oVvpZKbMvCs?t=5273|title=【Delivering Hope + ANNOUNCEMENT】Can I yeet far enough to deliver some Awesome News?!|author=IRyS|account=IRyS Ch. hololive-EN|date=2023, January 11|type=Video|site=YouTube}}</ref>\n\nOn 13 January, IRyS debuted her new year costume. IRyS uses high twintails decorated with magenta starry ribbons and optionally other flower accessories. IRyS wears a kimono with white and pink sleeves that gradient to purple. The right sleeve has a black hole print representing the end on the universe, while the left sleeve has a supernova representing the beginning of the universe.<ref>{{Link|url=https://twitter.com/shiru/status/1614140964595171328|title=ちなみに右腕は Black Hole, 左腕はSupernovaです。|author=redjuice|account=@shiru|date=2023, January 14|type=Tweet|site=Twitter}}</ref> The {{W|Obi (sash)|obi}} is decorated with a classic iris flower and a pair of sparkly dark purple and white wings. The kimono has some patterns including four pointed stars and flowers in different colors. IRyS wears sandals with socks.<ref>{{Link|url=https://youtu.be/-g701QOZtrc?t=2760|title=【IRyS NEW YEAR'S OUTFIT REVEAL】The Long Awaited KimonoRyS is HERE!【#NewKimonoRyS】|author=IRyS|account=IRyS Ch. hololive-EN|date=2023, January 13|type=Video|site=YouTube}}</ref>\n\nOn 19 March, IRyS debuted her 3D idol costume during hololive 4th fes. \"Our Bright Parade\" DAY2.<ref>{{Link|url=https://youtu.be/lZGqBUSvF4s?t=3857|title=【#ひろがるホロライブDAY2】hololive 4th fes. Our Bright Parade hololive stage DAY2【チラ見せ】|author=hololive production|account=hololive ホロライブ - VTuber Group|date=2023, March 19|type=Video|site=YouTube}}</ref>\n\nOn 28 May, IRyS debuted her main 3D model during a hologra episode.<ref>{{Link|url=https://youtu.be/0i4pJcTsnmk|title=【アニメ】悪魔なの？天使なの？|author=hololive production|account=hololive ホロライブ - VTuber Group|date=2023, May 28|type=Video|site=YouTube}}</ref>\n\nOn 2 July, she participated in \"hololive English 1st Concert Connect the World.\"<ref>{{Link|url=https://connecttheworld.hololivepro.com/|title=hololive English 1st Concert Connect the World|author=hololive production|account=|date=2023, July 2|type=Website|site=connecttheworld.hololivepro.com}}</ref>\n\nOn 10 July, as part of the \"hololive Summer 2023\" event, IRyS debuted her 3D {{W|yukata}} during her second anniversary celebration stream. These are the same designs that Japanese members debuted the previous year.<ref>{{Link|url=https://youtu.be/ahPy6U7ZufI?t=4371|title=【#2ndAnniversaRyS】2 Years with Hope already?! WITH Home 3D【2 Year Anniversary Stream】|author=IRyS|account=IRyS Ch. hololive-EN|date=2023, July 10|type=Video|site=YouTube}}</ref>\n\nOn 30 July, as part of the \"hololive Summer 2023\" event, during a karaoke relay, IRyS debuted her 3D swimsuit. The 2023 swimsuits are inspired in a sailor uniform. Members wear a two layered swimsuit, the first layer is blue from the straps going down diagonally to the center where each member has a mostly blue bow but one of the sides and the brooch are in one color representative of each member. The rest of the top is white. The edge has a semi circular cut. The lower piece of the first layer has two variants, one is a two layered blue skirt decorated with a white belt, a golden chain with some decorations hanging from it and a bow to the left and planks to the right. The second version is mostly the same but they wear blue shorts instead of a mini skirt. The second layer of the outfit is a matching striped bikini in white and another color depending on the member.<ref>{{Link|url=https://youtu.be/afSBWXV7JQw|title=【#ホロサマ歌枠リレー】Singing Summer Songs in Swimsuit?!|author=IRyS|account=IRyS Ch. hololive-EN|date=2023, July 30|type=Video|site=YouTube}}</ref>\n\nOn 20 August, IRyS officially debuted her 3D model on her YouTube channel.<ref>{{Link|url=https://youtu.be/dR9q_J-8mfM|title=【3D SHOWCASE】HOPE IS ON THE MOVE! #3DRyS|author=IRyS|account=IRyS Ch. hololive-EN|date=2023, August 20|type=Video|site=YouTube}}</ref>\n\nOn 9 October, IRyS, Ceres Fauna, Ouro Kronii, Nanashi Mumei and Hakos Baelz announced that they would form the new unit \"hololive English -Promise-.\"<ref>{{Link|url=https://youtu.be/sEnjWtbnUj4?t=533|title=【3D SHOWCASE COLLAB】hololive English -Council- and IRyS Special 3D Collab! #CouncilRyS3D|author=hololive English|account=hololive English|date=2023, October 8|type=Video|site=YouTube}}</ref> While not stated in the 3D collab the closure of \"Project: HOPE\" was announced on hololive's website shortly after.<ref name=\"Promiseannouncement\">{{Link|url=https://hololive.hololivepro.com/en/news/20231009-01-211/|title=COVER Corp. Announces New Unit “hololive English -Promise- Formed by hololive English Members|author=COVER Corp.|account=|date=2023, October 8|type=Website|site=hololive.hololivepro.com/}}</ref>\n\nOn 14 October, hololive English's Twitter account announced that IRyS would get her third 2D costume based on her redesign.<ref>{{Link|url=https://twitter.com/hololive_En/status/1713026841659719692|title=💎News💎 @irys_en's NEW OUTFIT REVEAL STREAM! 🗓️ Sunday, October 15th 8PM (PDT) <nowiki>/</nowiki> Monday, October 16th, 12PM (JST)|date=2023, October 14|type=Tweet|site=Twitter}}</ref>\n\nOn 16 October, IRyS debuted her third 2D costume. IRyS has two hairstyles, in one she has a bob haircut and in the other she has a side ponytail. Both have two different styles for her bangs and can be combined with a black and white beret. IRyS can also use her hairstyle from her new year costume. IRyS has a black choker and a necklace resembling GuyRyS. IRyS wears a white strap dress, with a ruffled collar, decorated with a black ribbon. The edge of the dress has small holes and a triangular cut. She uses synthetic leather boots. IRyS can also use a beige cardigan with a hoodie, baggy sleeves and pins of Bloom & Gloom on her left pocket. She can put on the cardigan's hoodie which has holes for her horns. IRyS can also use black tights and glasses. IRyS can also choose to use her wings and halo.<ref>{{Link|url=https://youtu.be/xVKVYIjmXCU?t=2826|title=【NEW OUTFIT REVEAL】#IRySoStylish IS HERE!!!|author=IRyS|account=IRyS Ch. hololive-EN |date=2023, October 16|type=Video|site=YouTube}}</ref>\n\n=== 2024 ===\nOn 30 January, IRyS debuted her fourth 2D costume. IRyS use low braided twintails falling to the front and straight bangs. IRyS wears a dark blue school girl outfit with a wine colored ribbon. The collar is decorated with Gloom & Bloom and GuyRyS pins. She has white, loose socks and white and black sneakers. IRyS can also wear a shiny light blue jacket with neon lime green elements and some patches, she can zip or unzip it. IRyS also has the option to wear a headset. She has two variants of glasses, normal ones and another with spiral opaque lenses.<ref>{{Link|url=https://youtu.be/XlUfYtSMYX8?t=3497|title=【NEW OUTFIT REVEAL】Check out my New #AttireRyS !!!|author=IRyS|account=IRyS Ch. hololive-EN |date=2024, January 30|type=Video|site=YouTube}}</ref>\n\nOn 6 March, 16:04 GMT, IRyS reached 1,000,000 YouTube subscribers during an endurance karaoke stream. This makes her the 40th hololive member, and the 2nd in hololive English -Promise- to achieve this milestone.<ref>{{Link|url=https://youtu.be/u4hBuNLzjkA?t=10925|title=【KARAOKE / 耐久歌枠】 1 MILLION ENDURANCE VERTICAL KARAOKE & BIRTHDAY COUNTDOWN! #shorts|author=IRyS|account=IRyS Ch. hololive-EN |date=2024, March 6|type=Video|site=YouTube}}</ref>\n\nOn 13 April, IRyS debuted a new accessory for her third 2D costume. She has a bunny themed black cape, with pink ribbons and white fluffy edges.<ref>{{Link|url=https://youtu.be/gqyv6v2xorA|title=【CAPE REVEAL】WHAT COULD THIS POSSIBLY BE?! ❤ #CapeRyS|author=IRyS|account=IRyS Ch. hololive-EN |date=2024, Aoril 13|type=Video|site=YouTube}}</ref>\n\nOn 24 May, during -Promise- half year anniversary, IRyS debuted a tiara accessory for her third 2D costume.<ref>{{Link|url=https://youtu.be/ezWJDS4DTWQ?t=6476|title=【PROMISE HALF ANNIVERSARY】 Forcing #holoPromise to play in my dungeon + ANNOUNCEMENTS & REVEALS|author=Ceres, F.|account=Ceres Fauna Ch. hololive-EN|date=2024, May 24|type=Video|site=YouTube}}</ref>\n\nOn 1 June, IRyS debuted a summer version of her fourth 2D costume with a predominantly white color scheme and short sleeves, along with a new short loose hairstyle. Bloom, Gloom, and GuyRyS pins can also shine in the light.<ref>{{Link|url=https://youtu.be/j6l4JDvIIeo?t=2687|title=【KARAOKE / 歌枠】Showing Accessories & Singing! 新髪型お披露目あり! #shorts|author=IRyS|account=IRyS Ch. hololive-EN|date=2024, June 1|type=Video|site=YouTube}}</ref>\n\nOn 11 July, during her third anniversary, IRyS released her new original song \"[https://youtu.be/DjNNpw2x2dU Carbonated Love].\"\n\nOn 31 August, as part of the ENigmatic Recollection project, hololive English members debuted a new accessory for their main 2D costumes. They wear the white and blue cloaks first seen in the project's [https://youtu.be/OnMxjFRlywA introduction video] and related concept art. The cloak includes a blue gem containing a symbol that represents their affiliated guilds.<ref>{{Link|url=https://youtu.be/Rk7nZ91vme4|title=【ENigmatic Recollection】EN Minecraft Roleplay!!! Let's Lose some Memories!! #ENreco|author=IRyS|account=IRyS Ch. hololive-EN|date=2024, August 31|type=Video|site=YouTube}}</ref>\n\nOn 8 October, during -Promise-'s first anniversary stream, they announced their 3D musical \"The Broken Promise.\"<ref>{{Link|url=https://youtu.be/XWaRk0yvasI?t=4639|title=【PROMISE ANNIVERSARY COLLAB】Mumei's HoloPromise HISTORY Quiz + ANNOUNCEMENTS|author=Nanashi, M.|account=Nanashi Mumei Ch. hololive-EN|date=2024, October 8|type=Video|site=YouTube}}</ref>\n\nOn 14 December, -Promise- held their musical: \"hololive English -Promise- 1st Anniversary Musical: The Broken Promise.\"<ref>{{Link|url=https://youtu.be/Oi0WDyT6xTE|title=【#TheBrokenPromise】hololive English -Promise- 1st Anniversary Musical: The Broken Promise|author=hololive English|account=hololive English|date=2024, December 14|type=Video|site=YouTube}}</ref>\n\nOn 20 December, IRyS and other members debuted their 3D Santa costumes. The costume has two versions, red and white.<ref>{{Link|url=https://youtu.be/mwyNwiA5um8?t=160|title=【3D】#holoHolidays with hololive English supported by Bisoulovely【Santa Outfits!】|author=hololive production|account=hololive English|date=2024, December 20|type=Video|site=YouTube}}</ref>\n\n=== 2025 ===\nOn 8 March, she debuted her hololive 6th fes. Color Rise Harmony 3D idol costume during the event's day 1 STAGE 1. The costume has some variants, it can be black or white, complemented with a color representative of the talent. The midriff can be covered or not. One has variant has a skirt while the other uses pants, with one leg exposed. Aside for the design featured in [[:File:Hololive 6th fes. Color Rise Harmony Stage 1 Key Visual by Matsuura Kento.jpg|promotional material]], the costume also includes a short jacket.<ref>{{Link|url=https://youtu.be/IKkSNj5uN6I?t=2886|title=【#hololivefesEXPO25_DAY1】hololive 6th fes. Color Rise Harmony hololive STAGE1【チラ見せ】|author=hololive production|account=hololive ホロライブ - VTuber Group|date=2025, March 8|type=Video|site=YouTube}}</ref>\n\nOn 15 March, during her birthday celebration, IRyS released her new original song \"[https://youtu.be/EXM0EE_NpQc DIAMOND GIRLFRIEND]\" and her fourth EP \"YaBAI.\"<ref>{{Link|url=https://youtu.be/V0plPBgyqPs?t=3254|title=【3D LIVE - HOPE UPON A STAR 】IRyS 2025 BIRTHDAY LIVE #IRySBDay2025|author=IRyS|account=IRyS Ch. hololive-EN|date=2025, March 15|type=Video|site=YouTube}}</ref>\n\nOn 1 April, Umino Miruku (うみのみるく) meaning \"milk of the sea\" or \"oyster\" in Japanese was introduced, she presented herself as IRyS' neighbour and an oyster that turned into a girl that came from the Pacific Ocean. She has pink hair, heterochromia and wears a wine colored cardigan and white sailor uniform.<ref>{{Link|url=https://youtu.be/y38HRNtTG4M?t=642|title=THE OYSTER STREAM|author=IRyS|account=IRyS Ch. hololive-EN|date=2025, April 1|type=Video|site=YouTube}}</ref>\n\nOn 7 June, IRyS debuted her fifth 2D costume. IRyS has two hairstyles, wavy twintails and long hair with wavy locks that IRyS describes as ojousama hair. Her horns have scrunchies and she can wear a headband. She uses rose earrings. IRyS wear a gothic lolita inspired maid costume. Her costume has two color variants, black and turquoise. She wears a long sleeved maid corset dress, both versions share a black collar with a red gem. The outfit has various ribbons in two pairs of three and another two one on each sleeve. IRyS has black garterbelt, lace, black socks and black pumps with red roses and flower shaped buckles. On top of the dress IRyS can wear a long white apron with a rose to the side and a thorn shaped belt holding a clock-like device with a moon in it and some moving cogs inside that can be stopped. IRyS can remove the layers of her outfit revealing that she wears an shoulderless, white blouse underneat with wide cuffs.<ref>{{Link|url=https://youtu.be/DjY_FI4f4-A|title=【NEW OUTFIT REVEAL】She's Beauty and She's IRyS #AtYourServeRyS|author=IRyS|account=IRyS Ch. hololive-EN|date=2025, June 7|type=Video|site=YouTube}}</ref>\n\nOn 10 July, during her fourth year anniversary, IRyS's main costume was updated to the 3.0 version. IRyS has a lot more movement. New features include the ability to change the appearance of her eyes (sparkly, heart eyes, remove the shine, or become redder), cry, stick out her tongue, wave her hand, use a keyboard, hold a controller, use a drawing tablet, and make emotes such as hearts or an exclamation mark.<ref>{{Link|url=https://youtu.be/KSjtvZdJ7vk|title=【#4thAnniversaRyS】3.0 MODEL REVEAL & HOLOLIVE SONG KARAOKE!!【4 Year Anniversary Stream🎉 】|author=IRyS|account=IRyS Ch. hololive-EN|date=2025, July 10|type=Video|site=YouTube}}</ref>\n\n=== 2026 ===\nOn 20 March, during her 3D birthday live \"RACING TOWARDS HOPE,\" IRyS debuted a new 3D costume. She has a long ponytail with a visor. IRyS wears a race queen outfit that appeared on the cover of her single Carbonated Love. She uses a black top that reads \"HOPE\" in white. IRyS has a long sleeved, white jacket and a pleated skirt with cyan and hot pink elements and racing flag patterns.<ref>{{Link|url=https://youtu.be/J53rX5brbUw?t=675|title=【3D LIVE - RACING TOWARDS HOPE】IRyS 2026 BIRTHDAY LIVE + 3D OUTFIT & BIG ANNOUNCEMENTS #IRySBDay2026|author=IRyS|account=IRyS Ch. hololive-EN|date=2026, March 20|type=Video|site=YouTube}}</ref>\n\nShe also released her new original song \"BE MY FLAME,\" announced her first solo album \"DANGERyS,\" and her first solo concert \"[https://hope-beyond-the-stars.hololivepro.com/ HOPE ||: Beyond the Stars]\" scheduled for 6 October 2026 at SGC Hall Ariake, Tokyo, Japan.<ref>{{Link|url=https://youtu.be/J53rX5brbUw?t=3110|title=【3D LIVE - RACING TOWARDS HOPE】IRyS 2026 BIRTHDAY LIVE + 3D OUTFIT & BIG ANNOUNCEMENTS #IRySBDay2026|author=IRyS|account=IRyS Ch. hololive-EN|date=2026, March 20|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://twitter.com/hololive_En/status/2075792201167122520|title=<nowiki>💎#IRyS 1st Concert💎 IRyS 1st Concert “HOPE ||: Beyond the Stars” October 6, 2026 To be held at SGC HALL ARIAKE! 🎉 Official Hashtag: #IRySConcert2026</nowiki>|author=hololive production|account=@hololive_en|date=2026, July 10|type=Tweet|site=Twitter}}</ref>\n\nOn 17 April, during a sponsored stream of the game ''PRAGMATA'', IRyS debuted a small Diana, a character from the game, for her fourth 2D costume. Diana lies on IRyS's shoulder and can mimic her expressions.<ref>{{Link|url=https://youtu.be/eok8zKnlldY?t=264|title=【PRAGMATA】MY PRECIOUS DIANA #sponsored|author=IRyS|account=IRyS Ch. hololive-EN|date=2026, April 17|type=Video|site=YouTube}}</ref>\n\nOn 27 April, as part of a collaboration with the game ''Monster Hunter Stories 3: Twisted Reflection'', IRyS debuted her sixth 2D costume inspired by [[w:c:monsterhunter:Mizutsune|Mizutsune]]. IRyS has twintails decorated with white flowers with purple tips. Her bangs have two styles, one with a straight cut and the other sweep to the side with a braid, and she can also wear a mizutsume mask. IRyS wears a white kimono with pink and fuchsia assets.<ref>{{Link|url=https://youtu.be/NEYxXPg7hsQ?t=2546|title=【NEW OUTFIT REVEAL】Monster Hunter Stories 3 with Outfit & fighting more Monsters! #sponsored|author=IRyS|account=IRyS Ch. hololive-EN|date=2026, April 27|type=Video|site=YouTube}}</ref>\n\nOn 6 October, IRyS debuted her new 3D costume during her concert \"HOPE ||: Beyond the Stars.\" She has twintails and can use a white and black beret. IRyS's costume has two variants one where white is the main color and the other where black is. Her top has a high collar with detached sleeves, the black version has an inner fuchsia and has white shorts. The white variant has an inner blue and has a black skirt. Her socks are one black and one white. IRyS has white boots.<ref>{{Link|url=https://twitter.com/hololive_En/status/2107421459991965896|title=💎#IRyS 1st Concert💎 Song 12: Stay Blue Special guest Shiranui Flare is here! 🔥|author=hololive production|account=@hololive_en|date=2026, October 6|type=Tweet|site=Twitter}}</ref><ref>{{Link|url=https://youtu.be/5eK3iWd0FQ0?t=1979|title=<nowiki>【Free Preview】IRyS 1st Concert “HOPE ||: Beyond the Stars”【#IRySConcert2026】</nowiki>|author=IRyS|account=IRyS Ch. hololive|date=2026, October 6|type=Video|site=YouTube}}</ref>\n\n== Discography ==\n{{Main|IRyS/Discography}}\n{{Music Album\n| Title            = DANGERyS\n| Additional Info  = 1st album\n| Release Date     = 12 July 2026\n| Track List       =\n# \"My car is in danger\"\n# \"Eclipse\"\n# \"Run to You\"\n# \"MUSE\"\n# \"Why do we stay?\"\n# \"Because of you\"\n# \"LIVING DEAD\"\n# \"Unspoken\"\n# \"Escalate\"\n# \"BE MY FLAME\"\n# \"Gravity\" (Rearranged Ver.) <small>(CD bonus track)</small>\n| Link YouTube     = https://music.youtube.com/playlist?list=OLAK5uy_lx10ANgaiKB29GPK0utNoPxoZ1Tcersc8\n| Link Digital     = https://cover.lnk.to/99cpRb\n| Link Other       = [https://shop.hololivepro.com/en/products/irys_1stalbum_dangerys_cd CD] • [https://shop.hololivepro.com/en/products/irys_1stalbum_dangerys_lp Vinyl Disc] • [https://youtu.be/4cOhQlJ_r70 Trailer]\n| Cover Art        = IRyS - DANGERyS.jpg\n| State            = expanded\n}}\n{{Music Single\n| Title            = BE MY FLAME\n| Additional Info  = 12th single\n| Release Date     = 22 March 2026\n| Track List       =\n# \"BE MY FLAME\"\n# \"BE MY FLAME\" <small>(instrumental)</small>\n| Link Music Video = \n| Link YouTube     = https://music.youtube.com/playlist?list=OLAK5uy_mIirtuuuYs0wjXPdmRzp73VeKPt3Ea0Zg\n| Link Digital     = https://cover.lnk.to/Ktc6pE\n| Cover Art        = IRyS - BE MY FLAME.jpg\n| State            = expanded\n}}\n\n== Events ==\n* On 5 April 2022, hololive's Twitter account announced that IRyS and [[Takanashi Kiara]] would appear at \"[[wp:de:DoKomi|DoKomi]] 2022.\" The event was held from 4-5 June 2022, which was also the first time IRyS participated in an event.<ref>{{Link|url=https://twitter.com/hololivetv/status/1511177039948091392|title=【🎉お知らせ🎉】6月4日（土）～5日（日）ドイツ・デュッセルドルフで開催されるイベント「DoKomi」に「ホロライブEnglish」所属「#小鳥遊キアラ」「#IRyS」の参加が決定しました🥳🙌|author=hololive production|account=@hololivetv|date=2022, April 5|type=Tweet|site=Twitter}}</ref>\n* On 26 June 2022, Anirevo's Twitter announced that Ouro Kronii and IRyS would be appearing as guests in \"Anirevo Summer 2022,\" which was held from 29-31 July 2022.<ref>{{Link|url=https://twitter.com/AnimeRevCanada/status/1540741615198916610|title=We're excited to welcome @irys_en and @ourokronii from hololive English to Anirevo Summer 2022! As a part of the hololive Meet project, this is a special appearance for the first time in Canada, only at Anirevo this year! Join their panel session and IRyS's solo karaoke concert!|author=AnirevoExpo|account=@AnimeRevCanada|date=2022, June 26|type=Tweet|site=Twitter}}</ref>\n* On 30 June 2022, OMOCAT's Twitter account revealed the design of Project: HOPE + holoCouncil collection.<ref>{{Link|url=https://twitter.com/_omocat/status/1542508251421474816|title=OMOCAT x Project: HOPE + holoCouncil collection -- coming soon.|author=OMOCAT|account=@_omocat|date=2022, June 30|type=Tweet|site=Twitter}}</ref>\n* On 14 July 2022, Crunchyroll Expo's Twitter account announced that IRyS and other members of hololive English would be appearing in \"Crunchyroll Expo 2022,\" which was held from 5 to 7 August 2022.<ref>{{Link|url=https://twitter.com/crunchyrollexpo/status/1547304857593413639|title=Right after celebrating her 1 year anniversary, we're excited to announce @irys_en will be joining us at Crunchyroll Expo!|author=Crunchyroll Expo|account=@crunchyrollexpo|date=2022, July 14|type=Tweet|site=Twitter}}</ref>\n* On 9 March 2023, hololive's Twitter account announced \"hololive EN café,\" a collaboration with CAPSULE Inc., featuring all hololive English members: Myth, Project HOPE, Council in foods and limited goods. The event would be held from 3 to 23 March 2023<ref>{{Link|url=https://twitter.com/hololivetv/status/1633739814477651969|title=🎉お知らせ🎉 3月10日より台湾にて #ホロライブEnglish とCAPSULEのコラボカフェ「hololive EN café」が開催‼ 各タレントをイメージしたコラボフードやドリンク、多くのオリジナルグッズが登場します🙌お見逃しなく✨|author=hololive production|account=@hololivetv|date=2023, March 9|type=Tweet|site=Twitter}}</ref>\n* On 6 June 2025, hololive announced \"hololive night,\" a collaboration with Los Angeles Dodgers baseball team, featuring Koseki Bijou, Ninomae Ina'nis, and IRyS in commercials, merchandise, food, and drinks, as well as various activities, including a live stream from Dodger Stadium. The event took place on 5 July 2025, and anyone who purchased a ticket received three exclusive trading cards featuring the talents in the Dodgers uniform.<ref>{{Link|url=https://twitter.com/hololive_En/status/1931146597934797070|title=hololive night is returning to Dodger Stadium on July 5th, 2025!🎉 What exactly will this year's \"hololive night\" collaboration between the Los Angeles Dodgers and hololive production entail!? Meet Ina, IRyS, and Bijou this year in Dodger Stadium! Watch the stream for all the deets!⚾ ⏰June 8th, 8PM PDT | June 9th 12PM JST 🔽Starring Ninomae Ina'nis, IRyS, Koseki Bijou|author=hololive production|account=@hololive_En|date=2025, June 6|type=Tweet|site=Twitter}}</ref><ref>{{Link|url=https://hololive.hololivepro.com/en/news/20250609-01-146/|title=hololive night Collaboration Event Returns to Dodger Stadium on July 5th, 2025!|author=hololive production|date=2025, June 9|type=Post|site=hololive.hololivepro.com}}</ref>\n* On 16 June 2025, Vite Ramen's [https://x.com/ViteRamen/status/1934808828656435337 Twitter] account started posting a series of videos teasing a collaboration with IRyS.<ref>{{Link|url=https://x.com/ViteRamen/status/1934808828656435337|title=Wait, Vite is making WHAT for the IRyS collab? Hope Comes In Many Forms... Videos every day.|author=Vite Ramen|account=@ViteRamen|date=2025, June 16|type=Tweet|site=Twitter}}</ref> After a series of videos on 19 June, on her [https://youtu.be/qnnFBk-k75U channel] it was revealed that the collaboration is the release of ''Hopium Soda'' a yuzu-lemon-melon blend and the more well known and part of IRyS lore ''Hope Soda'' with cherry cola flavor were going to be released as real products.<ref>{{Link|url=https://youtu.be/qnnFBk-k75U|title=Hope Soda is REAL?! #PR|author=IRyS|account=IRyS Ch. hololive-EN|date=2025, June 19|type=Video|site=YouTube}}</ref>\n\n== Mascot and fans ==\n* Her fanbase is officially called \"IRyStocrats,\" a portmanteau of \"aristocrats\" and her name, \"IRyS.\" They are represented by \"GuyRyS\" a human stick figure wearing a hat drawn by IRyS.\n* Members are called \"Nephamily,\" a portmanteau of the words \"nephilim\" and \"family.\"\n* On 4 July 2022, IRyS and Tsukumo Sana designed IRyS' mascots \"Bloom & Gloom\" black and white cat-like creatures each with just one wing, needing each other help in order to fly.<ref>{{Link|url=https://youtu.be/WjYCPf3shKI|title=【MASCOT DESIGN】Creating an Official Mascot with @Tsukumo Sana Ch. hololive-EN|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, July 4|type=Video|site=YouTube}}</ref>\n\n== Relationships ==\n* [[Hakos Baelz]] is known to be a good friend of IRyS'. As a running joke, they are constantly getting \"married\" and \"divorced,\" with \"BaeRyS\" being their unofficial pairing name.\n* The concept that they were \"married\" originated from a \"Minecraft\" stream on 29 September 2021. The aim was to construct the portal area for the hololive English server, which would be close to the transition point where they could move to the hololive JP server and viceversa.<ref>{{Link|url=https://youtu.be/9psi8k9bUV8|title=【MINECRAFT】Building stuff for Portal!! (finally?)|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, September 29|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://youtu.be/ozSK5q4Fys0|title=≪MINECRAFT≫ new friends + more portal building - part 1|author=Hakos, B.|account=Hakos Baelz Ch. hololive-EN|date=2021, September 29|type=Video|site=YouTube}}</ref>\n** To pass the time in \"Minecraft,\" both chose adjacent beds where they would go to sleep. In the following morning, Baelz would give IRyS a [[w:c:Minecraft:Baked Potato|baked potato]] as a {{W|bento}} similar to the mannerisms of a Japanese housewife. IRyS would accept the \"bento,\" jokingly commenting that it was not enough and that she expected more. This led to them role-playing an unhappily married couple, leading to the start of the running joke that they were \"married\" and were getting \"divorced.\"\n* On 7 October 2021, they had a collaboration stream playing \"Clubhouse 51,\" where IRyS won in a game of Yacht Dice. Baelz responded that they are \"signing the divorce papers tonight\" as a form of retaliation to the loss.<ref name=\"soda\"/>\n* On 4 January 2022, during a \"Minecraft\" stream, both entered [[Pavolia Reine]]'s room in [[Ouro Kronii]]'s base (the Bunkeronii). There, they read the existing \"[[w:c:Minecraft:Lectern#Holding_books|fanfictions]]\" written by other members. Eventually, they decided to write a \"fanfiction\" together, which would be titled \"A Night Like Any Other.\" The setting of this fiction was that they were in an adjacent room to the events that were depicted in another \"fanfiction\" titled \"Noise Complaint.\"<ref>{{Link|url=https://youtu.be/hfpiUehrpsE|title=【MINECRAFT】HAHA Minecraft w/ Bae|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, January 4|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://youtu.be/FUD2TKkCmLE|title=≪MINECRAFT≫ we doing something|author=Hakos, B.|account=Hakos Baelz Ch. hololive-EN|date=2022, January 4|type=Video|site=YouTube}}</ref>\n** In the fanfiction, the fictional IRyS told Baelz that she brought the {{W|Monopoly_(game)|Monopoly}} board game, and that they would be playing it \"on the bed.\" It ends with them \"preparing their hearts for one SPICY game.\" This resulted in the term \"Monopoly\" being used by IRyS and the fanbase as a substitute for sexual activities.\n\n=== Units and groups ===\n* Notable units and groups IRyS is part of:\n** \"-Promise-\" alongside Ceres Fauna, Ouro Kronii, Nanashi Mumei and Hakos Baelz. Officially introducing IRyS into the same group as the remaining active -Council- members on 9 October 2023, forming a new five member group similar to debuting genmates.<ref name=\"Promiseannouncement\"/> Before this the unit was known as \"CouncilRyS\" and also included Tsukumo Sana for a short time before her retirement.\n** \"BaeRyS,\" alongside Hakos Baelz.\n** \"MorIRyS,\" alongside [[Mori Calliope]].\n** \"CHADCAST\" (Chaos, Hope, And Death), alongside Hakos Baelz and Mori Calliope.<ref>{{Link|url=https://youtu.be/MXd7uOemEzc|title=【CHAD CAST #01】Chaos, Hope, and Death! Let the Rambles Begin.|author=Mori, C.|account=Mori Calliope Ch. hololive-EN|date=2022, January 30|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://twitter.com/hololive_En/status/1827501989690786122|title=Song 14: \"World is Mine\" by Gawr Gura Song 15: \"BLUE CLAPPER\" by CHADCAST (Mori Calliope, IRyS, Hakos Baelz)＋Koseki Bijou|author=hololive production (English)|date=2024, August 24|type=Tweet|site=Twitter}}</ref>\n** \"Star Flower,\" alongside [[Moona Hoshinova]], [[Hoshimachi Suisei]], and [[AZKi]].\n** \"IRySora,\" alongside [[Tokino Sora]].\n** \"K.I.R.A,\" alongside [[Ouro Kronii]], Pavolia Reine and [[Anya Melfissa]].\n** \"ReiRyS,\" alongside Pavolia Reine.\n** \"OKFAIR,\" alongside [[Kureiji Ollie|Kureiji '''O'''llie]], Ouro '''K'''ronii, [[Ceres Fauna|Ceres '''F'''auna]], '''A'''nya Melfissa and Pavolia '''R'''eine.\n** She is good friends with [[Shiranui Flare]], they collab sometimes playing games like Splatoon 3.\n** \"Cerulean Cup,\" alongside [[Ninomae Ina'nis]], [[Ouro Kronii]], [[Koseki Bijou]], and [[Gigi Murin]]. They are guildmates within the ENigmatic Recollection story.\n\n== Quotes ==\n* \"HiRyS, it's IRyS!\"\n* \"Yoisho~\"\n* \"How's the volume?\"<ref>{{Link|url=https://howsthevolu.me|title=Happy AnniversaRyS!|date=2022, July 11|type=Website|site=howsthevolu}}</ref>\n* \"Hope has descended and is coming for you\"<ref name=\":0\">{{Link|url=https://youtu.be/YMCDHtUSkGc?t=8490|title=【MINECRAFT】HEHE ZOMBIE APOCALYPSE【Hololive Indonesia 2nd Gen】|author=Kureiji Ollie|account=Kureiji Ollie Ch. hololive-ID|date=2021, August 18|type=Video|site=YouTube}}</ref>\n* [in Minecraft chat] \"why are you RUNNING?\"<ref>{{Link|url=https://youtu.be/uKEdSI9WSsw?t=2232|title=【MINECRAFT】Lets go to NETHER land ;D after some prep!|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, September 15|type=Video|site=YouTube}}</ref>\n* [in Minecraft chat] \"dont doubt senpairys\"\n* \"I am a hundred percent seiso, I would never lie!\"<ref name=\":1\">{{Link|url=https://youtu.be/OMy4QY1VbiI?t=661|title=【HoloEN Among Us】IT'S ULTIMATE SUS TIME|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, October 24|type=Video|site=YouTube}}</ref>\n* \"We can play Monopoly... IN BED!\"\n* \"I can kill as many zombie babies as I want! Is this Heaven!?\"\n* \"'Non-nerfed for membership.' I'm not gonna make that the selling point of my membership, okay?\"\n* \" ...you guys, you guys, uh, I think I heard Ollie saying \"IRYS HAS THE UPPER HAND!\" but I have no idea what this is!\"\n* \"I wonder how [Kronii] sounds when she's scared? I bet she still sounds as lovely as ever...\"\n* \"Our journey has only just begun & I'm FINALLY FREE!\"\n* \"You know how on my debut stream I was like 'Oh, my age is how-how long hope has been in your heart,' and everyone's like 'Oh, in that case, you must be ZERO years old,' like really? You guys are—you guys need more hope in your lives, man. I guess that's why I'm here, though. I guess that is why I'm here.\"\n* \"I don't take no for an answer.\"\n* \"I know a lot of people were very confused about how it's pronounced, because of the spelling, probably. It is not \"Eye-Reese\", it is not 'Aarrrrrse'.\"\n* \"It's not like I want to thank you or anything. Hmph!\"\n* \"Who cares about the baby being sick, mommy needs to eat!\"\n* \"I did ''not'' kidnap the baby, the baby came willingly.\"\n* \"Does that mean I was stepping on the flower's...on the flower's stuff? Nevermind.\"\n* \"I'll probably get bonked for that later...\"\n* \"Erase that from your memory.\"\n* \"Maybe I'm actually a punching bag...\"\n* \"What's better than one LongRyS? Three LongRySes...\"\n* \"I may be winning the fight, but I'm losing the war. All my fans are turning into Iono fans!\"\n* \"Oh my god. Fauna's resting at a Sapling's tent! [...] What a lucky Sapling.\"\n* \"Okay wait, where did that come from, guys? Since when did I become...a gambler, Huh? When did I become that to your eyes, huh?\"\n* \"Hope has descended!\"\n* \"ByeRyS!\"\n\n== Trivia ==\n=== Lore ===\n* IRyS is a nephilim, a half-angel, half-demon being.\n** The term \"{{W|nephilim}}\" appears in the Bible (Genesis 6:1-4; Numbers 13:32-33), where they refer to an ancient group of people sometimes interpreted as giants or fallen angels, beings who served God but were cast out for rebelling against Him. By some interpretations, the nephilim lived on Earth and intermarried with humans, but were wiped out in the Biblical flood which Noah and his descendants survived by building his ark.\n** The unofficial term for an angel-demon hybrid would be most likely \"''Nephalem''\", coming from the Diablo franchise and other medias.\n\n=== Likes and dislikes ===\n* She likes good spaghetti with meatballs and tofu.\n* She enjoys sleeping, singing, PvP Games and {{W|sudoku}}.\n* Her favorite anime and manga are {{W|Neon Genesis Evangelion|Evangelion}}, {{W|Bakuman}}, {{W|Death Note}}, {{W|Angel Beats!}}, {{W|Kaguya-sama:Love Is War|Kaguya-Sama}}, {{W|The Promised Neverland}}, {{W|Mobile Suit Gundam SEED Destiny|Gundam SEED Destiny}}. She also loves romance comedies and shojo manga.\n* Her goals are: releasing a full original album, hold a 3D debut live concert, singing an anime OP/ED song, make a lot of friends, make collaborations with every hololive member and bring hope to this world!<ref>{{Link|url=https://youtu.be/WTU3TIZRUCM?t=1988|title=【DEBUT STREAM】Hope has descended! #irysdebutstream |author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 11|type=Video|site=YouTube}}</ref>\n* She dislikes celery, heights, bugs, {{W|Santa Claus|Santa}}, math, ceiling fans and helicopters.\n** Despite having wings, IRyS prefers to walk because of her fear of heights.\n** IRyS claims that she dislikes Santa because, as she is a half-demon, Santa Claus never visited her, forgetting that she is also a half-angel.\n** She claims that she dislikes ceiling fans out of two reasons, first being that she considered them inefficient and obsolete due to the advent of air conditioning, and second being that she became paranoid of ceiling fans falling on top of her ever since watching ''Final Destination'', which caused her to develop a discomfort towards spinning objects, hence her dislike towards helicopters as well.\n* In the past, she couldn't stand gore and was afraid of surgeries. Nowadays she can handle it better, but still feels uncomfortable when the gore is too extreme.<ref>{{Link|url=https://youtu.be/h5JEV-2NNm0?t=9840|title=【DOOM】First time playing! Rip and Tear for HOPE|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 22|type=Video|site=YouTube}}</ref>\n* IRyS has a strong fondness for drinks and sodas, and will usually describe what drink she has prepared for the stream.\n** Despite this, she avoids sodas for singing streams, preferring non-carbonated drinks instead.<ref>{{Link|url=https://youtu.be/_Z_ppGumqQ4|title=【Karaoke!!】Another Day Another Song!|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, August 21|type=Video|site=YouTube}}</ref>\n** She drinks a 500ml bottle of soda almost every day.<ref name=\"soda\">{{Link|url=https://youtu.be/HuD3IBU4shw|title=【Clubhouse 51】Settling the score with Bae!! 【COLLAB】|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, October 7|type=Video|site=YouTube}}</ref>\n** Her love for sodas is so strong that she was given a \"punishment\" of a one-week soda ban for losing in Clubhouse Games against [[Hakos Baelz]].<ref name=\"soda\"/>\n** Her love for sodas is a running joke with the viewers, with viewers \"attempting\" to prevent her from drinking soda (with messages to the effect of \"IRyS, No soda\") whenever she mentions it.\n\n=== Miscellaneous ===\n* IRyS is the fifth hololive Production member to have {{W|heterochromia}} after [[Houshou Marine]], [[Himemori Luna]], [[Kureiji Ollie]] and [[Yukoku Roberu]]. She has one purple eye and one blue.\n* IRyS can speak English and Japanese.\n* She is the first member of hololive since AZKi to debut outside of a generation and is also the first one to do so outside the Japanese branch of hololive.\n* IRyS often makes puns with her name, such as \"HiRyS\" and \"ByeRyS,\" to name a few. She even has member badges with \"RyS\" and encourages her \"Nephamily\" to use them more often and make even funnier word combinations.\n** IRyS is also known for combining her name and phrases starting with \"S\" when creating new usernames. The following has confirmed so far:\n*** \"IRySuperGlue\" for ''Minecraft''.\n*** \"irysocool\" for ''Apex Legends'', ''Just Shapes & Beats'', ''Dead by Daylight'', and ''Rust''.\n*** \"IRySwitch\" for {{W|Nintendo Switch}} games such as ''Mario Kart 8 Deluxe'', ''Big Brain Academy™️: Brain vs. Brain'', ''Clubhouse 51'', ''Ring Fit Adventure'' and ''Nintendo'' ''Switch Sports''.\n*** \"IRYSOPRO\" for ''Gartic Phone''.\n*** \"IRySoSus\" for ''Among Us'', referencing \"sus,\" a slang for being suspicious popularized by the game's fanbase.\n*** \"IRySoSeiso\" for her character in ''Animal Crossing'', and \"ParadIRyS\" for her island.\n*** \"HikaRyS\" for her character in ''Pokémon Brilliant Diamond'', named after the Pokémon Gen 4 female protagonist Hikari (Japanese) / Dawn (English).\n*** \"ArceRyS\" for her character in ''Pokémon Legends: Arceus''.\n*** \"IRySoDead\" for ''Elden Ring''.\n*** \"IRySoWise\" for her Reddit user ID.\n*** \"IRyStonk\" for ''Monopoly''.\n*** \"IRySoWin\" for ''Overwatch''.\n* In her first mini-album, Caesura of Despair, the term \"{{W|caesura}}\" refers to the ‖ symbol, a double vertical line mark used to denote a pause in a song or poetry. In the fourth track, \"Caesura of Despair (attacca ver.)\", \"attacca\" refers to music played without a pause between movements.\n* IRyS used to have a childhood crush on Nintendo's Luigi.<ref>{{Link|url=https://youtu.be/jZCBPcYLkFQ?t=3991|title=【Mario Kart 8DX】The Legendary Training Arc|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, August 20|type=Video|site=YouTube}}</ref>\n* IRyS has a habit of doing lip rolls during streams, and has been doing them since she was young.<ref>{{Link|url=https://youtu.be/j1zqmS_q0zM?t=2091|title=【Q & A】Answering marshmallow questions!|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 13|type=Video|site=YouTube}}</ref> She also uses lip rolls as part of her vocal warm up routine.\n* IRyS has a medical condition of having \"unstable joints,\"<ref name=\"joints\">{{Link|url=https://youtu.be/fk1DFWD29lw?t=1170|title=【Ring Fit Adventure】Behold, more ExercIRyS|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, August 26|type=Video|site=YouTube}}</ref> and had a habit of dislocating her shoulder when she was young. She had surgery to treat it before.<ref name=\"surgery\">{{Link|url=https://youtu.be/nNpx_Nkuv_g?t=9059|title=【Mario Kart 8DX】Race with Me!! (after a bit of practice lol)|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, October 16|type=Video|site=YouTube}}</ref>\n** This is the reason why she avoids the \"Overhead Arm\" exercise when playing Nintendo's Ring Fit Adventure,<ref name=\"joints\" /> and also \"holds back\" on related physical activities such as bowling and throwing balls.<ref name=\"surgery\"/>\n* IRyS used to do skateboarding in the past.<ref>{{Link|url=https://youtu.be/9GMtBsMSUw4?t=3070|title=【Singing】Some more songs!|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 31|type=Video|site=YouTube}}</ref>\n* She is the twenty-first hololive member to join the official Hololive Subreddit as a moderator.\n* There is a fan game named \"Delivering Hope\" made by [https://twitter.com/SoftdevWu David Wu], it was released on 19 July 2022 to celebrate IRyS's one year anniversary. Featuring her as the main character, the game simulates how IRyS gives hope to everyone by throwing her and seeing how far she goes.<ref>{{Link|url=https://twitter.com/SoftdevWu/status/1545807192741367808|title=My #hololive fangame Delivering Hope is now released! Available to play for free on web, Windows and Linux. Find it at my itchio page. 🎮 Post your best scores using the tag #YeetIRyS Happy Anniversary @irys_en !!! 🥰🤩|author=David Wu|account=@SoftdevWu|date=2022, July 19|type=Tweet|site=Twitter}}</ref>\n* IRyS has a habit of wrapping bananas in plastic bags and putting them into the fridge.<ref>{{Link|url=https://youtu.be/dVA7mJV9ft8?t=4360|title=【APEX】mouse aiming goes brrrrrr|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, July 15|type=Video|site=YouTube}}</ref><ref>{{Link|url=https://youtu.be/cG2QyK4CkZc?t=3104|title=【MINECRAFT】Guerrilla Minecraft!|author=IRyS|site=YouTube|date=2021, November 2|account=IRyS Ch. hololive-EN|type=Video}}</ref><ref>{{Link|url=https://youtu.be/zk6Pi9UOK7Y?t=345|title=【Dead By Daylight Collab】Please don't run away|author=IRyS|account=IRyS Ch. hololive-EN|date=2021, October 9|type=Video|site=YouTube}}</ref>\n** This was brought to light during a Jump King stream in which she was unwrapping her banana while on voice chat with [[Nanashi Mumei]], [[Ceres Fauna]], and [[Mori Calliope]]. The noise took the other members by surprise, and as a joke IRyS called it the \"Windy Banana.\"<ref>{{Link|url=https://youtu.be/Dluq9C_IZBE?t=14608|title=【JUMP KING】Jumpity jump #Holojump|author=IRyS|account=IRyS Ch. hololive-EN|date=2022, March 12|type=Video|site=YouTube}}</ref>\n* On 16 March 2022, Cover registered a trademark for HOOZUKI IRYS. It is speculated to be an unused surname.<ref>{{Link|url=https://youtu.be/f03DrGJtUZ4|title=New Hololive English Gen Details Revealed By Mistake, HoloJustice Reactions, Gawr Gura Birthday|author=FalseEyeD|account=FalseEyeD|date=2024, June 19|type=Video|site=YouTube}}</ref> \"Houzuki\" may refer to {{W|Alkekengi|a type of cherry}} traditionally used in Japan as an offering to the dead. An even earlier trademark for the name was filed on 21 October 2021, for the spelling \"鬼灯IRys\".<ref>{{Link|url=https://x.com/trademark_bot/status/1458359786114846725|title=&lbrack;商願2021-131600&rbrack; 商標: &lbrack;画像&rbrack; (標準文字) / 出願人: カバー株式会社 / 出願日: 2021年10月21日 / 区分: 9類(業務用テレビゲーム機用プログラムほか), 35類(広告業ほか), 41類(技芸・スポーツ又は知識の教授ほか)|author=商標速報bot|account=@trademark_bot|date=2021, November 10|type=Tweet|site=Twitter}}</ref> A possible reference to this appears in her debut livestream, which gave \"███████ Irys\" as her full name, although the blanked out part was never officially revealed.\n* At debut, IRyS' height was given as 166 cm, including her shoe heels. Early in 2026, at some point between 18 February and 19 March, her official profile changed to 162 cm.\n\n== External links ==\n=== Media ===\n* [https://www.youtube.com/channel/UC8rcEBzJSleTkf_-agPM20g IRyS Ch. hololive-EN] - YouTube channel\n* [https://hololive.hololivepro.com/en/talents/irys IRyS's corporate profile] on hololive.hololivepro.com\n* [https://twitter.com/irys_en @irys_en] - Twitter account\n* [https://marshmallow-qa.com/irys_en @irys_en] - Marshmallow account\n* [https://www.reddit.com/user/IRySoWise u/IRySoWise] - Reddit account\n\n=== Hashtags ===\n* [https://twitter.com/hashtag/IRyS #IRyS] - General\n* [https://twitter.com/hashtag/IRyShow #IRyShow] - Stream\n* [https://twitter.com/hashtag/IRySart #IRySart] - Fan art\n\n=== Further reading ===\n* [https://dic.pixiv.net/a/IRyS IRyS] - Pixiv Encyclopedia\n* [https://zh.moegirl.org.cn/IRyS IRyS] - Moegirl Encyclopedia\n* [https://namu.wiki/w/IRyS IRyS] - Namu Wiki\n\n=== Statistics ===\n* [https://socialblade.com/youtube/channel/UC8rcEBzJSleTkf_-agPM20g IRyS] - Social Blade YouTube stats\n* [https://playboard.co/en/channel/UC8rcEBzJSleTkf_-agPM20g IRyS] - Playboard YouTube stats\n\n{{hololive}}\n\n== References ==\n{{references|2|scrollbox=1}}\n\n[[Category:YouTube]]\n[[Category:Female]]\n[[Category:Produced by Corporate]]\n[[Category:Hololive]]\n[[Category:Debuted in 2021]]\n[[Category:Voice: Female]]\n[[Category:Live2D]]\n[[Category:2D]]\n[[Category:3D]]\n[[Category:English]]\n[[Category:Japanese]]\n[[Category:Live2D by rariemonn]]\n[[Category:Live2D by Brian Tsui]]\n[[Category:Live2D by Akatsuki Enma]]\n[[Category:Live2D by Noka Nodoka]]\n[[Category:Live2D by jenny]]\n[[Category:Designed by Yako Mashiro]]\n[[Category:3D by SeafoamBoy]]\n[[Category:Designed by Tsukumo Sana]]\n\n[[ru:IRyS]]\n[[id:IRyS]]\n[[vi:IRyS]]\n[[pl:IRyS]]\n[[it:IRyS]]",
+  "revisions": [
+   {
+    "revid": 586906,
+    "parentid": 584105,
+    "user": "Fireburishi",
+    "timestamp": "2026-10-13T21:18:27Z",
+    "size": 63341,
+    "comment": "",
+    "tags": [
+     "visualeditor-wikitext"
+    ]
+   },
+   {
+    "revid": 584105,
+    "parentid": 584054,
+    "user": "Haram999",
+    "timestamp": "2026-10-06T13:08:13Z",
+    "size": 62947,
+    "comment": "ref",
+    "tags": [
+     "visualeditor-wikitext"
+    ]
+   },
+   {
+    "revid": 584054,
+    "parentid": 574284,
+    "user": "Haram999",
+    "timestamp": "2026-10-06T10:28:52Z",
+    "size": 62977,
+    "comment": "new 3D costume",
+    "tags": [
+     "visualeditor-wikitext"
+    ]
+   },
+   {
+    "revid": 574284,
+    "parentid": 574248,
+    "user": "Fireburishi",
+    "timestamp": "2026-09-13T07:34:39Z",
+    "size": 62342,
+    "comment": "",
+    "tags": [
+     "visualeditor-wikitext"
+    ]
+   },
+   {
+    "revid": 574248,
+    "parentid": 574242,
+    "user": "Fireburishi",
+    "timestamp": "2026-09-13T06:43:21Z",
+    "size": 62339,
+    "comment": "",
+    "tags": [
+     "visualeditor-wikitext"
+    ]
+   },
+   {
+    "revid": 574242,
+    "parentid": 573255,
+    "user": "Fireburishi",
+    "timestamp": "2026-09-13T06:36:11Z",
+    "size": 62337,
+    "comment": "Standardization",
+    "tags": [
+     "visualeditor-wikitext"
+    ]
+   }
+  ],
+  "sections": [
+   {
+    "index": "1",
+    "level": "2",
+    "line": "Introduction video"
+   },
+   {
+    "index": "2",
+    "level": "2",
+    "line": "Profile"
+   },
+   {
+    "index": "3",
+    "level": "2",
+    "line": "Personality"
+   },
+   {
+    "index": "4",
+    "level": "2",
+    "line": "Appearance"
+   },
+   {
+    "index": "5",
+    "level": "2",
+    "line": "History"
+   },
+   {
+    "index": "6",
+    "level": "3",
+    "line": "Background"
+   },
+   {
+    "index": "7",
+    "level": "3",
+    "line": "2021"
+   },
+   {
+    "index": "8",
+    "level": "3",
+    "line": "2022"
+   },
+   {
+    "index": "9",
+    "level": "3",
+    "line": "2023"
+   },
+   {
+    "index": "10",
+    "level": "3",
+    "line": "2024"
+   },
+   {
+    "index": "11",
+    "level": "3",
+    "line": "2025"
+   },
+   {
+    "index": "12",
+    "level": "3",
+    "line": "2026"
+   },
+   {
+    "index": "13",
+    "level": "2",
+    "line": "Discography"
+   },
+   {
+    "index": "14",
+    "level": "2",
+    "line": "Events"
+   },
+   {
+    "index": "15",
+    "level": "2",
+    "line": "Mascot and fans"
+   },
+   {
+    "index": "16",
+    "level": "2",
+    "line": "Relationships"
+   },
+   {
+    "index": "17",
+    "level": "3",
+    "line": "Units and groups"
+   },
+   {
+    "index": "18",
+    "level": "2",
+    "line": "Quotes"
+   },
+   {
+    "index": "19",
+    "level": "2",
+    "line": "Trivia"
+   },
+   {
+    "index": "20",
+    "level": "3",
+    "line": "Lore"
+   },
+   {
+    "index": "21",
+    "level": "3",
+    "line": "Likes and dislikes"
+   },
+   {
+    "index": "22",
+    "level": "3",
+    "line": "Miscellaneous"
+   },
+   {
+    "index": "23",
+    "level": "2",
+    "line": "External links"
+   },
+   {
+    "index": "24",
+    "level": "3",
+    "line": "Media"
+   },
+   {
+    "index": "25",
+    "level": "3",
+    "line": "Hashtags"
+   },
+   {
+    "index": "26",
+    "level": "3",
+    "line": "Further reading"
+   },
+   {
+    "index": "27",
+    "level": "3",
+    "line": "Statistics"
+   },
+   {
+    "index": "28",
+    "level": "2",
+    "line": "References"
+   }
+  ]
+ },
+ "compare": {
+  "fromid": 21876,
+  "fromrevid": 584105,
+  "fromns": 0,
+  "fromtitle": "IRyS",
+  "fromsize": 62947,
+  "fromtimestamp": "2026-10-06T13:08:13Z",
+  "fromuser": "Haram999",
+  "fromuserid": 48752258,
+  "fromcomment": "ref",
+  "fromparsedcomment": "ref",
+  "toid": 21876,
+  "torevid": 586906,
+  "tons": 0,
+  "totitle": "IRyS",
+  "tosize": 63341,
+  "totimestamp": "2026-10-13T21:18:27Z",
+  "touser": "Fireburishi",
+  "touserid": 23839163,
+  "tocomment": "",
+  "toparsedcomment": "",
+  "body": "<tr>\n  <td colspan=\"2\" class=\"diff-lineno\">Line 198:</td>\n  <td colspan=\"2\" class=\"diff-lineno\">Line 198:</td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>On 27 April, as part of a collaboration with the game ''Monster Hunter Stories 3: Twisted Reflection'', IRyS debuted her sixth 2D costume inspired by [[w:c:monsterhunter:Mizutsune|Mizutsune]]. IRyS has twintails decorated with white flowers with purple tips. Her bangs have two styles, one with a straight cut and the other sweep to the side with a braid, and she can also wear a mizutsume mask. IRyS wears a white kimono with pink and fuchsia assets.&lt;ref&gt;{{Link|url=https://youtu.be/NEYxXPg7hsQ?t=2546|title=【NEW OUTFIT REVEAL】Monster Hunter Stories 3 with Outfit &amp; fighting more Monsters! #sponsored|author=IRyS|account=IRyS Ch. hololive-EN|date=2026, April 27|type=Video|site=YouTube}}&lt;/ref&gt;</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>On 27 April, as part of a collaboration with the game ''Monster Hunter Stories 3: Twisted Reflection'', IRyS debuted her sixth 2D costume inspired by [[w:c:monsterhunter:Mizutsune|Mizutsune]]. IRyS has twintails decorated with white flowers with purple tips. Her bangs have two styles, one with a straight cut and the other sweep to the side with a braid, and she can also wear a mizutsume mask. IRyS wears a white kimono with pink and fuchsia assets.&lt;ref&gt;{{Link|url=https://youtu.be/NEYxXPg7hsQ?t=2546|title=【NEW OUTFIT REVEAL】Monster Hunter Stories 3 with Outfit &amp; fighting more Monsters! #sponsored|author=IRyS|account=IRyS Ch. hololive-EN|date=2026, April 27|type=Video|site=YouTube}}&lt;/ref&gt;</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><br /></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><br /></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\" data-marker=\"−\"></td>\n  <td class=\"diff-deletedline diff-side-deleted\"><div>On 6 October, IRyS debuted her new 3D costume during her concert \"HOPE ||: Beyond the Stars.\"&lt;ref&gt;{{Link|url=https://twitter.com/hololive_En/status/2107421459991965896|title=💎#IRyS 1st Concert💎 Song 12: Stay Blue Special guest Shiranui Flare is here! 🔥|author=hololive production|account=@hololive_en|date=2026, 6<del class=\"diffchange diffchange-inline\"> tháng 10</del>|type=Tweet|site=Twitter}}&lt;/ref&gt;&lt;ref&gt;{{Link|url=https://youtu.be/5eK3iWd0FQ0?t=1979|title=【Free Preview】IRyS 1st Concert “HOPE ||: Beyond the Stars”【#IRySConcert2026】|author=IRyS|account=IRyS Ch. hololive|date=2026, 6<del class=\"diffchange diffchange-inline\"> tháng 10</del>|type=Video|site=YouTube}}&lt;/ref&gt;</div></td>\n  <td class=\"diff-marker\" data-marker=\"+\"></td>\n  <td class=\"diff-addedline diff-side-added\"><div>On 6 October, IRyS debuted her new 3D costume during her concert \"HOPE ||: Beyond the Stars.\"<ins class=\"diffchange diffchange-inline\"> She has twintails and can use a white and black beret. IRyS's costume has two variants one where white is the main color and the other where black is. Her top has a high collar with detached sleeves, the black version has an inner fuchsia and has white shorts. The white variant has an inner blue and has a black skirt. Her socks are one black and one white. IRyS has white boots.</ins>&lt;ref&gt;{{Link|url=https://twitter.com/hololive_En/status/2107421459991965896|title=💎#IRyS 1st Concert💎 Song 12: Stay Blue Special guest Shiranui Flare is here! 🔥|author=hololive production|account=@hololive_en|date=2026,<ins class=\"diffchange diffchange-inline\"> October</ins> 6|type=Tweet|site=Twitter}}&lt;/ref&gt;&lt;ref&gt;{{Link|url=https://youtu.be/5eK3iWd0FQ0?t=1979|title=<ins class=\"diffchange diffchange-inline\">&lt;nowiki&gt;</ins>【Free Preview】IRyS 1st Concert “HOPE ||: Beyond the Stars”【#IRySConcert2026】<ins class=\"diffchange diffchange-inline\">&lt;/nowiki&gt;</ins>|author=IRyS|account=IRyS Ch. hololive|date=2026,<ins class=\"diffchange diffchange-inline\"> October</ins> 6|type=Video|site=YouTube}}&lt;/ref&gt;</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><br /></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><br /></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>== Discography ==</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>== Discography ==</div></td>\n</tr>\n"
+ },
+ "search": [
+  {
+   "ns": 0,
+   "title": "IRyS",
+   "pageid": 21876,
+   "size": 63341,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "IRyS/Gallery",
+   "pageid": 21884,
+   "size": 28969,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "IRyS/Discography",
+   "pageid": 22116,
+   "size": 29511,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Tsukumo Sana/Gallery",
+   "pageid": 23691,
+   "size": 11227,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Ouro Kronii",
+   "pageid": 23678,
+   "size": 58095,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Hitomi Chris",
+   "pageid": 3690,
+   "size": 2083,
+   "snippet": ""
+  }
+ ],
+ "prefixsearch": [
+  {
+   "title": "Chisaka Airi"
+  },
+  {
+   "title": "IRyS"
+  }
+ ],
+ "logs": [
+  {
+   "logid": 242969,
+   "ns": 2,
+   "title": "User:SalutaryCoyote124/Myu Kazue",
+   "pageid": 124750,
+   "logpage": 124510,
+   "revid": 586903,
+   "params": {
+    "target_ns": 2,
+    "target_title": "User:MyuKazue/Myu Kazue",
+    "suppressredirect": false
+   },
+   "type": "move",
+   "action": "move",
+   "user": "FANDOMbot",
+   "timestamp": "2026-10-13T21:10:01Z",
+   "comment": "Automatically moved page while renaming the user \"[[User:SalutaryCoyote124/Myu Kazue|SalutaryCoyote124/Myu Kazue]]\" to \"[[User:MyuKazue/Myu Kazue|MyuKazue/Myu Kazue]]\""
+  },
+  {
+   "logid": 242968,
+   "ns": 6,
+   "title": "File:PokeMiku Biri-Biri Boys Illustration.jpg",
+   "pageid": 124749,
+   "logpage": 124749,
+   "revid": 586883,
+   "params": {},
+   "type": "create",
+   "action": "create",
+   "user": "Ninamarie12",
+   "timestamp": "2026-10-13T20:27:03Z",
+   "comment": ""
+  },
+  {
+   "logid": 242967,
+   "ns": 6,
+   "title": "File:PokeMiku Biri-Biri Boys Illustration.jpg",
+   "pageid": 124749,
+   "logpage": 124749,
+   "revid": 586883,
+   "params": {
+    "img_sha1": "l4uxt5jpmwqs5a0lcuazxsit2t4gapt",
+    "img_timestamp": "2026-10-13T20:27:03Z"
+   },
+   "type": "upload",
+   "action": "upload",
+   "user": "Ninamarie12",
+   "timestamp": "2026-10-13T20:27:03Z",
+   "comment": ""
+  },
+  {
+   "logid": 242966,
+   "ns": 6,
+   "title": "File:PokeMiku Biri-Biri Girls Illustration.jpg",
+   "pageid": 124748,
+   "logpage": 124748,
+   "revid": 586882,
+   "params": {},
+   "type": "create",
+   "action": "create",
+   "user": "Ninamarie12",
+   "timestamp": "2026-10-13T20:26:49Z",
+   "comment": ""
+  },
+  {
+   "logid": 242965,
+   "ns": 6,
+   "title": "File:PokeMiku Biri-Biri Girls Illustration.jpg",
+   "pageid": 124748,
+   "logpage": 124748,
+   "revid": 586882,
+   "params": {
+    "img_sha1": "0be61updll78yn0ogjgklrqd8z742pf",
+    "img_timestamp": "2026-10-13T20:26:49Z"
+   },
+   "type": "upload",
+   "action": "upload",
+   "user": "Ninamarie12",
+   "timestamp": "2026-10-13T20:26:49Z",
+   "comment": ""
+  },
+  {
+   "logid": 242964,
+   "ns": 6,
+   "title": "File:Summer .jpg",
+   "pageid": 0,
+   "logpage": 124727,
+   "revid": 586879,
+   "params": {
+    "target_ns": 6,
+    "target_title": "File:AluminaSummerIllustration.jpg",
+    "suppressredirect": true
+   },
+   "type": "move",
+   "action": "move",
+   "user": "Ninamarie12",
+   "timestamp": "2026-10-13T19:43:23Z",
+   "comment": ""
+  },
+  {
+   "logid": 242963,
+   "ns": 6,
+   "title": "File:GwVQuIqbgAABvZM (2).jpg",
+   "pageid": 0,
+   "logpage": 109817,
+   "revid": 586878,
+   "params": {
+    "target_ns": 6,
+    "target_title": "File:AluminaPortraitBackground.jpg",
+    "suppressredirect": true
+   },
+   "type": "move",
+   "action": "move",
+   "user": "Ninamarie12",
+   "timestamp": "2026-10-13T19:42:47Z",
+   "comment": ""
+  },
+  {
+   "logid": 242962,
+   "ns": 2,
+   "title": "User:IlluminatingSpoonbill082",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64720773"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "ThatTankBanshee VT",
+   "timestamp": "2026-10-13T19:19:49Z",
+   "comment": ""
+  }
+ ]
+}

@@ -1,0 +1,1026 @@
+{
+ "host": "witch-hat-atelier.fandom.com",
+ "general": {
+  "sitename": "Witch Hat Atelier Wiki",
+  "mainpage": "Witch Hat Atelier Wiki"
+ },
+ "namespaces": [
+  {
+   "id": 0,
+   "name": ""
+  },
+  {
+   "id": 1,
+   "name": "Talk"
+  },
+  {
+   "id": 2,
+   "name": "User"
+  },
+  {
+   "id": 3,
+   "name": "User talk"
+  },
+  {
+   "id": 4,
+   "name": "Witch Hat Atelier Wiki"
+  },
+  {
+   "id": 5,
+   "name": "Witch Hat Atelier Wiki talk"
+  },
+  {
+   "id": 6,
+   "name": "File"
+  },
+  {
+   "id": 7,
+   "name": "File talk"
+  },
+  {
+   "id": 8,
+   "name": "MediaWiki"
+  },
+  {
+   "id": 9,
+   "name": "MediaWiki talk"
+  },
+  {
+   "id": 10,
+   "name": "Template"
+  },
+  {
+   "id": 11,
+   "name": "Template talk"
+  },
+  {
+   "id": 12,
+   "name": "Help"
+  },
+  {
+   "id": 13,
+   "name": "Help talk"
+  },
+  {
+   "id": 14,
+   "name": "Category"
+  },
+  {
+   "id": 15,
+   "name": "Category talk"
+  },
+  {
+   "id": 110,
+   "name": "Forum"
+  },
+  {
+   "id": 111,
+   "name": "Forum talk"
+  },
+  {
+   "id": 420,
+   "name": "GeoJson"
+  },
+  {
+   "id": 421,
+   "name": "GeoJson talk"
+  },
+  {
+   "id": 500,
+   "name": "User blog"
+  },
+  {
+   "id": 501,
+   "name": "User blog comment"
+  },
+  {
+   "id": 502,
+   "name": "Blog"
+  },
+  {
+   "id": 503,
+   "name": "Blog talk"
+  },
+  {
+   "id": 828,
+   "name": "Module"
+  },
+  {
+   "id": 829,
+   "name": "Module talk"
+  },
+  {
+   "id": 1200,
+   "name": "Message Wall"
+  },
+  {
+   "id": 1201,
+   "name": "Thread"
+  },
+  {
+   "id": 1202,
+   "name": "Message Wall Greeting"
+  },
+  {
+   "id": 1203,
+   "name": "Message Wall Greeting Talk"
+  },
+  {
+   "id": 2000,
+   "name": "Board"
+  },
+  {
+   "id": 2001,
+   "name": "Board Thread"
+  },
+  {
+   "id": 2002,
+   "name": "Topic"
+  },
+  {
+   "id": 2900,
+   "name": "Map"
+  },
+  {
+   "id": 2901,
+   "name": "Map talk"
+  }
+ ],
+ "changes": [
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Richeh",
+   "pageid": 89,
+   "revid": 13295,
+   "old_revid": 13235,
+   "rcid": 13201,
+   "user": "FelicitousSheep353",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 6942,
+   "newlen": 6946,
+   "timestamp": "2026-10-09T14:53:17Z",
+   "comment": "Clarified sentence about Riliphin being threatened by their previous master",
+   "tags": [
+    "visualeditor",
+    "mobile web edit",
+    "mobile edit"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Beldaruit",
+   "pageid": 611,
+   "revid": 13294,
+   "old_revid": 13293,
+   "rcid": 13200,
+   "user": "Tempesta13x",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 29451,
+   "newlen": 29015,
+   "timestamp": "2026-10-05T04:22:52Z",
+   "comment": "removed trivia part and just added the name for the brittle bone stuff in his appearance",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Beldaruit",
+   "pageid": 611,
+   "revid": 13293,
+   "old_revid": 13220,
+   "rcid": 13199,
+   "user": "Tempesta13x",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 28986,
+   "newlen": 29451,
+   "timestamp": "2026-10-05T04:19:34Z",
+   "comment": "Giving a trivia part in Beldaruit's page and giving him medical conditions.",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Tartah",
+   "pageid": 113,
+   "revid": 13292,
+   "old_revid": 13291,
+   "rcid": 13198,
+   "user": "ShibaBrother",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 17270,
+   "newlen": 17282,
+   "timestamp": "2026-10-04T14:54:12Z",
+   "comment": "Undo revision [[Special:Diff/13291|13291]] by [[Special:Contributions/LumineBoy|LumineBoy]] ([[User talk:LumineBoy|talk]])",
+   "tags": [
+    "mw-undo",
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Tartah",
+   "pageid": 113,
+   "revid": 13291,
+   "old_revid": 13122,
+   "rcid": 13197,
+   "user": "LumineBoy",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 17282,
+   "newlen": 17270,
+   "timestamp": "2026-10-04T14:51:14Z",
+   "comment": "",
+   "tags": [
+    "visualeditor",
+    "mobile web edit",
+    "mobile edit",
+    "mw-reverted"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Windowway",
+   "pageid": 959,
+   "revid": 13290,
+   "old_revid": 8951,
+   "rcid": 13196,
+   "user": "Ariel Olafsson",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2288,
+   "newlen": 2290,
+   "timestamp": "2026-10-02T16:59:39Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext",
+    "mobile web edit",
+    "mobile edit"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Kalhn",
+   "pageid": 110,
+   "revid": 13289,
+   "old_revid": 13288,
+   "rcid": 13195,
+   "user": "Damage3245",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1143,
+   "newlen": 1148,
+   "timestamp": "2026-10-01T19:48:14Z",
+   "comment": "",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Kalhn",
+   "pageid": 110,
+   "revid": 13288,
+   "old_revid": 7507,
+   "rcid": 13194,
+   "user": "HellbentOnHeartbreak",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 1144,
+   "newlen": 1143,
+   "timestamp": "2026-09-28T02:31:30Z",
+   "comment": "typos",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Qifrey",
+   "pageid": 88,
+   "revid": 13287,
+   "old_revid": 13233,
+   "rcid": 13193,
+   "user": "HellbentOnHeartbreak",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 27193,
+   "newlen": 27204,
+   "timestamp": "2026-09-28T02:17:48Z",
+   "comment": "",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Second Pentagram Test Arc",
+   "pageid": 1399,
+   "revid": 13286,
+   "old_revid": 13285,
+   "rcid": 13192,
+   "user": "Ximena571626",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1282,
+   "newlen": 1662,
+   "timestamp": "2026-09-25T15:11:32Z",
+   "comment": "/* Summary */",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Second Pentagram Test Arc",
+   "pageid": 1399,
+   "revid": 13285,
+   "old_revid": 13070,
+   "rcid": 13191,
+   "user": "Ximena571626",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 921,
+   "newlen": 1282,
+   "timestamp": "2026-09-25T14:55:25Z",
+   "comment": "",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Story Arcs",
+   "pageid": 1390,
+   "revid": 13284,
+   "old_revid": 13258,
+   "rcid": 13190,
+   "user": "Ximena571626",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 8215,
+   "newlen": 8570,
+   "timestamp": "2026-09-25T14:46:59Z",
+   "comment": "",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Ezrest",
+   "pageid": 1423,
+   "revid": 13283,
+   "old_revid": 11062,
+   "rcid": 13189,
+   "user": "SaruHadaki",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 565,
+   "newlen": 564,
+   "timestamp": "2026-09-23T15:25:26Z",
+   "comment": "",
+   "tags": [
+    "visualeditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 97",
+   "pageid": 2906,
+   "revid": 13282,
+   "old_revid": 13279,
+   "rcid": 13188,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 2362,
+   "newlen": 2355,
+   "timestamp": "2026-09-18T04:07:58Z",
+   "comment": "Undo revision [[Special:Diff/13279|13279]] by [[Special:Contributions/Mel7Grace|Mel7Grace]] ([[User talk:Mel7Grace|talk]])",
+   "tags": [
+    "mw-undo",
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 6,
+   "title": "File:Chapter 97.jpg",
+   "pageid": 2907,
+   "revid": 13281,
+   "old_revid": 13280,
+   "rcid": 13187,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 51,
+   "newlen": 0,
+   "timestamp": "2026-09-18T04:07:33Z",
+   "comment": "Blanked the page",
+   "tags": [
+    "visualeditor-wikitext",
+    "mw-blank",
+    "mw-manual-revert"
+   ]
+  },
+  {
+   "type": "log",
+   "ns": 6,
+   "title": "File:Chapter 98 Cover.jpeg",
+   "pageid": 2907,
+   "revid": 13280,
+   "old_revid": 0,
+   "rcid": 13186,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 0,
+   "newlen": 0,
+   "timestamp": "2026-09-18T04:07:04Z",
+   "comment": "Misspelled title",
+   "logid": 5085,
+   "logtype": "move",
+   "logaction": "move",
+   "logparams": {
+    "target_ns": 6,
+    "target_title": "File:Chapter 97.jpg",
+    "suppressredirect": true
+   },
+   "tags": []
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 97",
+   "pageid": 2906,
+   "revid": 13279,
+   "old_revid": 13278,
+   "rcid": 13185,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 2355,
+   "newlen": 2362,
+   "timestamp": "2026-09-18T04:03:56Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext",
+    "mw-reverted"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 97",
+   "pageid": 2906,
+   "revid": 13278,
+   "old_revid": 13277,
+   "rcid": 13184,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 2274,
+   "newlen": 2355,
+   "timestamp": "2026-09-18T04:03:39Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 97",
+   "pageid": 2906,
+   "revid": 13277,
+   "old_revid": 13224,
+   "rcid": 13183,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 2175,
+   "newlen": 2274,
+   "timestamp": "2026-09-18T03:57:31Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 96",
+   "pageid": 2781,
+   "revid": 13276,
+   "old_revid": 13201,
+   "rcid": 13182,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 702,
+   "newlen": 779,
+   "timestamp": "2026-09-18T03:57:10Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 95",
+   "pageid": 2778,
+   "revid": 13275,
+   "old_revid": 13259,
+   "rcid": 13181,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 503,
+   "newlen": 580,
+   "timestamp": "2026-09-18T03:56:54Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 94",
+   "pageid": 2607,
+   "revid": 13274,
+   "old_revid": 13260,
+   "rcid": 13180,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 551,
+   "newlen": 628,
+   "timestamp": "2026-09-18T03:56:38Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 93",
+   "pageid": 2606,
+   "revid": 13273,
+   "old_revid": 12789,
+   "rcid": 13179,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 531,
+   "newlen": 608,
+   "timestamp": "2026-09-18T03:56:21Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 92",
+   "pageid": 2605,
+   "revid": 13272,
+   "old_revid": 12777,
+   "rcid": 13178,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 485,
+   "newlen": 584,
+   "timestamp": "2026-09-18T03:56:08Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Chapter 91",
+   "pageid": 2604,
+   "revid": 13271,
+   "old_revid": 12776,
+   "rcid": 13177,
+   "user": "Mel7Grace",
+   "bot": false,
+   "new": false,
+   "minor": true,
+   "oldlen": 500,
+   "newlen": 599,
+   "timestamp": "2026-09-18T03:55:52Z",
+   "comment": "",
+   "tags": [
+    "visualeditor-wikitext"
+   ]
+  }
+ ],
+ "page": {
+  "title": "Richeh",
+  "pageid": 89,
+  "text": "{{Top Tab\n|tab1=Overview\n|tab2=Image Gallery\n}}\n{{Character\n|image = <gallery>\nricheh anime.png|Anime\nRiche portrait new.png| Manga\n</gallery>\n|Katakana = リチェ<br>リチェリット <small>(Full name)</small>\n|alias = Richehlette <small>(Full name)</small>\n|gender = Female\n|age = 10-12 \n|birthday= March 15th\n|hair = Sky blue\n|eyes = Sky blue\n|status = Alive\n|occupation = [[Witches|Witch]] Apprentice \n|specialty = Richeh's Magic, Crystal Magic, Small Glyphs\n|relatives = [[Riliphin]] <small>(older brother)</small>\n|affiliation = [[Qifrey's Atelier]]<br>[[Pointed Hat Witches]]\n|manga = [[Chapter 2]]\n|residence = [[Qifrey's Atelier]]\n|romaji=Riche<br>Richeritto <small>(Full name)</small>|Japanese VA=Hika Tsukishiro|English VA=Nerida Bronwen|anime=[[Episode 2]]|spanish=Riche<br>Richerit <small>(Full name)</small>}}\n\n'''Richehlette''' (''リチェリット, Richeretto''), often referred to as '''Richeh''' (リチェ, ''Riche'') is a young apprentice witch at Qifrey's Atelier. She specializes in drawing very small rune circles and likes drawing original magic. She became withdrawn when her beloved older brother, Riliphin, became distant from her, refusing to learn new magic or submit to authority.\n\n== Appearance ==\nRicheh is a young girl with long sky blue hair and sky blue eyes. She wears the apprentice robes of [[Qifrey|Qifrey's]] atelier.\n\n== Personality ==\nRicheh has a seemingly emotionless and childish personality, being very stubborn, individualistic, and resentful of authority figures that tell her what to do. She often refers to herself in the third person, another facet of her childlike personality. She is opposed to the idea of growing up and wishes to stay as she is forever in order to maintain her unique magic and individuality. However, during a placement test where she and her friends were ambushed by the Brimmed Caps who turned Euini into a wolf due to Richeh's lack of knowledge in magic, she realized the importance of learning new magic.\n\n== History ==\nRicheh was born in the [[Great Hall]] to a family of witches. After her older brother [[Riliphin]] became an apprentice witch, he began growing distant from her. This greatly upset Richeh, causing her to refuse to learn new magic or submit to authority.\n\nFour years before the events of the manga, Richeh requested to apprentice alongside her brother. Riliphin's professor was extremely verbally abusive to her. Richeh spoke up about the abuse, and it came out that not only was the professor physically abusing his other students, he had threatened Riliphin into silence by promising not to beat Richeh if he kept quiet. Richeh's courage freed both siblings from their professor: Richeh joined [[Qifrey|Qifrey's]] [[Qifrey's Atelier|atelier]], while Riliphin began to study under [[Beldaruit]].\n\n== Plot ==\n\n=== [[Volume 1|A Touch of Magic]] ===\nRicheh is first introduced when [[Qifrey]] leaves [[Coco]] in the entryway of his [[Qifrey's Atelier|atelier]]. [[Tetia]] is thanking Coco back and forth, and Richeh notes that if you leave Tetia be she'll quiet down. When Coco says she only started doing magic the other day, Richeh shares a concerned glance with Tetia, before the other girl begins telling Coco of the rumors they'd heard. Before Coco can respond, Qifrey comes back and tells Richeh and Tetia to wait outside which they agree to do. \n[[File:12 (1).png|thumb|152x152px|Richeh continues to eat unbothered.]]\nRicheh is seen the next day as she is eating dinner with Tetia. She asks why Tetia isn't eating, to which Tetia says she will but she's really concerned for Coco at that moment. Richeh stands up to get seconds, causing Tetia to explain she's acting too normal.\n\nLikely days later, Richeh accompanies Qifrey and his other apprentices to [[The Starry Sword]]. When Coco says that due to [[Agott|Agott's]] amazing magic she must have an amazing heart as well, Richeh says she shouldn't get her hopes up about the girl. She accompanies Tetia and Coco as [[Mr. Nolnoa]] explains how [[Conjuring Ink]] is made and follows the two down the stairs to look at [[Ink Wand|Ink Wands]] for Coco. When Coco runs out of the shop, Richeh follows Tetia in the chase after her. Once they catch up to her, Richeh is the first to realize they are no longer in [[Kalhn]] and runs after Tetia when the girl realizes there's a [[Dragon|dragon]] chasing after them.\n\n=== [[Volume 2|Trial By Fire]] ===\nRicheh learns that she will be participating in the second test, the Knight’s Loyalty, along with Agott. Richeh becomes upset, telling Qifrey that she only joined his Atelier because he promised he’d let her do what she wants to do. Richeh says that she doesn’t trust Qifrey anymore, and goes back to the house. She goes through a portal she set up in a large jug to enter a secret space full of crystal ribbons.\n\nCoco quickly finds Richeh inside of the room, and the two speak about the upcoming test.\n\n==Abilities==\nRicheh specializes in crystal magic, particularly creating transparent crystal ribbons. She also excels at drawing small, intricate glyphs, and has been shown to be adept at connecting these together to form magical portal holes. Her individualistic magic style is expressed in her more out of the box solutions to problems and tests.\n\n==Relationships==\n===[[Qifrey]]===\n[[Qifrey]] is Richeh's current professor, he took her into his atelier after being dismissed by her first professor. She seems to trust him enough that he won't force her to do magic she doesn't want to do, but still has bouts of stubbornness and dissatisfaction with his instruction.\n\n===[[Coco]]===\n[[Coco]] is Richeh's fellow apprentice under Qifrey, she often doesn't understand Coco's naive fascination with magic but gets along well with her.\n\n===[[Riliphin]]===\n[[Riliphin]] is Richeh's older brother, the two were evidently very close in childhood and his love of Richeh's magic is one of the reasons she hopes to keep her magic free of outside influence.\n\n===[[Euini]]===\n[[Euini]] was one of Richeh's fellow test-takers during the second test, the two bond alot during the test. Before parting, Euini promised that he'll return back to his real self, and Richeh promised she'll be waiting for him, and that the next time they see each other they'll show each other the magic they've learned. \n\nThey stay in contact by mail. Notably,  Eunie sends her a great deal of letters for her birthday.<ref>Riche's birthday comics</ref>\n\n== Quotes ==\n\n* “If you challenge the way you do things…you could do the things you couldn’t before.” -  [[Volume 4|Vol. 4 Pg.95]] ([[Chapter 21|Chp. 21]])\n\n==Gallery==\n<gallery hideaddbutton=\"true\">\nChapter 29n.png|Riche and Eunie's wolf form chapter 29\n</gallery>\n\n==References==\n{{Reflist}}\n\n==Site Navigation==\n{{Navibox Characters}}\n[[Category:Characters]]\n[[Category:Pointed Hat Witch]]\n[[Category:Qifrey's Atelier]]\n[[Category:Female]]\n[[Category:Apprentice Witch]]\n[[Category:Alive]]\n[[Fr:Trice]]",
+  "revisions": [
+   {
+    "revid": 13295,
+    "parentid": 13235,
+    "user": "FelicitousSheep353",
+    "timestamp": "2026-10-09T14:53:17Z",
+    "size": 6946,
+    "comment": "Clarified sentence about Riliphin being threatened by their previous master",
+    "tags": [
+     "visualeditor",
+     "mobile web edit",
+     "mobile edit"
+    ]
+   },
+   {
+    "revid": 13235,
+    "parentid": 13234,
+    "user": "I-am-platypus",
+    "timestamp": "2026-08-16T03:53:58Z",
+    "size": 6942,
+    "comment": "",
+    "tags": [
+     "visualeditor"
+    ]
+   },
+   {
+    "revid": 13234,
+    "parentid": 13071,
+    "user": "I-am-platypus",
+    "timestamp": "2026-08-16T03:53:48Z",
+    "size": 6941,
+    "comment": "",
+    "tags": [
+     "visualeditor"
+    ]
+   },
+   {
+    "revid": 13071,
+    "parentid": 13047,
+    "user": "MaxTaylor08",
+    "timestamp": "2026-06-16T04:11:37Z",
+    "size": 5907,
+    "comment": "",
+    "tags": [
+     "visualeditor",
+     "mobile web edit",
+     "mobile edit"
+    ]
+   },
+   {
+    "revid": 13047,
+    "parentid": 12994,
+    "user": "MaxTaylor08",
+    "timestamp": "2026-06-14T07:15:47Z",
+    "size": 5817,
+    "comment": "",
+    "tags": [
+     "visualeditor",
+     "mobile web edit",
+     "mobile edit"
+    ]
+   },
+   {
+    "revid": 12994,
+    "parentid": 12737,
+    "user": "MaxTaylor08",
+    "timestamp": "2026-06-08T16:59:57Z",
+    "size": 5818,
+    "comment": "",
+    "tags": [
+     "visualeditor",
+     "mobile web edit",
+     "mobile edit"
+    ]
+   }
+  ],
+  "sections": [
+   {
+    "index": "1",
+    "level": "2",
+    "line": "Appearance"
+   },
+   {
+    "index": "2",
+    "level": "2",
+    "line": "Personality"
+   },
+   {
+    "index": "3",
+    "level": "2",
+    "line": "History"
+   },
+   {
+    "index": "4",
+    "level": "2",
+    "line": "Plot"
+   },
+   {
+    "index": "5",
+    "level": "3",
+    "line": "A Touch of Magic"
+   },
+   {
+    "index": "6",
+    "level": "3",
+    "line": "Trial By Fire"
+   },
+   {
+    "index": "7",
+    "level": "2",
+    "line": "Abilities"
+   },
+   {
+    "index": "8",
+    "level": "2",
+    "line": "Relationships"
+   },
+   {
+    "index": "9",
+    "level": "3",
+    "line": "Qifrey"
+   },
+   {
+    "index": "10",
+    "level": "3",
+    "line": "Coco"
+   },
+   {
+    "index": "11",
+    "level": "3",
+    "line": "Riliphin"
+   },
+   {
+    "index": "12",
+    "level": "3",
+    "line": "Euini"
+   },
+   {
+    "index": "13",
+    "level": "2",
+    "line": "Quotes"
+   },
+   {
+    "index": "14",
+    "level": "2",
+    "line": "Gallery"
+   },
+   {
+    "index": "15",
+    "level": "2",
+    "line": "References"
+   },
+   {
+    "index": "16",
+    "level": "2",
+    "line": "Site Navigation"
+   }
+  ]
+ },
+ "compare": {
+  "fromid": 89,
+  "fromrevid": 13235,
+  "fromns": 0,
+  "fromtitle": "Richeh",
+  "fromsize": 6942,
+  "fromtimestamp": "2026-08-16T03:53:58Z",
+  "fromuser": "I-am-platypus",
+  "fromuserid": 46241883,
+  "fromcomment": "",
+  "fromparsedcomment": "",
+  "toid": 89,
+  "torevid": 13295,
+  "tons": 0,
+  "totitle": "Richeh",
+  "tosize": 6946,
+  "totimestamp": "2026-10-09T14:53:17Z",
+  "touser": "FelicitousSheep353",
+  "touserid": 64621169,
+  "tocomment": "Clarified sentence about Riliphin being threatened by their previous master",
+  "toparsedcomment": "Clarified sentence about Riliphin being threatened by their previous master",
+  "body": "<tr>\n  <td colspan=\"2\" class=\"diff-lineno\">Line 35:</td>\n  <td colspan=\"2\" class=\"diff-lineno\">Line 35:</td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>Richeh was born in the [[Great Hall]] to a family of witches. After her older brother [[Riliphin]] became an apprentice witch, he began growing distant from her. This greatly upset Richeh, causing her to refuse to learn new magic or submit to authority.</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>Richeh was born in the [[Great Hall]] to a family of witches. After her older brother [[Riliphin]] became an apprentice witch, he began growing distant from her. This greatly upset Richeh, causing her to refuse to learn new magic or submit to authority.</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><br /></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><br /></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\" data-marker=\"−\"></td>\n  <td class=\"diff-deletedline diff-side-deleted\"><div>Four years before the events of the manga, Richeh requested to apprentice alongside her brother. Riliphin's professor was extremely verbally abusive to her. Richeh spoke up about the abuse, and it came out that not only was the professor physically abusing his other students, he had threatened <del class=\"diffchange diffchange-inline\">Riphillin</del> into <del class=\"diffchange diffchange-inline\">keeping quiet</del> by promising to beat Richeh if he <del class=\"diffchange diffchange-inline\">did</del>. Richeh's courage freed both siblings from their professor: Richeh joined [[Qifrey|Qifrey's]] [[Qifrey's Atelier|atelier]], while Riliphin began to study under [[Beldaruit]].</div></td>\n  <td class=\"diff-marker\" data-marker=\"+\"></td>\n  <td class=\"diff-addedline diff-side-added\"><div>Four years before the events of the manga, Richeh requested to apprentice alongside her brother. Riliphin's professor was extremely verbally abusive to her. Richeh spoke up about the abuse, and it came out that not only was the professor physically abusing his other students, he had threatened <ins class=\"diffchange diffchange-inline\">Riliphin</ins> into <ins class=\"diffchange diffchange-inline\">silence</ins> by promising<ins class=\"diffchange diffchange-inline\"> not</ins> to beat Richeh if he <ins class=\"diffchange diffchange-inline\">kept quiet</ins>. Richeh's courage freed both siblings from their professor: Richeh joined [[Qifrey|Qifrey's]] [[Qifrey's Atelier|atelier]], while Riliphin began to study under [[Beldaruit]].</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><br /></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><br /></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>== Plot ==</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>== Plot ==</div></td>\n</tr>\n"
+ },
+ "search": [
+  {
+   "ns": 0,
+   "title": "Richeh",
+   "pageid": 89,
+   "size": 6946,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Riliphin",
+   "pageid": 193,
+   "size": 4593,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Richeh/Image Gallery",
+   "pageid": 642,
+   "size": 4290,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Chapter 19",
+   "pageid": 407,
+   "size": 7170,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Crystal Ribbon",
+   "pageid": 1615,
+   "size": 1662,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Crystal Fragment Bangles",
+   "pageid": 1285,
+   "size": 1996,
+   "snippet": ""
+  }
+ ],
+ "prefixsearch": [
+  {
+   "title": "Richeh"
+  }
+ ],
+ "logs": [
+  {
+   "logid": 5134,
+   "ns": 2,
+   "title": "User:StreamlinedWildcat577",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64713848"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "StreamlinedWildcat577",
+   "timestamp": "2026-10-13T13:29:04Z",
+   "comment": ""
+  },
+  {
+   "logid": 5133,
+   "ns": 2,
+   "title": "User:RosyRaven301",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64710705"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "RosyRaven301",
+   "timestamp": "2026-10-13T10:05:02Z",
+   "comment": ""
+  },
+  {
+   "logid": 5132,
+   "ns": 2,
+   "title": "User:DextrousParrot944",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64706550"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "DextrousParrot944",
+   "timestamp": "2026-10-13T04:14:14Z",
+   "comment": ""
+  },
+  {
+   "logid": 5131,
+   "ns": 2,
+   "title": "User:AbundantGnat758",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64699507"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "AbundantGnat758",
+   "timestamp": "2026-10-12T19:52:52Z",
+   "comment": ""
+  },
+  {
+   "logid": 5130,
+   "ns": 2,
+   "title": "User:PoliteJellyfish417",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64681528"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "PoliteJellyfish417",
+   "timestamp": "2026-10-12T01:01:44Z",
+   "comment": ""
+  },
+  {
+   "logid": 5129,
+   "ns": 2,
+   "title": "User:PreciousFrog425",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64670940"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "PreciousFrog425",
+   "timestamp": "2026-10-11T15:34:13Z",
+   "comment": ""
+  },
+  {
+   "logid": 5128,
+   "ns": 2,
+   "title": "User:RecommendedArmadillo904",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64652286"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "RecommendedArmadillo904",
+   "timestamp": "2026-10-10T20:44:07Z",
+   "comment": ""
+  },
+  {
+   "logid": 5127,
+   "ns": 2,
+   "title": "User:Reallyfluffybrushbuddy",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64636019"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "Reallyfluffybrushbuddy",
+   "timestamp": "2026-10-10T06:23:54Z",
+   "comment": ""
+  }
+ ]
+}

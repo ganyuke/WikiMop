@@ -1,0 +1,10 @@
+.gradle/
+build/
+local.properties
+*.keystore
+*.jks
+.kotlin/
+
+# Signing keys and their passwords
+keystore.properties
+*.p12

@@ -1,0 +1,16 @@
+WikiMop is for administrators of Fandom wikis who want to keep watch from their phone.
+
+Add a wiki by its address, then sign in with a Fandom account or a bot password, or use it read-only with no account. Several wikis can be added.
+
+<b>Features</b>
+<ul>
+<li>Recent changes and your watchlist, with unpatrolled edits marked in red</li>
+<li>Diffs with patrol, rollback, undo, block, and delete one tap away</li>
+<li>Search, page history, protect, and move</li>
+<li>New pages, blocked users, logs, and a user lookup</li>
+<li>Editor with syntax coloring, completion of page and template names, find and replace, and preview</li>
+<li>Drafts saved on the phone as you type</li>
+<li>A confirm sheet before every change that lists what will be done</li>
+<li>Read-only mode and required edit summaries in Settings</li>
+<li>A daily edit streak card</li>
+</ul>

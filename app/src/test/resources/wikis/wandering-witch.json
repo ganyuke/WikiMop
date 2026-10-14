@@ -1,0 +1,995 @@
+{
+ "host": "wandering-witch.fandom.com",
+ "general": {
+  "sitename": "Wandering Witch Wiki",
+  "mainpage": "Wandering Witch Wiki"
+ },
+ "namespaces": [
+  {
+   "id": 0,
+   "name": ""
+  },
+  {
+   "id": 1,
+   "name": "Talk"
+  },
+  {
+   "id": 2,
+   "name": "User"
+  },
+  {
+   "id": 3,
+   "name": "User talk"
+  },
+  {
+   "id": 4,
+   "name": "Wandering Witch Wiki"
+  },
+  {
+   "id": 5,
+   "name": "Wandering Witch Wiki talk"
+  },
+  {
+   "id": 6,
+   "name": "File"
+  },
+  {
+   "id": 7,
+   "name": "File talk"
+  },
+  {
+   "id": 8,
+   "name": "MediaWiki"
+  },
+  {
+   "id": 9,
+   "name": "MediaWiki talk"
+  },
+  {
+   "id": 10,
+   "name": "Template"
+  },
+  {
+   "id": 11,
+   "name": "Template talk"
+  },
+  {
+   "id": 12,
+   "name": "Help"
+  },
+  {
+   "id": 13,
+   "name": "Help talk"
+  },
+  {
+   "id": 14,
+   "name": "Category"
+  },
+  {
+   "id": 15,
+   "name": "Category talk"
+  },
+  {
+   "id": 110,
+   "name": "Forum"
+  },
+  {
+   "id": 111,
+   "name": "Forum talk"
+  },
+  {
+   "id": 420,
+   "name": "GeoJson"
+  },
+  {
+   "id": 421,
+   "name": "GeoJson talk"
+  },
+  {
+   "id": 500,
+   "name": "User blog"
+  },
+  {
+   "id": 501,
+   "name": "User blog comment"
+  },
+  {
+   "id": 502,
+   "name": "Blog"
+  },
+  {
+   "id": 503,
+   "name": "Blog talk"
+  },
+  {
+   "id": 828,
+   "name": "Module"
+  },
+  {
+   "id": 829,
+   "name": "Module talk"
+  },
+  {
+   "id": 1200,
+   "name": "Message Wall"
+  },
+  {
+   "id": 1201,
+   "name": "Thread"
+  },
+  {
+   "id": 1202,
+   "name": "Message Wall Greeting"
+  },
+  {
+   "id": 1203,
+   "name": "Message Wall Greeting Talk"
+  },
+  {
+   "id": 2000,
+   "name": "Board"
+  },
+  {
+   "id": 2001,
+   "name": "Board Thread"
+  },
+  {
+   "id": 2002,
+   "name": "Topic"
+  },
+  {
+   "id": 2900,
+   "name": "Map"
+  },
+  {
+   "id": 2901,
+   "name": "Map talk"
+  }
+ ],
+ "changes": [
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Magic",
+   "pageid": 888,
+   "revid": 6313,
+   "old_revid": 6310,
+   "rcid": 6264,
+   "user": "LordMidnight91",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 843,
+   "newlen": 1157,
+   "timestamp": "2026-10-02T02:49:34Z",
+   "comment": "",
+   "tags": [
+    "visualeditor",
+    "mobile web edit",
+    "mobile edit"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Mirarose",
+   "pageid": 340,
+   "revid": 6312,
+   "old_revid": 6248,
+   "rcid": 6263,
+   "user": "LordMidnight91",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 5352,
+   "newlen": 5411,
+   "timestamp": "2026-10-01T04:06:53Z",
+   "comment": "",
+   "tags": [
+    "visualeditor",
+    "mobile web edit",
+    "mobile edit"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Emil",
+   "pageid": 337,
+   "revid": 6311,
+   "old_revid": 3586,
+   "rcid": 6262,
+   "user": "LordMidnight91",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 960,
+   "newlen": 1127,
+   "timestamp": "2026-09-30T04:31:40Z",
+   "comment": "",
+   "tags": [
+    "visualeditor",
+    "mobile web edit",
+    "mobile edit"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Magic",
+   "pageid": 888,
+   "revid": 6310,
+   "old_revid": 5722,
+   "rcid": 6261,
+   "user": "LordMidnight91",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 708,
+   "newlen": 843,
+   "timestamp": "2026-09-30T04:27:44Z",
+   "comment": "",
+   "tags": [
+    "visualeditor",
+    "mobile web edit",
+    "mobile edit"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel",
+   "pageid": 503,
+   "revid": 6309,
+   "old_revid": 6308,
+   "rcid": 6260,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 22410,
+   "newlen": 23567,
+   "timestamp": "2026-09-28T03:01:56Z",
+   "comment": "/* Volumes */ ; prep for vol26",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel",
+   "pageid": 503,
+   "revid": 6308,
+   "old_revid": 6264,
+   "rcid": 6259,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 22405,
+   "newlen": 22410,
+   "timestamp": "2026-09-28T02:39:49Z",
+   "comment": "/* Volumes */ ; add vol24/25 release dates & ISBNs (JP)",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Anime",
+   "pageid": 194,
+   "revid": 6307,
+   "old_revid": 6255,
+   "rcid": 6258,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 8723,
+   "newlen": 8730,
+   "timestamp": "2026-09-28T01:18:50Z",
+   "comment": "/* External Links */ ; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 12",
+   "pageid": 113,
+   "revid": 6306,
+   "old_revid": 4558,
+   "rcid": 6257,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2127,
+   "newlen": 2136,
+   "timestamp": "2026-09-18T18:20:54Z",
+   "comment": "use gallery over tabber; link ISBNs to Japanese Wikipedia & local Special:BookSources; use WW template; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 11",
+   "pageid": 111,
+   "revid": 6305,
+   "old_revid": 3948,
+   "rcid": 6256,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1931,
+   "newlen": 1977,
+   "timestamp": "2026-09-18T18:20:40Z",
+   "comment": "use gallery over tabber; link ISBNs to Japanese Wikipedia & local Special:BookSources; use WW template; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 10",
+   "pageid": 109,
+   "revid": 6304,
+   "old_revid": 6295,
+   "rcid": 6255,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2275,
+   "newlen": 2264,
+   "timestamp": "2026-09-18T18:15:30Z",
+   "comment": "abbr. image tabs in infobox",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 8",
+   "pageid": 102,
+   "revid": 6303,
+   "old_revid": 6293,
+   "rcid": 6254,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1962,
+   "newlen": 2112,
+   "timestamp": "2026-08-28T05:00:50Z",
+   "comment": "use abbreviations for Japanese/English cover image tabs, so limited ed ones can be seen; mention limited editions in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 7",
+   "pageid": 101,
+   "revid": 6302,
+   "old_revid": 6292,
+   "rcid": 6253,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2240,
+   "newlen": 2396,
+   "timestamp": "2026-08-28T05:00:43Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 6",
+   "pageid": 100,
+   "revid": 6301,
+   "old_revid": 6291,
+   "rcid": 6252,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1860,
+   "newlen": 2016,
+   "timestamp": "2026-08-28T05:00:39Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 5",
+   "pageid": 99,
+   "revid": 6300,
+   "old_revid": 6287,
+   "rcid": 6251,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1644,
+   "newlen": 1800,
+   "timestamp": "2026-08-28T05:00:35Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 4",
+   "pageid": 98,
+   "revid": 6299,
+   "old_revid": 6286,
+   "rcid": 6250,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1981,
+   "newlen": 2137,
+   "timestamp": "2026-08-28T05:00:30Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 3",
+   "pageid": 97,
+   "revid": 6298,
+   "old_revid": 6285,
+   "rcid": 6249,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1949,
+   "newlen": 2105,
+   "timestamp": "2026-08-28T05:00:26Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 2",
+   "pageid": 96,
+   "revid": 6297,
+   "old_revid": 6284,
+   "rcid": 6248,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1958,
+   "newlen": 2114,
+   "timestamp": "2026-08-28T05:00:22Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 1",
+   "pageid": 95,
+   "revid": 6296,
+   "old_revid": 6283,
+   "rcid": 6247,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2526,
+   "newlen": 2681,
+   "timestamp": "2026-08-28T05:00:17Z",
+   "comment": "mention limited edition in intro",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 10",
+   "pageid": 109,
+   "revid": 6295,
+   "old_revid": 4342,
+   "rcid": 6246,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2254,
+   "newlen": 2275,
+   "timestamp": "2026-08-27T23:51:26Z",
+   "comment": "use gallery over tabber; link ISBNs to Japanese Wikipedia & local Special:BookSources; use WW template; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 9",
+   "pageid": 103,
+   "revid": 6294,
+   "old_revid": 3869,
+   "rcid": 6245,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2035,
+   "newlen": 2076,
+   "timestamp": "2026-08-27T23:51:14Z",
+   "comment": "use gallery over tabber; link ISBNs to Japanese Wikipedia & local Special:BookSources; use WW template; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 8",
+   "pageid": 102,
+   "revid": 6293,
+   "old_revid": 5313,
+   "rcid": 6244,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1871,
+   "newlen": 1962,
+   "timestamp": "2026-08-27T23:50:52Z",
+   "comment": "link ISBNs to Japanese Wikipedia & local Special:BookSources; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 7",
+   "pageid": 101,
+   "revid": 6292,
+   "old_revid": 6192,
+   "rcid": 6243,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 2182,
+   "newlen": 2240,
+   "timestamp": "2026-08-27T23:50:25Z",
+   "comment": "use gallery over tabber; link ISBNs to Japanese Wikipedia & local Special:BookSources; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Light Novel Volume 6",
+   "pageid": 100,
+   "revid": 6291,
+   "old_revid": 5312,
+   "rcid": 6242,
+   "user": "Fandyllic",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 1766,
+   "newlen": 1860,
+   "timestamp": "2026-08-27T23:49:49Z",
+   "comment": "link ISBNs to Japanese Wikipedia & local Special:BookSources; editing",
+   "tags": [
+    "wikieditor"
+   ]
+  },
+  {
+   "type": "log",
+   "ns": 6,
+   "title": "File:WhatsApp Image 2026-08-10 at 17.38.36.jpg",
+   "pageid": 1555,
+   "revid": 0,
+   "old_revid": 0,
+   "rcid": 6241,
+   "user": "GODLIKEUndertaker",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 0,
+   "newlen": 0,
+   "timestamp": "2026-08-16T04:42:27Z",
+   "comment": "Housekeeping: Non-Wandering Witch related",
+   "logid": 2241,
+   "logtype": "delete",
+   "logaction": "delete",
+   "logparams": {},
+   "tags": []
+  },
+  {
+   "type": "edit",
+   "ns": 0,
+   "title": "Elaina",
+   "pageid": 143,
+   "revid": 6290,
+   "old_revid": 6289,
+   "rcid": 6240,
+   "user": "Rick Grimes the survivor",
+   "bot": false,
+   "new": false,
+   "minor": false,
+   "oldlen": 11083,
+   "newlen": 11000,
+   "timestamp": "2026-08-15T07:32:57Z",
+   "comment": "Undo revision [[Special:Diff/6289|6289]] by [[Special:Contributions/NourishingMole879|NourishingMole879]] ([[User talk:NourishingMole879|talk]])",
+   "tags": [
+    "mw-undo"
+   ]
+  }
+ ],
+ "page": {
+  "title": "Anime",
+  "pageid": 194,
+  "text": "{{DISPLAYTITLE:''Wandering Witch'' <small>(Anime)</small>}}\n{{Anime\n|name         = Wandering Witch: The Journey of Elaina\n|image        = Anime Key Visual.png\n|director     = [[wikipedia:Toshiyuki Kubooka|Toshiyuki Kubooka]]\n|series_comp  = Kazuyuki Fudeyasu\n|char_design  = Takeshi Oda\n|music        = AstroNoteS\n|studio       = [[wikipedia:C2C (studio)|C2C]]\n|original_run = October 2nd, 2020 – December 18th, 2020\n|episodes     = 12\n}}\n'''''Wandering Witch: The Journey of Elaina''''' (魔女の旅々, ''Majo no Tabitabi'', lit. \"''A Witch's Journey''\") is an anime adaptation of the {{WW|Japanese light novel series of the same name}}, written by [[Jōgi Shiraishi]] and illustrated by Azure. It premiered on October 2nd, 2020 and ran for 12 episodes to December 18th, 2020.\n\nOn September 24th, 2025, the official website announced the a rebroadcast on [[w:c:animanga:Tokyo MX|Tokyo MX]] starting late night on October 9th, 2025 and the revival of the radio show \"The Radio of Elaina\" for a public recording on October 4th, 2025 hosted by seiyuu [[w:c:seiyuu:Hondo Kaede|Kaede Hondo]].<ref>''TV anime \"Wandering Witch: The Journey of Elaina\" official website'' (TVアニメ『魔女の旅々』公式サイト) - [https://majotabi.jp/news.html#news-250924-3 NEWS 【アニメ5周年】『魔女のラジ々』公開録音イベントが開催決定] (in Japanese; in English: ''&#91;5th Anniversary of the Anime&#93; Public recording event for \"Witch's Radio\" to be held'') 2025.9.24</ref>\n\nOn January 4, 2026, a [[Wandering Witch (Movie)|new movie]] has been announced.\n\n== Synopsis ==\nInspired by her favorite book, Elaina ventures out to see the world she's read so much about. Like a leaf on the wind, she travels from one country to another, looking to sate her inquisitiveness and searching for new experiences. She's confronted by humanity in all its forms, whether strange, bizarre, or emotional. Exploration and curiosity drive her journey. Where to next, Elaina?<ref>[https://www.funimation.com/shows/wandering-witch-the-journey-of-elaina/ Funimation]</ref>\n\n== Cast ==\n*[[w:c:seiyuu:Hondo Kaede|Kaede Hondo]] as [[Elaina]]\n*[[w:c:seiyuu:Hanazawa Kana|Kana Hanazawa]] as [[Fran]]\n*[[w:c:seiyuu:Kurosawa Tomoyo|Tomoyo Kurosawa]] as [[Saya]]\n*[[w:c:seiyuu:Hikasa Yoko|Yōko Hikasa]] as [[Sheila]]\n*[[w:c:seiyuu:Ito Shizuka|Shizuka Itō]] as [[Victorica]]\n*[[w:c:seiyuu:Konomi Kohara|Konomi Kohara]] as [[Amnesia]]\n*[[w:c:seiyuu:Tatsumi Yuiko|Yuiko Tatsumi]] as [[Artemisia]]\n*[[w:c:seiyuu:Kawanishi Kengo|Kengo Kawanishi]] as [[Chara]]\n*[[w:c:seiyuu:Saito Kimiko|Kimiko Saitō]] as Curio Company Boss\n*[[w:c:seiyuu:Ueda Reina|Reina Ueda]] as [[Ripper]] (Doll Shop Owner)\n*[[w:c:seiyuu:Sato Rina|Rina Satō]] as [[Eihemia]]\n*[[w:c:seiyuu:Uchiyama Yumi|Yumi Uchiyama]] as [[Estelle]]\n\n== Music ==\n=== Opening Theme ===\n* [[Literature]] (リテラチュア) by [[wikipedia:Reina Ueda|Reina Ueda]]\n\n=== Ending Theme ===\n* [[Haiiro no Saga]] (灰色のサーガ) by [[wikipedia:ChouCho|ChouCho]]\n\n== Episodes ==\n{| class=\"wikitable\" style=\"text-align:center\"\n! width=\"2%\" |#\n! width=\"45%\" |Episode Name\n! width=\"18%\" |JP Air Date\n! width=\"18%\" |EN Air Date\n|-\n|1\n|[[Episode 1|'''Elaina, the Apprentice Witch''']]<br />(魔女見習いイレイナ, ''Majo Minarai Ireina'')\n|October 2nd, 2020\n|December 4th, 2020\n|-\n|2\n|[[Episode 2|'''The Land of Mages''']]<br />(魔法使いの国, ''Mahōtsukai no Kuni'')\n|October 9th, 2020\n|December 18th, 2020\n|-\n|rowspan=\"2\" |3\n|[[Episode 3|'''The Girl as Pretty as a Flower''']]<br />(花のように可憐な彼女, ''Hana no Yō ni Karen'na Kanojo'')\n|rowspan=\"2\" |October 16th, 2020\n|rowspan=\"2\" |January 8th, 2021\n|-\n|[[Episode 3|'''Bottled Happiness''']]<br />(瓶詰めの幸せ, ''Bindzume no Shiawase'')\n|-\n|4\n|[[Episode 4|'''The Princess Without Subjects''']]<br />(民なき国の王女, ''Tami naki Kuni no Ōjo'')\n|October 23rd, 2020\n|January 22nd, 2021\n|-\n|5\n|[[Episode 5|'''Royal Celesteria''']]<br />(王立セレステリア, ''Ōritsu Seresuteria'')\n|October 30th, 2020\n|January 29th, 2021\n|-\n|6\n|[[Episode 6|'''The Land of Truth Tellers''']]<br />(正直者の国, ''Shōjiki-mono no Kuni'')\n|November 6th, 2020\n|February 12th, 2021\n|-\n|rowspan=\"2\" |7\n|[[Episode 7|'''The Wall Etched by Travelers''']]<br />(旅人が刻む壁, ''Tabibito ga Kizamu Kabe'')\n|rowspan=\"2\" |November 13th, 2020\n|rowspan=\"2\" |February 19th, 2021\n|-\n|[[Episode 7|'''The Grape-Stomping Girl''']]<br />(ぶどう踏みの少女, ''Budō Fumi no Shōjo'')\n|-\n|8\n|[[Episode 8|'''The Ripper''']]<br />(切り裂き魔, ''Kirisaki Ma'')\n|November 20th, 2020\n|March 5th, 2021\n|-\n|9\n|[[Episode 9|'''A Deep Sorrow from the Past''']]<br />(遡る嘆き, ''Sakanoboru Nageki'')\n|November 27th, 2020\n|March 12th, 2021\n|-\n|10\n|[[Episode 10|'''The Two Teachers''']]<br />(二人の師匠, ''Futari no Shishō'')\n|December 4th, 2020\n|March 26th, 2021\n|-\n|11\n|[[Episode 11|'''The Two Apprentices''']]<br />(二人の弟子, ''Futari no Deshi'')\n|December 11th, 2020\n|April 2nd, 2021\n|-\n|12\n|[[Episode 12|'''The Everyday Tale of Every Ashen Witch''']]<br />(ありとあらゆるありふれた灰の魔女の物語, ''Aritoarayuru Arifureta Hai no Majo no Monogatari'')\n|December 18th, 2020\n|April 9th, 2021\n|}\n\n== Movie ==\n:''Main article:'' {{WWmovie|''Wandering Witch'' <small>(Movie)</small>}}\n{{Sectionstub}}\n\n== Gallery ==\n==== Promotional images ====\n<gallery hideaddbutton=\"true\" captionalign=\"center\">\nFile:Anime Visual 1.png|First anime visual\nFile:Anime Visual 2.png|Second anime visual\nFile:Anime Visual 3.png|Third anime visual\nFile:Anime Visual 4.png|Fourth anime visual\nFile:Anime Visual 5.png|Fifth anime visual\nFile:Anime Visual 6.png|Sixth anime visual\nFile:Anime Visual 7.png|Seventh anime visual\nFile:Anime Visual 8.png|Eighth anime visual\nFile:majotabi-jp-5th_anniv_visual-250924-1.png|5th anniversary visual (Sep 2025)\nFile:majotabi-jp-5th_anniv_rebroadcast_visual-250924-2.png|5th anniversary rebroadcast visual (Sep 2025)\nFile:once_upon_a_witch's_death_collab-250401-1.png|''Once Upon a Witch&apos;s Death'' collab visual (Apr 2025)\n</gallery>\n\n==== Concept art ====\n<gallery><!--[https://x.com/ucchiey Kazumasa Uchio]-->\nFile:Concept art 1.jpg\nFile:Concept art 2.jpg\nFile:Concept art 3.jpg\nFile:Concept art 4.jpg\nFile:Concept art 5.jpg\nFile:Concept art 6.jpg\nFile:Concept art 7.jpg\nFile:Concept art 8.jpg\nFile:Concept art 9.jpg\nFile:Concept art 10.jpg\nFile:Concept art 11.jpg\nFile:Concept art 12.jpg\nFile:Concept art 13.jpg\nFile:Concept art 14.jpg\nFile:Concept art 15.jpg\nFile:Concept art 16.jpg\nFile:Concept art 17.jpg\nFile:Concept art 18.jpg\n</gallery>\n\n==== Blu-Ray & DVD ====\n<gallery hideaddbutton=\"true\" captionalign=\"center\">\nFile:WanderingWitchBD1.jpg|Volume 1 ([[Episode 1]] - [[Episode 6]]), January 27th, 2021\nFile:WanderingWitchBD2.jpg|Volume 2 ([[Episode 7]] - [[Episode 12]]), February 24th, 2021\n</gallery>\n\n==== Promotional Videos ====\n<gallery hideaddbutton=\"true\" captionalign=\"center\">\nFile:TVアニメ『魔女の旅々』ティザーPV|Anime Teaser PV\nFile:TVアニメ『魔女の旅々』PV第２弾（2020年10月放送開始！）|Anime PV 2\nFile:TVアニメ『魔女の旅々』PV第３弾|Anime PV 3\n</gallery>\n\n== External Links ==\n* [https://majotabi.jp/ Official Japanese website]\n** [https://twitter.com/majotabi_PR Official Japanese Twitter: @majotabi_PR]\n\n;Other info\n* ''Anime News Network'' - [https://www.animenewsnetwork.com/encyclopedia/anime.php?id=22581 Wandering Witch - The Journey of Elaina (TV)]\n* ''MyAnimeList'' - [https://myanimelist.net/anime/40571/Majo_no_Tabitabi Majo no Tabitabi]\n\n;News\n* ''Japan Anime News'' (Oricon News) - [https://us.oricon-group.com/news/6412/ Wandering Witch: The Journey of Elaina Celebrates 5th Anniversary with Special Projects and Cast Messages from 12 Members Including Kaede Hondo] by [https://us.oricon-group.com/information/shoji.html Satoru Shoji]; 2025-10-02 11:51 (EST), Last modified : 2025-10-02 11:59 (EST)\n* ''Crunchyroll News'' - [https://www.crunchyroll.com/news/latest/2025/9/24/wandering-witch-the-journey-of-elaina-anime-5th-anniversary-visual Wandering Witch: The Journey of Elaina Anime Unveils 5th Anniversary Visual] by [https://www.crunchyroll.com/news/author/liam-dempsey Liam Dempsey] Sep 24, 2025 3:46 AM PDT\n* ''TV anime \"Wandering Witch: The Journey of Elaina\" official website'' (TVアニメ『魔女の旅々』公式サイト) - [https://majotabi.jp/news.html#news-250924-3 NEWS 【アニメ5周年】『魔女のラジ々』公開録音イベントが開催決定] (in Japanese; in English: ''&#91;5th Anniversary of the Anime&#93; Public recording event for \"Witch's Radio\" to be held'') 2025.9.24\n\n== References ==\n<references />\n\n[[Category:Anime| ]]\n[[vi:Anime]]",
+  "revisions": [
+   {
+    "revid": 6307,
+    "parentid": 6255,
+    "user": "Fandyllic",
+    "timestamp": "2026-09-28T01:18:50Z",
+    "size": 8730,
+    "comment": "/* External Links */ ; editing",
+    "tags": [
+     "wikieditor"
+    ]
+   },
+   {
+    "revid": 6255,
+    "parentid": 5839,
+    "user": "Pikachufan2010",
+    "timestamp": "2026-06-26T13:10:57Z",
+    "size": 8723,
+    "comment": "Pikachufan2010 moved page [[Wandering Witch (Anime)]] to [[Anime]] over redirect",
+    "tags": []
+   },
+   {
+    "revid": 5839,
+    "parentid": 5837,
+    "user": "Fandyllic",
+    "timestamp": "2026-01-31T06:00:47Z",
+    "size": 8723,
+    "comment": "/* Movie */ ; use WWmovie template",
+    "tags": [
+     "wikieditor"
+    ]
+   },
+   {
+    "revid": 5837,
+    "parentid": 5784,
+    "user": "Fandyllic",
+    "timestamp": "2026-01-31T05:52:08Z",
+    "size": 8696,
+    "comment": "/* Episodes */ ; add movie section",
+    "tags": [
+     "wikieditor"
+    ]
+   },
+   {
+    "revid": 5784,
+    "parentid": 5782,
+    "user": "GODLIKEUndertaker",
+    "timestamp": "2026-01-04T13:07:11Z",
+    "size": 8620,
+    "comment": "",
+    "tags": [
+     "wikieditor"
+    ]
+   },
+   {
+    "revid": 5782,
+    "parentid": 5723,
+    "user": "GODLIKEUndertaker",
+    "timestamp": "2026-01-04T13:05:36Z",
+    "size": 689,
+    "comment": "Replaced content with \"{{DISPLAYTITLE:''Wandering Witch'' <small>(Anime)</small>}} {{Stub}} In January 4, 2026, a movie based on ''Wandering Witch'' series has been announced at GA Bunko and GA Novel 2026 New Year Anime Festival. The release date has yet to be announced so far.  == Synopsis ==  == Cast ==  == Music == === Opening Theme ===  === Ending Theme ===  == Gallery == ==== Promotional images ====  ==== Promotional Videos ==== <gallery hideaddbutton=\"true\" captionalign=\"center\"> </g...\"",
+    "tags": [
+     "mw-replace",
+     "wikieditor"
+    ]
+   }
+  ],
+  "sections": [
+   {
+    "index": "1",
+    "level": "2",
+    "line": "Synopsis"
+   },
+   {
+    "index": "2",
+    "level": "2",
+    "line": "Cast"
+   },
+   {
+    "index": "3",
+    "level": "2",
+    "line": "Music"
+   },
+   {
+    "index": "4",
+    "level": "3",
+    "line": "Opening Theme"
+   },
+   {
+    "index": "5",
+    "level": "3",
+    "line": "Ending Theme"
+   },
+   {
+    "index": "6",
+    "level": "2",
+    "line": "Episodes"
+   },
+   {
+    "index": "7",
+    "level": "2",
+    "line": "Movie"
+   },
+   {
+    "index": "8",
+    "level": "2",
+    "line": "Gallery"
+   },
+   {
+    "index": "9",
+    "level": "4",
+    "line": "Promotional images"
+   },
+   {
+    "index": "10",
+    "level": "4",
+    "line": "Concept art"
+   },
+   {
+    "index": "11",
+    "level": "4",
+    "line": "Blu-Ray &amp; DVD"
+   },
+   {
+    "index": "12",
+    "level": "4",
+    "line": "Promotional Videos"
+   },
+   {
+    "index": "13",
+    "level": "2",
+    "line": "External Links"
+   },
+   {
+    "index": "14",
+    "level": "2",
+    "line": "References"
+   }
+  ]
+ },
+ "compare": {
+  "fromid": 194,
+  "fromrevid": 6255,
+  "fromns": 0,
+  "fromtitle": "Anime",
+  "fromsize": 8723,
+  "fromtimestamp": "2026-06-26T13:10:57Z",
+  "fromuser": "Pikachufan2010",
+  "fromuserid": 49446815,
+  "fromcomment": "Pikachufan2010 moved page [[Wandering Witch (Anime)]] to [[Anime]] over redirect",
+  "fromparsedcomment": "Pikachufan2010 moved page <a href=\"/wiki/Wandering_Witch_(Anime)\" class=\"mw-redirect\" title=\"Wandering Witch (Anime)\">Wandering Witch (Anime)</a> to <a href=\"/wiki/Anime\" title=\"Anime\">Anime</a> over redirect",
+  "toid": 194,
+  "torevid": 6307,
+  "tons": 0,
+  "totitle": "Anime",
+  "tosize": 8730,
+  "totimestamp": "2026-09-28T01:18:50Z",
+  "touser": "Fandyllic",
+  "touserid": 168424,
+  "tocomment": "/* External Links */ ; editing",
+  "toparsedcomment": "<span class=\"autocomment\"><a href=\"/wiki/Anime#External_Links\" title=\"Anime\">→<bdi dir=\"ltr\">External Links</bdi></a>: </span> ; editing",
+  "body": "<tr>\n  <td colspan=\"2\" class=\"diff-lineno\">Line 170:</td>\n  <td colspan=\"2\" class=\"diff-lineno\">Line 170:</td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>== External Links ==</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>== External Links ==</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>* [https://majotabi.jp/ Official Japanese website]</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>* [https://majotabi.jp/ Official Japanese website]</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\" data-marker=\"−\"></td>\n  <td class=\"diff-deletedline diff-side-deleted\"><div>* [https://twitter.com/majotabi_PR Official Japanese Twitter <del class=\"diffchange diffchange-inline\">account</del>]</div></td>\n  <td class=\"diff-marker\" data-marker=\"+\"></td>\n  <td class=\"diff-addedline diff-side-added\"><div><ins class=\"diffchange diffchange-inline\">*</ins>* [https://twitter.com/majotabi_PR Official Japanese Twitter<ins class=\"diffchange diffchange-inline\">:</ins> <ins class=\"diffchange diffchange-inline\">@majotabi_PR</ins>]</div></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><br /></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><br /></td>\n</tr>\n<tr>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-deleted\"><div>;Other info</div></td>\n  <td class=\"diff-marker\"></td>\n  <td class=\"diff-context diff-side-added\"><div>;Other info</div></td>\n</tr>\n"
+ },
+ "search": [
+  {
+   "ns": 0,
+   "title": "Anime",
+   "pageid": 194,
+   "size": 8730,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Wandering Witch (Movie)",
+   "pageid": 1502,
+   "size": 2671,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Manga",
+   "pageid": 488,
+   "size": 1185,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Yuuto",
+   "pageid": 727,
+   "size": 838,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Liella",
+   "pageid": 304,
+   "size": 966,
+   "snippet": ""
+  },
+  {
+   "ns": 0,
+   "title": "Academy of Wandering Witches",
+   "pageid": 1040,
+   "size": 1196,
+   "snippet": ""
+  }
+ ],
+ "prefixsearch": [],
+ "logs": [
+  {
+   "logid": 2253,
+   "ns": 2,
+   "title": "User:PureOyster851",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64696525"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "PureOyster851",
+   "timestamp": "2026-10-12T17:22:02Z",
+   "comment": ""
+  },
+  {
+   "logid": 2252,
+   "ns": 2,
+   "title": "User:GenuineHorse867",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64692787"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "GenuineHorse867",
+   "timestamp": "2026-10-12T14:25:14Z",
+   "comment": ""
+  },
+  {
+   "logid": 2251,
+   "ns": 2,
+   "title": "User:BriskSalamander774",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64631749"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "BriskSalamander774",
+   "timestamp": "2026-10-10T01:16:14Z",
+   "comment": ""
+  },
+  {
+   "logid": 2250,
+   "ns": 2,
+   "title": "User:HND editz",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64598159"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "HND editz",
+   "timestamp": "2026-10-08T13:36:18Z",
+   "comment": ""
+  },
+  {
+   "logid": 2249,
+   "ns": 2,
+   "title": "User:NicerAlbatross614",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64573685"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "NicerAlbatross614",
+   "timestamp": "2026-10-07T10:14:41Z",
+   "comment": ""
+  },
+  {
+   "logid": 2248,
+   "ns": 2,
+   "title": "User:RewardingButterfly999",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64414305"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "RewardingButterfly999",
+   "timestamp": "2026-09-30T13:10:00Z",
+   "comment": ""
+  },
+  {
+   "logid": 2247,
+   "ns": 2,
+   "title": "User:PassionateCurlew599",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64318654"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "PassionateCurlew599",
+   "timestamp": "2026-09-26T09:59:27Z",
+   "comment": ""
+  },
+  {
+   "logid": 2246,
+   "ns": 2,
+   "title": "User:GaloreGnu860",
+   "pageid": 0,
+   "logpage": 0,
+   "params": {
+    "0": "64303458"
+   },
+   "type": "newusers",
+   "action": "create",
+   "user": "GaloreGnu860",
+   "timestamp": "2026-09-25T17:43:57Z",
+   "comment": ""
+  }
+ ]
+}
