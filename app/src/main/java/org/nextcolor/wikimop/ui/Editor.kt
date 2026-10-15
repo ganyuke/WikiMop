@@ -90,6 +90,7 @@ import org.nextcolor.wikimop.Entry
 import org.nextcolor.wikimop.Session
 import org.nextcolor.wikimop.data.DiffKind
 import org.nextcolor.wikimop.data.Draft
+import org.nextcolor.wikimop.data.Preview
 import org.nextcolor.wikimop.data.LocalDiff
 import org.nextcolor.wikimop.data.PageText
 import org.nextcolor.wikimop.data.PendingWrite
@@ -370,18 +371,20 @@ private fun FindBar(state: EditorState) {
 
 @Composable
 fun PreviewSheet(model: AppModel, session: Session, title: String, text: String, onClose: () -> Unit) {
-    var html by remember { mutableStateOf<String?>(null) }
+    var preview by remember { mutableStateOf<Preview?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(text) {
-        try { html = session.api.preview(title, text) } catch (e: Exception) { error = e.say() }
+        try { preview = session.api.preview(title, text) } catch (e: Exception) { error = e.say() }
     }
     ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxHeight(0.9f)) {
             Text("Preview", Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.headlineSmall)
                         when {
                 error != null -> Notice(error.orEmpty())
-                html == null -> Busy()
-                else -> WikiHtml(html.orEmpty(), session.wiki.base) { onClose(); model.openPage(it) }
+                else -> preview?.let {
+                    val settings = model.saved.settings
+                    PreviewHtml(it.html, it.styles, session.wiki.base, settings.desktopPages, settings.blockTrackers) { title -> onClose(); model.openPage(title) }
+                } ?: Busy()
             }
         }
     }
@@ -389,14 +392,14 @@ fun PreviewSheet(model: AppModel, session: Session, title: String, text: String,
 
 // Review
 
-class ReviewState(initial: Draft) {
+class ReviewState(initial: Draft, markBot: Boolean) {
     var draft by mutableStateOf(initial)
     var checking by mutableStateOf(true)
     var checkError by mutableStateOf<String?>(null)
     /** The page as it is on the wiki now, when that is not what the draft started from. */
     var newer by mutableStateOf<PageText?>(null)
     var newerBy by mutableStateOf("")
-    var markBot by mutableStateOf(false)
+    var markBot by mutableStateOf(markBot)
 }
 
 /**
@@ -410,7 +413,7 @@ fun ReviewScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Rev
         Scaffold(topBar = { BackBar("Review", model::back) }) { Notice("Draft not found", Modifier.padding(it)) }
         return
     }
-    val state = entry.hold("review") { ReviewState(initial) }
+    val state = entry.hold("review") { ReviewState(initial, model.saved.settings.markBot) }
     val draft = state.draft
     fun save(changed: Draft) { state.draft = changed; model.saveDraft(changed) }
     fun check() {
@@ -462,7 +465,7 @@ fun ReviewScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Rev
                         onClick = {
                             val write = PendingWrite.Edit(
                                 session.wiki, draft.title, draft.text, draft.summary.trim(), draft.minor, draft.isNew, draft.section, draft.sectionHeading,
-                                draft.baseRevId, draft.baseTimestamp, draft.startTimestamp, state.markBot, added, removed,
+                                draft.baseRevId, draft.baseTimestamp, draft.startTimestamp, session.can("bot") && state.markBot, added, removed,
                             )
                             model.ask(write) {
                                 model.discardDraft(draft.id)

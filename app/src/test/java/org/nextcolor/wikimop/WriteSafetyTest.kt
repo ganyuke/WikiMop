@@ -25,7 +25,7 @@ class WriteSafetyTest {
     @After fun stop() = fake.stop()
 
     private fun edit(base: Long = 5120, isNew: Boolean = false) = PendingWrite.Edit(
-        fake.wiki, "Emberfall Keep", "new text", "typo", minor = false, isNew = isNew,
+        fake.wiki, "Elaina", "new text", "typo", minor = false, isNew = isNew,
         baseRevId = base, baseTimestamp = "2026-10-13T10:00:00Z", startTimestamp = "2026-10-13T10:05:00Z",
     )
 
@@ -68,7 +68,7 @@ class WriteSafetyTest {
 
     @Test fun confirmationCoversOneChangeOnly() = runBlocking {
         val confirmed = edit()
-        val other = PendingWrite.Delete(fake.wiki, "Emberfall Keep", "Spam")
+        val other = PendingWrite.Delete(fake.wiki, "Elaina", "Spam")
         failsWith<IllegalStateException> { api.perform(other, Confirmation.bySlide(confirmed)) }
         // An equal change that is a different object was not the one on the sheet either.
         failsWith<IllegalStateException> { api.perform(edit(), Confirmation.bySlide(confirmed)) }
@@ -85,13 +85,13 @@ class WriteSafetyTest {
 
     @Test fun editIsHeldBackWhenThePageMovedOn() = runBlocking {
         fake.latestRevId = 5130
-        fake.latestUser = "Tindercap"
+        fake.latestUser = "BroomKeeper"
         val write = edit(base = 5120)
         try {
             api.perform(write, Confirmation.bySlide(write))
             fail("Expected PageChanged")
         } catch (e: PageChanged) {
-            assertEquals("Tindercap", e.by)
+            assertEquals("BroomKeeper", e.by)
         }
         assertTrue(fake.writes().isEmpty())
     }
@@ -105,7 +105,7 @@ class WriteSafetyTest {
 
     @Test fun lostAnswerIsNotSentAgain() = runBlocking {
         fake.dropWrites = true
-        val write = PendingWrite.Delete(fake.wiki, "Ash Hound (old)", "Housekeeping")
+        val write = PendingWrite.Delete(fake.wiki, "Ashen Witch (old)", "Housekeeping")
         failsWith<UnknownOutcome> { api.perform(write, Confirmation.bySlide(write)) }
         assertEquals(1, fake.writes().size)
     }
@@ -143,14 +143,23 @@ class WriteSafetyTest {
         assertEquals(null, fake.writes().last()["autoblock"])
         assertTrue(address.facts.none { it.first == "Autoblock" })
 
-        val move = PendingWrite.Move(fake.wiki, "Wick Knights", "Wick Knight", "Singular", leaveRedirect = false, moveTalk = false)
+        val move = PendingWrite.Move(fake.wiki, "Light Novel Volume 01", "Light Novel Volume 1", "Match the other volume pages", leaveRedirect = false, moveTalk = false)
         api.perform(move, Confirmation.bySlide(move))
         val moved = fake.writes().last()
         assertEquals("move", moved["action"])
         assertEquals("1", moved["noredirect"])
         assertEquals(null, moved["movetalk"])
 
-        val roll = PendingWrite.Rollback(fake.wiki, "The Lamplighter", "203.0.113.42")
+        val undo = PendingWrite.Undo(fake.wiki, "Elaina", 5120, "StardustReader", "", markBot = true)
+        api.perform(undo, Confirmation.bySlide(undo))
+        assertEquals("1", fake.writes().last()["bot"])
+        assertTrue(undo.facts.contains("Bot edit" to "Yes"))
+
+        val plainUndo = PendingWrite.Undo(fake.wiki, "Elaina", 5120, "StardustReader", "")
+        api.perform(plainUndo, Confirmation.bySlide(plainUndo))
+        assertEquals(null, fake.writes().last()["bot"])
+
+        val roll = PendingWrite.Rollback(fake.wiki, "Fran", "203.0.113.42")
         api.perform(roll, Confirmation.bySlide(roll))
         assertEquals("rollback", fake.calls.last { it["meta"] == "tokens" }["type"])
     }

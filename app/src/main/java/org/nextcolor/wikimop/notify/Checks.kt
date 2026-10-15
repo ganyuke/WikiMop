@@ -2,9 +2,11 @@ package org.nextcolor.wikimop.notify
 
 import okhttp3.OkHttpClient
 import org.nextcolor.wikimop.data.Account
+import org.nextcolor.wikimop.data.AccountJar
 import org.nextcolor.wikimop.data.AccountKind
 import org.nextcolor.wikimop.data.ApiError
 import org.nextcolor.wikimop.data.Marks
+import org.nextcolor.wikimop.data.Me
 import org.nextcolor.wikimop.data.SavedStore
 import org.nextcolor.wikimop.data.Wiki
 import org.nextcolor.wikimop.data.WikiApi
@@ -41,11 +43,11 @@ class Checker(private val store: SavedStore, private val http: OkHttpClient, pri
     suspend fun run(): List<Post> {
         val posts = ArrayList<Post>()
         for (wiki in store.saved.wikis) {
-            if (!wiki.notify.any) continue
-            val account = store.saved.accounts.firstOrNull { it.id == wiki.accountId } ?: continue
-            if (account.id in store.saved.signedOutTold) continue
+            if (!wiki.notifying) continue
+            val account = store.saved.accounts.firstOrNull { it.id == wiki.accountId }
+            if (account != null && account.id in store.saved.signedOutTold) continue
             try {
-                posts += check(wiki, account)
+                posts += if (account != null) check(wiki, account) else changes(wiki, WikiApi(wiki, null, http, AccountJar(emptyList())), null)
             } catch (e: IOException) {
                 // No connection. The next check tries again.
             } catch (e: ApiError) {
@@ -72,21 +74,8 @@ class Checker(private val store: SavedStore, private val http: OkHttpClient, pri
             return listOf(Post(Notice.SIGNED_OUT, account.id, wiki.id, account.userName, text))
         }
 
-        val posts = ArrayList<Post>()
+        val posts = ArrayList(changes(wiki, api, me))
         val marks = store.saved.marks[wiki.id] ?: Marks()
-
-        if (wiki.notify.changes) {
-            val chunk = api.recentChanges(store.saved.filter.copy(hideOwn = true), me, null, marks.changes)
-            if (marks.changes == null) {
-                // The first check only notes where the list stands, so turning this on does not report old changes.
-                val newest = chunk.items.firstOrNull()?.timestamp ?: Instant.EPOCH
-                store.update { s -> s.mark(wiki.id) { it.copy(changes = newest, changesTold = 0) } }
-            } else if (chunk.items.size != marks.changesTold) {
-                val count = chunk.items.size
-                store.update { s -> s.mark(wiki.id) { it.copy(changesTold = count) } }
-                posts += Post(Notice.CHANGES, wiki.id, wiki.id, wiki.name, counted(count, chunk.next != null, "new change", "new changes"))
-            }
-        }
 
         if (wiki.notify.watchlist) {
             val chunk = api.watchlist(null, marks.watchlist, me.name)
@@ -128,6 +117,23 @@ class Checker(private val store: SavedStore, private val http: OkHttpClient, pri
             }
         }
         return posts
+    }
+
+    /** Recent changes are public, so this also runs for a wiki without an account. Then [me] is null and nothing is left out as own changes. */
+    private suspend fun changes(wiki: Wiki, api: WikiApi, me: Me?): List<Post> {
+        if (!wiki.notify.changes) return emptyList()
+        val marks = store.saved.marks[wiki.id] ?: Marks()
+        val chunk = api.recentChanges(store.saved.filter.copy(hideOwn = true), me, null, marks.changes)
+        if (marks.changes == null) {
+            // The first check only notes where the list stands, so turning this on does not report old changes.
+            val newest = chunk.items.firstOrNull()?.timestamp ?: Instant.EPOCH
+            store.update { s -> s.mark(wiki.id) { it.copy(changes = newest, changesTold = 0) } }
+        } else if (chunk.items.size != marks.changesTold) {
+            val count = chunk.items.size
+            store.update { s -> s.mark(wiki.id) { it.copy(changesTold = count) } }
+            return listOf(Post(Notice.CHANGES, wiki.id, wiki.id, wiki.name, counted(count, chunk.next != null, "new change", "new changes")))
+        }
+        return emptyList()
     }
 
     /** Null for a count of zero, which takes the notification down. */

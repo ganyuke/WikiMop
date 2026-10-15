@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import org.nextcolor.wikimop.data.Account
 import org.nextcolor.wikimop.data.AccountJar
 import org.nextcolor.wikimop.data.AccountKind
+import org.nextcolor.wikimop.data.AccountRole
 import org.nextcolor.wikimop.data.ApiError
 import org.nextcolor.wikimop.data.Change
 import org.nextcolor.wikimop.data.Chunk
@@ -136,6 +137,7 @@ class Session(val wiki: Wiki, val account: Account?, val api: WikiApi) {
     var signedOut by mutableStateOf(false)
     var error by mutableStateOf<String?>(null)
     var daily by mutableStateOf<DailyEdits?>(null)
+    var role by mutableStateOf<AccountRole?>(null)
 
     /** False for every right without a signed-in account, so nothing that changes the wiki is offered. */
     fun can(right: String) = account != null && !signedOut && me?.can(right) == true
@@ -158,6 +160,14 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
     var session by mutableStateOf<Session?>(null)
         private set
     val stack = mutableStateListOf(Entry(Dest.Home))
+
+    /** Whether the window is wide enough to show a change beside the list of changes. Set by the app from the window width. */
+    var wide by mutableStateOf(false)
+
+    /** The change shown beside the list of changes on a wide screen. It is not on the back stack. */
+    var beside by mutableStateOf<Entry?>(null)
+        private set
+
     var homeTab by mutableStateOf(0)
     /** Whether the Changes tab shows the watchlist instead of recent changes. */
     var homeWatch by mutableStateOf(false)
@@ -195,6 +205,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
         while (stack.size > 1) stack.removeAt(stack.lastIndex).scope.cancel()
         stack[0].scope.cancel()
         stack[0] = Entry(Dest.Home)
+        closeBeside()
         scope.launch { connect(opened) }
     }
 
@@ -222,6 +233,14 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
                 if (s.account.id in saved.signedOutTold) update { it.copy(signedOutTold = it.signedOutTold - s.account.id) }
                 dismiss(Notice.SIGNED_OUT, s.account.id)
                 refreshDaily(s)
+                // Only for showing. Nothing is decided by it, the rights in [Me] are what count.
+                s.role = try {
+                    s.api.role(me)
+                } catch (e: IOException) {
+                    null
+                } catch (e: ApiError) {
+                    null
+                }
             }
         } catch (e: Exception) {
             s.error = e.say()
@@ -271,8 +290,26 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
         addWiki(base, name, account.copy(userName = userName, cookies = jar.snapshot()), icon)
     }
 
-    /** Forgets an account's cookies or bot password. Wikis that used it are kept, without an account. */
+    /**
+     * Signs the account out on the wiki and forgets its cookies or bot password. Wikis
+     * that used it are kept, without an account. The phone forgets it right away, even
+     * when the wiki cannot be reached to sign out.
+     */
     fun removeAccount(account: Account) {
+        // A copy, so what the wiki sends back while signing out is not saved for an account that is gone.
+        val jar = AccountJar(store.jar(account).snapshot())
+        val wiki = saved.wikis.firstOrNull { it.accountId == account.id } ?: saved.wikis.firstOrNull()
+        if (wiki != null) {
+            scope.launch {
+                try {
+                    WikiApi.logout(Transport(wiki, account, http, jar))
+                } catch (e: IOException) {
+                    // No connection. The session runs out on its own.
+                } catch (e: ApiError) {
+                    // Already signed out, or the wiki refused.
+                }
+            }
+        }
         store.forgetJar(account.id)
         dismiss(Notice.SIGNED_OUT, account.id)
         update { s ->
@@ -341,6 +378,28 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
     fun replaceTop(dest: Dest) {
         stack.removeAt(stack.lastIndex).scope.cancel()
         stack.add(Entry(dest))
+    }
+
+    fun openBeside(dest: Dest) {
+        beside?.scope?.cancel()
+        beside = Entry(dest)
+    }
+
+    fun closeBeside() {
+        beside?.scope?.cancel()
+        beside = null
+    }
+
+    /** Opens [dest] from the screen [from]. Another diff opened from the one beside the list takes its place there. */
+    fun goFrom(from: Entry, dest: Dest) {
+        if (from === beside && dest is Dest.Diff) openBeside(dest) else go(dest)
+    }
+
+    /** When the window gets too narrow for two panes, the change beside the list becomes a screen of its own, as it is. */
+    fun narrow() {
+        val shown = beside ?: return
+        beside = null
+        stack.add(shown)
     }
 
     fun openPage(title: String) {

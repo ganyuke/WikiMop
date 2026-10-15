@@ -21,7 +21,7 @@ data class Account(
     val cookies: List<StoredCookie> = emptyList(),
 )
 
-/** Which notifications are on for a wiki. They all need an account on it. */
+/** Which notifications are on for a wiki. New changes work without an account, the others need one. */
 data class WikiNotify(
     val changes: Boolean = false,
     val watchlist: Boolean = false,
@@ -42,6 +42,8 @@ data class Wiki(
 ) {
     val api get() = "$base/api.php"
     val host get() = base.substringAfter("://").substringBefore('/')
+    /** Without an account only new changes can be checked, so the other switches count for nothing. */
+    val notifying get() = notify.changes || accountId != null && notify.any
     fun pageUrl(title: String) = "$base/wiki/" + java.net.URLEncoder.encode(title.replace(' ', '_'), "UTF-8")
         .replace("%2F", "/").replace("%3A", ":")
 }
@@ -53,6 +55,12 @@ data class Settings(
     val dynamicColor: Boolean = true,
     /** How long the phone waits between two checks for notifications. */
     val checkMinutes: Int = 30,
+    /** Requests to the ad and tracking hosts in [org.nextcolor.wikimop.data.Trackers] are refused in the app's web views. */
+    val blockTrackers: Boolean = true,
+    /** Pages are shown with Fandom's desktop layout instead of its mobile one. */
+    val desktopPages: Boolean = false,
+    /** Starts the bot edit switch turned on. Only accounts with the right to mark bot edits see that switch. */
+    val markBot: Boolean = false,
 )
 
 data class Namespace(val id: Int, val name: String)
@@ -70,10 +78,22 @@ data class Me(
     val anon: Boolean,
     val groups: List<String>,
     val rights: Set<String>,
-    val blocked: Boolean,
+    /** The block on the account itself. A partial one carries "partial" in its flags. */
+    val block: Block? = null,
 ) {
+    val blocked get() = block != null
     fun can(right: String) = right in rights
     val isAdmin get() = "sysop" in groups
+}
+
+/** The groups the signed-in account is in, and the rights they would give that this sign-in lacks. */
+data class AccountRole(
+    /** Group id and the wiki's name for a member, highest first. */
+    val groups: List<Pair<String, String>>,
+    /** Empty unless the sign-in was given fewer rights than its groups, as a bot password can be. */
+    val missing: Set<String>,
+) {
+    val top get() = groups.firstOrNull()?.second
 }
 
 /**
@@ -137,6 +157,9 @@ data class RevisionDiff(
 )
 
 data class Rendered(val title: String, val html: String, val sections: List<Section>, val categories: List<String>, val revId: Long)
+
+/** [styles] are the style modules the page needs on top of the skin's own, such as the infobox's. */
+data class Preview(val html: String, val styles: List<String>)
 
 data class Section(val index: String, val level: Int, val heading: String)
 

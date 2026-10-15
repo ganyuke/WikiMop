@@ -96,13 +96,21 @@ sealed class PendingWrite {
         val revId: Long,
         val user: String,
         val summary: String,
+        val markBot: Boolean = false,
     ) : PendingWrite() {
         override val action get() = "Undo edit"
         override val slide get() = "Slide to undo"
         override val target get() = title
         override val right get() = "edit"
         override val done get() = "Edit undone"
-        override val facts get() = listOf("Revision" to revId.toString(), "By" to user, "Summary" to summary.ifEmpty { "Default" })
+        override val facts
+            get() = buildList {
+                add("Revision" to revId.toString())
+                add("By" to user)
+                add("Summary" to summary.ifEmpty { "Default" })
+                if (markBot) add("Bot edit" to "Yes")
+            }
+
         override fun params() = buildMap {
             put("action", "edit")
             put("title", title)
@@ -110,6 +118,7 @@ sealed class PendingWrite {
             put("nocreate", "1")
             put("watchlist", "nochange")
             if (summary.isNotEmpty()) put("summary", summary)
+            if (markBot) put("bot", "1")
         }
     }
 
@@ -233,7 +242,7 @@ sealed class PendingWrite {
             get() = listOf(
                 "New title" to to,
                 "Leave a redirect behind" to if (leaveRedirect) "Yes" else "No",
-                "Move talk page" to if (moveTalk) "Yes" else "No",
+                "Move associated talk page" to if (moveTalk) "Yes" else "No",
                 "Reason" to reason.ifEmpty { "None" },
             )
 

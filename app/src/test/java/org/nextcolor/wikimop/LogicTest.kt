@@ -9,6 +9,7 @@ import org.nextcolor.wikimop.data.DiffKind
 import org.nextcolor.wikimop.data.DiffParser
 import org.nextcolor.wikimop.data.LocalDiff
 import org.nextcolor.wikimop.data.WikiApi
+import org.nextcolor.wikimop.data.rankGroups
 import org.nextcolor.wikimop.data.wikiBase
 import org.nextcolor.wikimop.logic.Edited
 import org.nextcolor.wikimop.logic.EditorOps
@@ -20,10 +21,10 @@ class LogicTest {
         assertEquals(listOf(DiffKind.HEADER, DiffKind.CONTEXT, DiffKind.REMOVED, DiffKind.ADDED, DiffKind.ADDED, DiffKind.ADDED, DiffKind.ADDED, DiffKind.ADDED), lines.map { it.kind })
         assertEquals("Line 8", lines[0].text)
         assertEquals(8, lines[1].newNo)
-        assertEquals("war", lines[2].spans.single { it.marked }.text)
-        assertEquals("Long Dusk", lines[3].spans.single { it.marked }.text)
+        assertEquals("country", lines[2].spans.single { it.marked }.text)
+        assertEquals("world on her broom", lines[3].spans.single { it.marked }.text)
         assertEquals(9, lines[3].newNo)
-        assertEquals("* [[Wick Knight]]", lines.last().text)
+        assertEquals("* [[Saya]]", lines.last().text)
         assertEquals(13, lines.last().newNo)
     }
 
@@ -51,21 +52,21 @@ class LogicTest {
     }
 
     @Test fun linksAndTemplatesAreCompleted() {
-        val text = "See [[The La"
+        val text = "See [[Fr"
         val link = EditorOps.completion(text, text.length)!!
         assertFalse(link.template)
-        assertEquals("The La", link.prefix)
-        assertEquals(Edited("See [[The Lamplighter]]", 23), EditorOps.complete(Edited(text, text.length), link, "The Lamplighter"))
+        assertEquals("Fr", link.prefix)
+        assertEquals(Edited("See [[Fran]]", 12), EditorOps.complete(Edited(text, text.length), link, "Fran"))
 
-        val template = EditorOps.completion("{{Info", 6)!!
+        val template = EditorOps.completion("{{Char", 6)!!
         assertTrue(template.template)
-        assertEquals(Edited("{{Infobox location}}", 18), EditorOps.complete(Edited("{{Info", 6), template, "Template:Infobox location"))
+        assertEquals(Edited("{{Character}}", 11), EditorOps.complete(Edited("{{Char", 6), template, "Template:Character"))
 
         assertNull(EditorOps.completion("[[Page|lab", 10))
         assertNull(EditorOps.completion("{{{param", 8))
         assertNull(EditorOps.completion("plain text", 10))
-        assertEquals(listOf(0, 9), EditorOps.matches("Wick and wick", "wick", matchCase = false))
-        assertEquals(listOf(0), EditorOps.matches("Wick and wick", "Wick", matchCase = true))
+        assertEquals(listOf(0, 10), EditorOps.matches("Witch and witch", "witch", matchCase = false))
+        assertEquals(listOf(0), EditorOps.matches("Witch and witch", "Witch", matchCase = true))
     }
 
     @Test fun daysAreCountedInUtc() {
@@ -91,12 +92,25 @@ class LogicTest {
     }
 
     @Test fun wikiAddressesAreRead() {
-        assertEquals("https://lanternfall.fandom.com", wikiBase("lanternfall.fandom.com"))
-        assertEquals("https://lanternfall.fandom.com", wikiBase("https://lanternfall.fandom.com/wiki/Emberfall_Keep"))
-        assertEquals("https://lanternfall.fandom.com/es", wikiBase("lanternfall.fandom.com/es/wiki/Portada"))
-        assertEquals("https://lanternfall.fandom.com/pt-br", wikiBase("https://lanternfall.fandom.com/pt-br/"))
-        assertEquals("https://lanternfall.fandom.com", wikiBase("lanternfall"))
-        assertNull(wikiBase("not a wiki"))
+        assertEquals("https://wandering-witch.fandom.com", wikiBase("wandering-witch.fandom.com"))
+        assertEquals("https://wandering-witch.fandom.com", wikiBase("https://wandering-witch.fandom.com/wiki/Elaina"))
+        assertEquals("https://wandering-witch.fandom.com/es", wikiBase("wandering-witch.fandom.com/es/wiki/Portada"))
+        assertEquals("https://wandering-witch.fandom.com/pt-br", wikiBase("https://wandering-witch.fandom.com/pt-br/"))
+        assertEquals("https://wandering-witch.fandom.com", wikiBase("wandering-witch"))
+        // Typed loosely, the way people say the name.
+        assertEquals("https://wandering-witch.fandom.com", wikiBase("Wandering Witch"))
+        assertEquals("https://wandering-witch.fandom.com", wikiBase("wandering_witch"))
+        // Links copied with spaces in the page name, or with the scheme in capitals.
+        assertEquals("https://wandering-witch.fandom.com", wikiBase("HTTPS://wandering-witch.fandom.com/wiki/Light Novel Volume 1"))
+        assertNull(wikiBase("???"))
         assertNull(wikiBase(""))
+    }
+
+    @Test fun groupsAreRanked() {
+        val rights = mapOf("sysop" to setOf("block", "delete"), "bureaucrat" to setOf("userrights"), "util" to (1..20).map { "r$it" }.toSet(), "imagereviewer" to setOf("a"))
+        assertEquals(
+            listOf("bureaucrat", "sysop", "util", "imagereviewer", "autoconfirmed", "user"),
+            rankGroups(listOf("*", "user", "autoconfirmed", "imagereviewer", "sysop", "util", "bureaucrat"), rights),
+        )
     }
 }

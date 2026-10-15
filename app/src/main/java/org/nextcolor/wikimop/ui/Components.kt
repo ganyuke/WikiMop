@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,19 +21,26 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.DriveFileMove
 import androidx.compose.material.icons.automirrored.rounded.ListAlt
 import androidx.compose.material.icons.automirrored.rounded.NoteAdd
 import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.Block
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.NoAccounts
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonAdd
+import androidx.compose.material.icons.rounded.SmartToy
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
@@ -50,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +65,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.nextcolor.wikimop.Feed
+import org.nextcolor.wikimop.data.Account
+import org.nextcolor.wikimop.data.AccountKind
 import org.nextcolor.wikimop.data.Change
 
 /** Rounds the outer corners of a group of rows more than the corners between rows. */
@@ -69,7 +79,7 @@ fun segment(index: Int, count: Int): Shape {
 }
 
 @Composable
-fun BackBar(title: String, onBack: () -> Unit, subtitle: String? = null, actions: @Composable () -> Unit = {}) {
+fun BackBar(title: String, onBack: () -> Unit, subtitle: String? = null, close: Boolean = false, actions: @Composable () -> Unit = {}) {
     TopAppBar(
         title = {
             Column {
@@ -79,9 +89,22 @@ fun BackBar(title: String, onBack: () -> Unit, subtitle: String? = null, actions
                 }
             }
         },
-        navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back") } },
+        navigationIcon = {
+            IconButton(onClick = onBack) { if (close) Icon(Icons.Rounded.Close, "Close") else Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back") }
+        },
         actions = { actions() },
     )
+}
+
+/** The widest that settings, forms and lists get. Past this, rows are hard to follow from one side to the other. */
+val MaxContentWidth = 840.dp
+
+/** Holds [content] to [MaxContentWidth], in the middle of a wider window. */
+@Composable
+fun Centered(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Box(Modifier.widthIn(max = MaxContentWidth)) { content() }
+    }
 }
 
 @Composable
@@ -177,9 +200,10 @@ fun ChangeRow(
     modifier: Modifier = Modifier,
     showTitle: Boolean = true,
     showUser: Boolean = true,
+    selected: Boolean = false,
 ) {
     val scheme = MaterialTheme.colorScheme
-    Surface(color = scheme.surfaceContainerLow, shape = shape, modifier = modifier.fillMaxWidth().clip(shape).clickable(onClick = onClick)) {
+    Surface(color = if (selected) scheme.secondaryContainer else scheme.surfaceContainerLow, shape = shape, modifier = modifier.fillMaxWidth().clip(shape).clickable(onClick = onClick)) {
         Row(Modifier.padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)) {
             val unpatrolled = change.patrolled == false
             Box(
@@ -277,13 +301,14 @@ fun LazyListScope.changeRows(
     onOpen: (Change) -> Unit,
     showTitle: Boolean = true,
     showUser: Boolean = true,
+    selected: String? = null,
 ) {
     val days = items.groupBy { it.timestamp.dayName() }
     for ((day, rows) in days) {
         item(key = "day-$day", contentType = "day") { SectionLabel(day) }
         rows.forEachIndexed { index, change ->
             item(key = change.key, contentType = "change") {
-                ChangeRow(change, { onOpen(change) }, segment(index, rows.size), showTitle = showTitle, showUser = showUser)
+                ChangeRow(change, { onOpen(change) }, segment(index, rows.size), showTitle = showTitle, showUser = showUser, selected = change.key == selected)
             }
         }
     }
@@ -300,21 +325,23 @@ fun Frame(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val behavior = androidx.compose.material3.TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    androidx.compose.material3.Scaffold(
-        modifier = Modifier.imePadding().nestedScroll(behavior.nestedScrollConnection),
-        topBar = {
-            androidx.compose.material3.MediumFlexibleTopAppBar(
-                title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                subtitle = { if (subtitle != null) Text(subtitle, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                navigationIcon = { IconButton(onClick = { model.back() }) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back") } },
-                actions = { actions() },
-                scrollBehavior = behavior,
-            )
-        },
-        bottomBar = bottomBar,
-        snackbarHost = { androidx.compose.material3.SnackbarHost(model.snackbar) },
-        content = content,
-    )
+    Centered {
+        androidx.compose.material3.Scaffold(
+            modifier = Modifier.imePadding().nestedScroll(behavior.nestedScrollConnection),
+            topBar = {
+                androidx.compose.material3.MediumFlexibleTopAppBar(
+                    title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    subtitle = { if (subtitle != null) Text(subtitle, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    navigationIcon = { IconButton(onClick = { model.back() }) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back") } },
+                    actions = { actions() },
+                    scrollBehavior = behavior,
+                )
+            },
+            bottomBar = bottomBar,
+            snackbarHost = { androidx.compose.material3.SnackbarHost(model.snackbar) },
+            content = content,
+        )
+    }
 }
 
 /** A problem that needs attention, on a neutral card so its buttons keep their usual colors. */
@@ -342,4 +369,28 @@ fun Alert(title: String, modifier: Modifier = Modifier, text: String? = null, ac
             }
         }
     }
+}
+
+/** A filter chip with the check that Material shows on a selected one. */
+@Composable
+fun CheckChip(selected: Boolean, onClick: () -> Unit, label: String) = FilterChip(
+    selected, onClick, { Text(label) },
+    leadingIcon = if (selected) {
+        { Icon(Icons.Rounded.Check, null, Modifier.size(FilterChipDefaults.IconSize)) }
+    } else null,
+)
+
+/** How an account is named where it acts. A bot password has the same user name as the account, so it says which it is. */
+fun accountName(account: Account?): String = when {
+    account == null -> ""
+    account.kind == AccountKind.BOT -> "${account.userName} (bot password)"
+    else -> account.userName
+}
+
+/** The icon for how someone is signed in, the same wherever an account is shown. Null is no account. */
+fun accountIcon(account: Account?): ImageVector = when {
+    // Not the crossed-out person, which stands for blocked users in Tools.
+    account == null -> Icons.Rounded.NoAccounts
+    account.kind == AccountKind.BOT -> Icons.Rounded.SmartToy
+    else -> Icons.Rounded.Person
 }

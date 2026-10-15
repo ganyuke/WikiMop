@@ -13,6 +13,7 @@ Watch recent changes and clean up vandalism on your Fandom wiki from your Androi
 
 - See recent changes or your watchlist at a glance, with unpatrolled edits marked in red.
 - Open any change to see its diff, then patrol, rollback, undo, block, or delete from the same screen.
+- Read pages the way Fandom shows them, in the mobile or desktop layout, with trackers blocked.
 - Search for pages, check their history, and protect or move them.
 - Edit pages in a wikitext editor with syntax highlighting, autocomplete for links and templates, find and replace, and preview.
 - Get notified about new changes, changes to pages on your watchlist, and an edit streak that is about to end.
@@ -27,7 +28,7 @@ Add your wiki by typing its address (e.g. `wandering-witch.fandom.com`) or pasti
 
 - If you sign in to Fandom through Google or Apple, signing in inside the app may not work. Create a bot password at `Special:BotPasswords` on your wiki and sign in with that instead.
 - You can skip signing in if you only want to read.
-- Notifications are off until you turn them on for a wiki in Settings. You must be signed in to that wiki.
+- Notifications are off until you turn them on for a wiki in Settings. Watchlist and streak notifications only work if you are signed in to that wiki.
 - WikiMop checks for notifications every 30 minutes by default (you can change this in Settings). Android may delay a check to save battery.
 
 ## Requirements
@@ -55,6 +56,6 @@ You need JDK 17 and the Android SDK.
 
 Uninstall the F-Droid version before installing your own build. They're signed with different keys.
 
-`./gradlew testDebugUnitTest` runs the tests against a fake wiki and also saves a picture of every screen to `app/build/screenshots`.
+`./gradlew testDebugUnitTest` runs the tests against a fake wiki and also saves a picture of every screen to `app/build/screenshots/phone` and `app/build/screenshots/tablet`.
 
 The screenshots above come from saved copies of real wikis in `app/src/test/resources/wikis`. Run `scripts/snapshot_wikis.py` to save fresh ones.

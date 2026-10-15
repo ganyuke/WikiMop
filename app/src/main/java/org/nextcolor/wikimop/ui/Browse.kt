@@ -2,9 +2,7 @@ package org.nextcolor.wikimop.ui
 
 import android.content.Intent
 import android.net.Uri
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,11 +24,20 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Undo
+import androidx.compose.material.icons.rounded.SettingsBackupRestore
+import androidx.compose.material.icons.rounded.Description
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.CleaningServices
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.automirrored.rounded.DriveFileMove
 import androidx.compose.material.icons.automirrored.rounded.ListAlt
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Lock
@@ -42,12 +49,14 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FloatingToolbarDefaults
-import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
+import androidx.compose.material3.FloatingActionButtonMenuItem
+import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
@@ -56,6 +65,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,8 +76,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -78,7 +90,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
 import org.nextcolor.wikimop.AppModel
 import org.nextcolor.wikimop.Dest
 import org.nextcolor.wikimop.Entry
@@ -97,7 +108,6 @@ import org.nextcolor.wikimop.data.RevisionDiff
 import org.nextcolor.wikimop.data.Span
 import org.nextcolor.wikimop.data.UserDetails
 import org.nextcolor.wikimop.say
-import java.net.URLDecoder
 
 // Diff
 
@@ -157,7 +167,7 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
         entry.scope.launch {
             try {
                 val change = dest.change
-                state.diff = if (change != null && change.isNew && dest.from == 0L) {
+                val diff = if (change != null && change.isNew && dest.from == 0L) {
                     // A new page has nothing before it, so its whole text is shown as added.
                     val text = session.api.revisionText(dest.to)
                     RevisionDiff(
@@ -165,7 +175,9 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
                         text.split('\n').mapIndexed { i, line -> DiffLine(DiffKind.ADDED, listOf(Span(line, false)), newNo = i + 1) },
                     )
                 } else session.api.diff(dest.from, dest.to)
+                // Both are shown at once, so the link to the newer edit does not appear after the rest.
                 state.facts = session.api.pageFacts(dest.title)
+                state.diff = diff
             } catch (e: Exception) {
                 state.error = e.say()
             }
@@ -175,42 +187,50 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
     val diff = state.diff
     val latest = diff != null && state.facts?.lastRevId == diff.to.revId
     var menu by remember { mutableStateOf(false) }
+    // Beside the list of changes, the diff closes instead of going back, and the list's screen shows the messages.
+    val beside = entry === model.beside
 
     Scaffold(
-        topBar = { BackBar(dest.title, model::back, subtitle = diff?.let { "Revision ${it.to.revId}" }) },
-        snackbarHost = { SnackbarHost(model.snackbar) },
+        topBar = { BackBar(dest.title, { if (beside) model.closeBeside() else model.back() }, subtitle = diff?.let { "Revision ${it.to.revId}" }, close = beside) },
+        snackbarHost = { if (!beside) SnackbarHost(model.snackbar) },
         floatingActionButton = {
             if (diff == null) return@Scaffold
-            HorizontalFloatingToolbar(expanded = true, colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()) {
+            // Listed top to bottom. The ones used most are last, closest to the thumb.
+            val actions = buildList<Triple<String, ImageVector, () -> Unit>> {
+                if (session.can("delete")) add(Triple("Delete page", Icons.Rounded.Delete) { model.go(Dest.Form(FormKind.DELETE, dest.title)) })
+                // The user's name stays out of the labels, since it can be long. It is in the card above, which opens the user.
+                if (session.can("block")) add(Triple("Block user", Icons.Rounded.Block) { model.go(Dest.Form(FormKind.BLOCK, diff.to.user)) })
+                add(Triple("Open page", Icons.Rounded.Description) { model.openPage(dest.title) })
+                if (session.can("edit")) add(Triple("Edit page", Icons.Rounded.Edit) { model.edit(dest.title) })
+                if (diff.from != null && session.can("edit")) {
+                    add(Triple("Undo", Icons.AutoMirrored.Rounded.Undo) { model.go(Dest.Form(FormKind.UNDO, dest.title, diff.to.user, diff.to.revId)) })
+                }
+                if (latest && diff.from != null && session.can("rollback")) {
+                    add(Triple("Rollback", Icons.Rounded.SettingsBackupRestore) { model.go(Dest.Form(FormKind.ROLLBACK, dest.title, diff.to.user)) })
+                }
                 if (dest.change?.patrolled == false && !state.patrolled && session.can("patrol")) {
-                    FilledTonalButton(onClick = {
+                    add(Triple("Patrol", Icons.Rounded.Check) {
                         model.ask(PendingWrite.Patrol(session.wiki, dest.title, diff.to.revId, diff.to.user)) { state.patrolled = true }
-                    }) { Text("Patrol") }
-                    Spacer(Modifier.width(4.dp))
+                    })
                 }
-                if (latest && session.can("rollback") && diff.from != null) {
-                    FilledTonalButton(onClick = { model.go(Dest.Form(FormKind.ROLLBACK, dest.title, diff.to.user)) }) { Text("Rollback") }
-                } else if (diff.from != null && session.can("edit")) {
-                    FilledTonalButton(onClick = { model.go(Dest.Form(FormKind.UNDO, dest.title, diff.to.user, diff.to.revId)) }) { Text("Undo") }
-                }
-                if (session.can("edit")) IconButton(onClick = { model.edit(dest.title) }) { Icon(Icons.Rounded.Edit, "Edit page") }
-                Box {
-                    IconButton(onClick = { menu = true }) { Icon(Icons.Rounded.MoreVert, "More") }
-                    DropdownMenu(menu, { menu = false }) {
-                        @Composable
-                        fun entry(label: String, action: () -> Unit) = DropdownMenuItem({ Text(label) }, { menu = false; action() })
-                        entry("Open page") { model.openPage(dest.title) }
-                        entry("User: ${diff.to.user}") { model.go(Dest.User(diff.to.user)) }
-                        if (latest && session.can("rollback") && diff.from != null && session.can("edit")) {
-                            entry("Undo") { model.go(Dest.Form(FormKind.UNDO, dest.title, diff.to.user, diff.to.revId)) }
-                        }
-                        if (session.can("block")) entry("Block ${diff.to.user}") { model.go(Dest.Form(FormKind.BLOCK, diff.to.user)) }
-                        if (session.can("delete")) entry("Delete page") { model.go(Dest.Form(FormKind.DELETE, dest.title)) }
+            }
+            BackHandler(menu) { menu = false }
+            FloatingActionButtonMenu(
+                expanded = menu,
+                button = {
+                    ToggleFloatingActionButton(menu, { menu = it }, Modifier.semantics { contentDescription = "Actions" }) {
+                        Icon(
+                            if (checkedProgress > 0.5f) Icons.Rounded.Close else Icons.Rounded.CleaningServices, null,
+                            Modifier.animateIcon({ checkedProgress }),
+                        )
                     }
+                },
+            ) {
+                for ((label, icon, action) in actions) {
+                    FloatingActionButtonMenuItem(onClick = { menu = false; action() }, text = { Text(label) }, icon = { Icon(icon, null) })
                 }
             }
         },
-        floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
         when {
             state.error != null -> Notice(state.error.orEmpty(), Modifier.padding(padding), "Try again", ::load)
@@ -218,6 +238,30 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
             else -> LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(bottom = 112.dp)) {
                 item {
                     Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        // Older and newer edits of the same page, as on the wiki's own diff page. Back returns the same way.
+                        Row(Modifier.fillMaxWidth()) {
+                            diff.from?.let { before ->
+                                TextButton(onClick = { model.goFrom(entry, Dest.Diff(dest.title, 0, before.revId)) }) {
+                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, Modifier.padding(end = 8.dp))
+                                    Text("Older edit")
+                                }
+                            }
+                            Spacer(Modifier.weight(1f))
+                            if (state.facts != null && !latest) {
+                                TextButton(onClick = {
+                                    entry.scope.launch {
+                                        try {
+                                            model.goFrom(entry, Dest.Diff(dest.title, diff.to.revId, session.api.nextRevision(diff.to.revId)))
+                                        } catch (e: Exception) {
+                                            model.say(e.say())
+                                        }
+                                    }
+                                }) {
+                                    Text("Newer edit")
+                                    Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, Modifier.padding(start = 8.dp))
+                                }
+                            }
+                        }
                         diff.from?.let { SideCard("Before", it, null, segment(0, 2)) { model.go(Dest.User(it.user)) } }
                         SideCard(
                             if (diff.from == null) "New page" else "After", diff.to, diff.from?.let { diff.to.size - it.size } ?: diff.to.size,
@@ -294,6 +338,12 @@ fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page)
         topBar = {
             Column {
                 BackBar(facts?.title ?: dest.title, model::back) {
+                    if (facts?.exists == true && state.tab == 0) {
+                        val desktop = model.saved.settings.desktopPages
+                        IconToggleButton(desktop, { on -> model.update { it.copy(settings = it.settings.copy(desktopPages = on)) } }) {
+                            Icon(Icons.Rounded.DesktopWindows, "Desktop layout")
+                        }
+                    }
                     IconButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(session.wiki.pageUrl(dest.title)))) }) {
                         Icon(Icons.AutoMirrored.Rounded.OpenInNew, "Open in browser")
                     }
@@ -331,7 +381,9 @@ fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page)
                         ToolRow(Icons.Rounded.RestoreFromTrash, "Restore", segment(1, 2)) { model.go(Dest.Form(FormKind.RESTORE, dest.title)) }
                     }
                 }
-                state.tab == 0 -> state.rendered?.let { WikiHtml(it.html, session.wiki.base, model::openPage) } ?: Busy()
+                state.tab == 0 -> FandomPage(
+                    session.wiki.pageUrl(facts.title), session.wiki.base, model.saved.settings.desktopPages, model.saved.settings.blockTrackers, model::openPage,
+                )
                 state.tab == 1 -> FeedList(history, "No revisions") {
                     changeRows(history.items, { model.go(Dest.Diff(dest.title, it.oldRevId, it.revId, it)) }, showTitle = false)
                 }
@@ -400,54 +452,6 @@ fun Fact(name: String, value: String) {
     }
 }
 
-/** Shows a wiki page's HTML. Scripts are off, and links inside the wiki open in the app. */
-@Composable
-fun WikiHtml(html: String, base: String, onPage: (String) -> Unit) {
-    val scheme = MaterialTheme.colorScheme
-    fun hex(color: Color) = "#%06X".format(color.toArgb() and 0xFFFFFF)
-    val page = remember(html, scheme) {
-        val doc = Jsoup.parseBodyFragment(html, "$base/wiki/")
-        // Fandom swaps pictures in with a script as they scroll into view. Scripts are off here, so it is done up front.
-        doc.select("img[data-src]").forEach { it.attr("src", it.attr("data-src")) }
-        doc.select("script, style, .mw-editsection").remove()
-        """<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>
-            body { font-family: sans-serif; line-height: 1.5; padding: 4px 16px 96px; margin: 0; word-wrap: break-word;
-                   background: ${hex(scheme.surface)}; color: ${hex(scheme.onSurface)}; }
-            a { color: ${hex(scheme.primary)}; text-decoration: none; } a.new { color: ${hex(scheme.error)}; }
-            img { max-width: 100%; height: auto; }
-            table { display: block; overflow-x: auto; border-collapse: collapse; max-width: 100%; }
-            td, th { border: 1px solid ${hex(scheme.outlineVariant)}; padding: 4px 8px; }
-            h2 { border-bottom: 1px solid ${hex(scheme.outlineVariant)}; padding-bottom: 4px; font-weight: 500; }
-            pre, code { background: ${hex(scheme.surfaceContainerHigh)}; white-space: pre-wrap; border-radius: 6px; padding: 2px 4px; }
-            .portable-infobox { background: ${hex(scheme.surfaceContainer)}; border-radius: 16px; padding: 12px; margin: 8px 0; }
-            .pi-data { display: flex; gap: 12px; padding: 4px 0; } .pi-data-label { flex: 0 0 35%; font-weight: 600; margin: 0; }
-            .pi-data-value { flex: 1; } .pi-title, .pi-header { margin: 4px 0; font-size: 1.1em; }
-            figure { margin: 8px 0; } .thumb, .tright, .floatright { float: none !important; margin: 8px 0; }
-            </style></head><body>${doc.body().html()}</body></html>"""
-    }
-    AndroidView(
-        factory = { context ->
-            WebView(context).apply {
-                settings.javaScriptEnabled = false
-                webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                        val url = request.url.toString()
-                        val prefix = "$base/wiki/"
-                        if (url.startsWith(prefix)) {
-                            onPage(URLDecoder.decode(url.removePrefix(prefix).substringBefore('#').substringBefore('?'), "UTF-8").replace('_', ' '))
-                        } else {
-                            try { context.startActivity(Intent(Intent.ACTION_VIEW, request.url)) } catch (e: Exception) { /* Nothing can open it. */ }
-                        }
-                        return true
-                    }
-                }
-            }
-        },
-        update = { it.loadDataWithBaseURL("$base/wiki/", page, "text/html", "utf-8", null) },
-        modifier = Modifier.fillMaxSize(),
-    )
-}
-
 // User
 
 class UserState {
@@ -467,14 +471,16 @@ fun UserScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.User)
     LaunchedEffect(Unit) { load() }
     val details = state.details
     Scaffold(topBar = { BackBar(details?.name ?: dest.name, model::back, subtitle = "User") }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        FeedList(edits, "No edits", Modifier.padding(padding)) {
-            item(key = "head") {
-                Column {
-                    if (details != null) UserHeader(model, session, details)
-                    else if (state.error != null) Text(state.error.orEmpty(), color = MaterialTheme.colorScheme.error)
+        Centered(Modifier.padding(padding)) {
+            FeedList(edits, "No edits") {
+                item(key = "head") {
+                    Column {
+                        if (details != null) UserHeader(model, session, details)
+                        else if (state.error != null) Text(state.error.orEmpty(), color = MaterialTheme.colorScheme.error)
+                    }
                 }
+                changeRows(edits.items, { model.go(Dest.Diff(it.title, it.oldRevId, it.revId, it)) }, showUser = false)
             }
-            changeRows(edits.items, { model.go(Dest.Diff(it.title, it.oldRevId, it.revId, it)) }, showUser = false)
         }
     }
 }
@@ -530,7 +536,7 @@ fun LogsScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Logs)
         else -> "Logs"
     }
     Scaffold(topBar = { BackBar(title, model::back, subtitle = dest.title ?: dest.user?.let { "By $it" }) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        FeedList(feed, "No log entries", Modifier.padding(padding)) { changeRows(feed.items, { openChange(model, it) }) }
+        Centered(Modifier.padding(padding)) { FeedList(feed, "No log entries") { changeRows(feed.items, { openChange(model, it) }) } }
     }
 }
 
@@ -540,7 +546,7 @@ fun NewPagesScreen(model: AppModel, entry: Entry, session: Session) {
         Feed(entry.scope) { session.api.recentChanges(ChangeFilter(edits = false, logs = false, hideBots = false), session.me, it) }
     }
     Scaffold(topBar = { BackBar("New pages", model::back) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        FeedList(feed, "No new pages", Modifier.padding(padding)) { changeRows(feed.items, { openChange(model, it) }) }
+        Centered(Modifier.padding(padding)) { FeedList(feed, "No new pages") { changeRows(feed.items, { openChange(model, it) }) } }
     }
 }
 
@@ -548,12 +554,14 @@ fun NewPagesScreen(model: AppModel, entry: Entry, session: Session) {
 fun BlocksScreen(model: AppModel, entry: Entry, session: Session) {
     val feed = entry.hold("blocks") { Feed<Block>(entry.scope) { session.api.blocks(it) } }
     Scaffold(topBar = { BackBar("Blocked users", model::back) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        FeedList(feed, "No blocks", Modifier.padding(padding), contentPadding = PaddingValues(16.dp)) {
-            itemsIndexed(feed.items, key = { _, b -> b.id }) { index, block ->
-                ToolRow(
-                    Icons.Rounded.Block, block.user.ifEmpty { "Autoblock #${block.id}" }, segment(index, feed.items.size),
-                    note = "Expires: ${expiryText(block.expiry)} · By: ${block.by}" + if (block.reason.isBlank()) "" else "\n${block.reason}",
-                ) { if (block.user.isNotEmpty()) model.go(Dest.User(block.user)) }
+        Centered(Modifier.padding(padding)) {
+            FeedList(feed, "No blocks", contentPadding = PaddingValues(16.dp)) {
+                itemsIndexed(feed.items, key = { _, b -> b.id }) { index, block ->
+                    ToolRow(
+                        Icons.Rounded.Block, block.user.ifEmpty { "Autoblock #${block.id}" }, segment(index, feed.items.size),
+                        note = "Expires: ${expiryText(block.expiry)} · By: ${block.by}" + if (block.reason.isBlank()) "" else "\n${block.reason}",
+                    ) { if (block.user.isNotEmpty()) model.go(Dest.User(block.user)) }
+                }
             }
         }
     }

@@ -108,7 +108,7 @@ class CheckJob : JobService() {
         /** Brings the schedule in line with the settings. Safe to call at any time. */
         fun schedule(context: Context, saved: Saved) {
             val scheduler = context.getSystemService(JobScheduler::class.java)
-            val wanted = saved.wikis.any { it.notify.any && it.accountId != null }
+            val wanted = saved.wikis.any { it.notifying }
             val every = saved.settings.checkMinutes * 60_000L
             val pending = scheduler.getPendingJob(ID)
             if (!wanted) {

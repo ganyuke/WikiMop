@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -52,7 +53,7 @@ class NotifyTest {
         store.update { s -> s.mark("w1") { it.copy(changes = fake.now.minus(30, ChronoUnit.MINUTES)) } }
         val post = checker.run().single()
         assertEquals(Notice.CHANGES, post.notice)
-        assertEquals("Lanternfall Wiki", post.title)
+        assertEquals("Wandering Witch Wiki", post.title)
         assertEquals("3 new changes", post.text)
 
         // The same count is not sent a second time.
@@ -62,6 +63,27 @@ class NotifyTest {
         store.update { s -> s.mark("w1") { it.copy(changes = fake.now) } }
         assertNull(checker.run().single().text)
         assertTrue(fake.writes().isEmpty())
+    }
+
+    @Test fun newChangesWithoutAnAccount() = runBlocking {
+        val wiki = fake.wiki.copy(accountId = null, notify = WikiNotify(changes = true, watchlist = true, streak = true))
+        val store = SavedStore(MemoryVault(SavedJson.write(Saved(emptyList(), listOf(wiki), "w1"))))
+        val checker = Checker(store, OkHttpClient()) { evening }
+        assertTrue(checker.run().isEmpty())
+
+        store.update { s -> s.mark("w1") { it.copy(changes = fake.now.minus(2, ChronoUnit.DAYS)) } }
+        val post = checker.run().single()
+        assertEquals(Notice.CHANGES, post.notice)
+        // Without an account nothing is left out as own changes, so Mopkeeper's delete counts too.
+        assertEquals("7 new changes", post.text)
+        // Only recent changes are read, and nothing asks for a signed-in user.
+        assertTrue(fake.calls.all { it["assert"] == null && it["list"] == "recentchanges" })
+    }
+
+    @Test fun onlyNewChangesCountWithoutAnAccount() {
+        assertTrue(fake.wiki.copy(accountId = null, notify = WikiNotify(changes = true)).notifying)
+        assertFalse(fake.wiki.copy(accountId = null, notify = WikiNotify(watchlist = true, streak = true)).notifying)
+        assertTrue(fake.wiki.copy(notify = WikiNotify(streak = true)).notifying)
     }
 
     @Test fun watchlistLeavesOutOwnChanges() = runBlocking {
@@ -102,7 +124,7 @@ class NotifyTest {
         assertEquals(Notice.STREAK, post.notice)
         assertEquals("Not edited today", post.title)
         assertEquals("Streak: 11 days · Resets in 1 h 30 min (UTC)", post.text)
-        assertEquals("Lanternfall Wiki", post.wikiName)
+        assertEquals("Wandering Witch Wiki", post.wikiName)
         assertEquals(Instant.parse("2026-10-14T00:00:00Z"), post.until)
         assertTrue(checker.run().isEmpty())
 
@@ -122,14 +144,16 @@ class NotifyTest {
 
     @Test fun settingsSurviveBeingSaved() {
         val store = store(WikiNotify(changes = true, streak = true))
-        store.update { s -> s.copy(settings = s.settings.copy(checkMinutes = 60), signedOutTold = setOf("a1")).mark("w1") { it.copy(changes = evening, changesTold = 4, streakDay = "2026-10-13", streakTold = true) } }
+        store.update { s -> s.copy(settings = s.settings.copy(checkMinutes = 60, blockTrackers = false, desktopPages = true), signedOutTold = setOf("a1")).mark("w1") { it.copy(changes = evening, changesTold = 4, streakDay = "2026-10-13", streakTold = true) } }
         assertEquals(store.saved, SavedJson.read(SavedJson.write(store.saved)))
+        // Trackers are blocked unless that was turned off.
+        assertTrue(SavedJson.read("{}").settings.blockTrackers)
     }
 
     @Test fun notificationsGoUpAndComeDown() {
         val app = RuntimeEnvironment.getApplication()
         val shade = shadowOf(app.getSystemService(NotificationManager::class.java))
-        val post = Post(Notice.CHANGES, "w1", "w1", "Lanternfall Wiki", "3 new changes")
+        val post = Post(Notice.CHANGES, "w1", "w1", "Wandering Witch Wiki", "3 new changes")
 
         // Nothing is shown until notifications have been allowed.
         Notifier.show(app, post)

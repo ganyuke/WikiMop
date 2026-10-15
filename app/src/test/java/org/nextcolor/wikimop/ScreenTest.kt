@@ -1,21 +1,35 @@
 package org.nextcolor.wikimop
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasScrollToKeyAction
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToKey
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.github.takahirom.roborazzi.captureScreenRoboImage
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -23,13 +37,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.nextcolor.wikimop.data.Account
+import org.nextcolor.wikimop.data.AccountKind
 import org.nextcolor.wikimop.data.Change
 import org.nextcolor.wikimop.data.Draft
 import org.nextcolor.wikimop.data.MemoryVault
+import org.nextcolor.wikimop.data.PendingWrite
 import org.nextcolor.wikimop.data.Saved
 import org.nextcolor.wikimop.data.SavedJson
 import org.nextcolor.wikimop.data.Settings
-import org.nextcolor.wikimop.data.PendingWrite
 import org.nextcolor.wikimop.data.WikiNotify
 import org.nextcolor.wikimop.ui.App
 import org.nextcolor.wikimop.ui.ConfirmSheet
@@ -39,23 +55,30 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import org.robolectric.shadows.ShadowNetworkCapabilities
+import org.robolectric.shadows.ShadowNetworkInfo
+import java.net.UnknownHostException
 
 /**
  * Runs the app against the made-up wiki. Each screen is written to
- * app/build/screenshots so the layout can be looked at without a phone, and
+ * app/build/screenshots/phone (and by [TabletScreenTest] to app/build/screenshots/tablet)
+ * so the layout can be looked at without a device, and
  * the path from an edit to its publication is walked through by hand.
  */
 @OptIn(ExperimentalRoborazziApi::class)
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [35], qualifiers = "w412dp-h915dp-xhdpi")
-class ScreenTest {
+open class ScreenTest {
+    /** The folder in app/build/screenshots that this size of screen is saved to. */
+    protected open val device = "phone"
+
     @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
-    private val fake = FakeWiki()
+    protected val fake = FakeWiki()
 
     @After fun stop() = fake.stop()
 
-    private fun model(settings: Settings = Settings(), wikis: Boolean = true, account: Boolean = true): AppModel {
+    protected fun model(settings: Settings = Settings(), wikis: Boolean = true, account: Boolean = true): AppModel {
         val dir = RuntimeEnvironment.getApplication().cacheDir.resolve("drafts-" + System.nanoTime())
         val saved = when {
             !wikis -> Saved()
@@ -65,11 +88,11 @@ class ScreenTest {
         return AppModel(MemoryVault(SavedJson.write(saved)), dir, OkHttpClient())
     }
 
-    private fun show(model: AppModel, dark: Boolean = false) =
+    protected fun show(model: AppModel, dark: Boolean = false) =
         rule.setContent { WikiMopTheme(dark = dark, dynamicColor = false) { App(model) } }
 
     /** Waits in real time. The test clock runs ahead of the fake server, so its own timeouts end too early. */
-    private fun until(what: String, condition: () -> Boolean) {
+    protected fun until(what: String, condition: () -> Boolean) {
         repeat(500) {
             rule.waitForIdle()
             if (condition()) return
@@ -78,32 +101,35 @@ class ScreenTest {
         throw AssertionError("Still waiting for $what")
     }
 
-    private fun waitFor(text: String) = until(text) {
+    protected fun waitFor(text: String) = until(text) {
         rule.onAllNodesWithText(text, substring = true).fetchSemanticsNodes().isNotEmpty()
     }
 
-    private fun shot(name: String) = rule.onRoot().captureRoboImage("build/screenshots/$name.png")
-    private fun sheetShot(name: String) { rule.waitForIdle(); captureScreenRoboImage("build/screenshots/$name.png") }
+    protected fun shot(name: String) = rule.onRoot().captureRoboImage("build/screenshots/$device/$name.png")
+    private fun sheetShot(name: String) { rule.waitForIdle(); captureScreenRoboImage("build/screenshots/$device/$name.png") }
 
-    private fun draft(summary: String = "Named the war and listed a third enemy") = Draft(
-        id = "d1", wikiId = "w1", title = "Emberfall Keep", baseText = fake.text,
-        text = fake.text.replace("the Long Dusk", "the Long Dusk of 412").replace("* [[Wick Knight]]", "* [[Wick Knight]]\n* [[Cinder Moth]]"),
+    private fun draft(summary: String = "Reworded her travels and added Sheila") = Draft(
+        id = "d1", wikiId = "w1", title = "Elaina", baseText = fake.text,
+        text = fake.text.replace("travel the world on her broom", "travel the world on her broom, one country at a time").replace("* [[Saya]]", "* [[Saya]]\n* [[Sheila]]"),
         baseRevId = 5120, baseTimestamp = "2026-10-13T10:00:00Z", startTimestamp = "2026-10-13T10:05:00Z",
         summary = summary, updated = System.currentTimeMillis(),
     )
 
-    private val vandalism = Change("rc1", "edit", "Emberfall Keep", revId = 5120, oldRevId = 5101, user = "Quillfeather", patrolled = false)
+    private val vandalism = Change("rc1", "edit", "Elaina", revId = 5120, oldRevId = 5101, user = "StardustReader", patrolled = false)
 
     @Test fun home() {
         show(model())
-        waitFor("The Lamplighter")
+        waitFor("Fran")
+        // The streak card and the role come from requests of their own, which can finish after the list.
+        waitFor("Streak:")
+        waitFor("Administrator")
         shot("home")
     }
 
     @Test fun homeDarkNoEditToday() {
         fake.editedToday = false
         show(model(), dark = true)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         waitFor("Not edited today")
         shot("home-dark")
     }
@@ -112,7 +138,7 @@ class ScreenTest {
         shadowOf(RuntimeEnvironment.getApplication()).grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
         val m = model()
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         rule.onNodeWithContentDescription("Settings").performClick()
         waitFor("Notifications")
         rule.onNodeWithText("Notifications").performClick()
@@ -132,9 +158,23 @@ class ScreenTest {
         until("the newest change to be noted") { m.saved.marks["w1"]?.changes == fake.now.minusSeconds(240) }
     }
 
+    @Test fun notificationsWithoutAccount() {
+        shadowOf(RuntimeEnvironment.getApplication()).grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        val m = model(account = false)
+        show(m)
+        m.go(Dest.Notifications)
+        waitFor("Check every")
+        rule.onAllNodes(isToggleable())[0].performClick()
+        rule.waitForIdle()
+        assertEquals(WikiNotify(changes = true), m.saved.wikis.single().notify)
+        rule.onAllNodes(isToggleable())[1].assertIsNotEnabled()
+        rule.onAllNodes(isToggleable())[2].assertIsNotEnabled()
+        shot("notifications-no-account")
+    }
+
     @Test fun filters() {
         show(model())
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         rule.onNodeWithContentDescription("Filters").performClick()
         waitFor("Namespaces")
         sheetShot("filters")
@@ -144,7 +184,7 @@ class ScreenTest {
         val m = model()
         m.saveDraft(draft())
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         rule.onNodeWithText("Pages").performClick()
         waitFor("Main page")
         shot("pages")
@@ -159,10 +199,13 @@ class ScreenTest {
     @Test fun diffAndRollback() {
         val m = model()
         show(m)
-        waitFor("The Lamplighter")
-        m.go(Dest.Diff("Emberfall Keep", 5101, 5120, vandalism))
-        waitFor("Long Dusk")
+        waitFor("Fran")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
         shot("diff")
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Rollback")
+        shot("diff-actions")
         rule.onNodeWithText("Rollback").performClick()
         waitFor("Summary")
         shot("form-rollback")
@@ -172,11 +215,70 @@ class ScreenTest {
         assertTrue(fake.writes().isEmpty())
     }
 
+    @Test fun olderAndNewerEdits() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        // The newest edit has nothing newer.
+        until("the page check") { rule.onAllNodesWithText("Current").fetchSemanticsNodes().isNotEmpty() }
+        assertTrue(rule.onAllNodesWithText("Newer edit").fetchSemanticsNodes().isEmpty())
+
+        rule.onNodeWithText("Older edit").performClick()
+        waitFor("BroomKeeper")
+        until("the newer link") { rule.onAllNodesWithText("Newer edit").fetchSemanticsNodes().isNotEmpty() }
+        shot("diff-older")
+        assertEquals(Dest.Diff("Elaina", 0, 5101), m.top.dest)
+
+        // The first revision of the page has nothing older.
+        rule.onNodeWithText("Older edit").performClick()
+        waitFor("New page")
+        assertTrue(rule.onAllNodesWithText("Older edit").fetchSemanticsNodes().isEmpty())
+
+        rule.onNodeWithText("Newer edit").performClick()
+        until("the edit after the first") { m.top.dest == Dest.Diff("Elaina", 5090, 5101) }
+        until("its newer link") { rule.onAllNodesWithText("Newer edit").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithText("Newer edit").performClick()
+        until("the newest edit") { m.top.dest == Dest.Diff("Elaina", 5101, 5120) }
+        // Back goes through the same edits again.
+        m.back()
+        assertEquals(Dest.Diff("Elaina", 5090, 5101), m.top.dest)
+        assertTrue(fake.writes().isEmpty())
+    }
+
+    private fun actionsFor(rights: List<String>, shown: List<String>, name: String) {
+        fake.rights = rights
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Open page")
+        val all = listOf("Patrol", "Rollback", "Undo", "Edit page", "Open page", "Block user", "Delete page")
+        for (label in all) assertEquals(label, label in shown, rule.onAllNodesWithText(label).fetchSemanticsNodes().isNotEmpty())
+        shot(name)
+    }
+
+    // The rights each group has on Fandom, as the wikis list them.
+    private val user = listOf("read", "edit", "createpage")
+
+    @Test fun actionsForEditor() = actionsFor(user, listOf("Undo", "Edit page", "Open page"), "diff-actions-editor")
+
+    @Test fun actionsForRollbacker() =
+        actionsFor(user + "rollback", listOf("Rollback", "Undo", "Edit page", "Open page"), "diff-actions-rollbacker")
+
+    @Test fun actionsForContentModerator() = actionsFor(
+        user + listOf("patrol", "rollback", "delete", "undelete", "protect"),
+        listOf("Patrol", "Rollback", "Undo", "Edit page", "Open page", "Delete page"), "diff-actions-content-moderator",
+    )
+
     @Test fun pageDetails() {
         val m = model()
         show(m)
-        waitFor("The Lamplighter")
-        m.openPage("Emberfall Keep")
+        waitFor("Fran")
+        m.openPage("Elaina")
         waitFor("Details")
         rule.onNodeWithText("History").performClick()
         waitFor("Created page")
@@ -190,19 +292,19 @@ class ScreenTest {
         val m = model()
         m.saveDraft(draft())
         show(m, dark = true)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         m.go(Dest.Editor("d1"))
-        waitFor("Infobox location")
+        waitFor("{{Character")
         shot("editor-dark")
     }
 
     @Test fun userAndBlock() {
         val m = model()
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         m.go(Dest.User("SpamBlaster99"))
         waitFor("Blocked")
-        waitFor("phase 2 moves")
+        waitFor("Rewrote her abilities")
         shot("user")
         m.go(Dest.Form(FormKind.BLOCK, "203.0.113.42"))
         waitFor("Duration")
@@ -212,6 +314,152 @@ class ScreenTest {
         rule.onNode(hasText("Block user") and hasClickAction()).performClick()
         waitFor("Slide to block")
         sheetShot("confirm-block")
+        assertTrue(fake.writes().isEmpty())
+    }
+
+    @Test fun roleAndRights() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        // The wiki's name for the group, with a capital, and no note when the sign-in has everything its groups give.
+        waitFor("Administrator")
+        assertTrue(rule.onAllNodesWithContentDescription("Fewer rights than usual").fetchSemanticsNodes().isEmpty())
+        rule.onNodeWithText("Administrator").performClick()
+        waitFor("Block or unblock other users from editing")
+        assertTrue(rule.onAllNodesWithText("Missing from this sign-in").fetchSemanticsNodes().isEmpty())
+        sheetShot("rights")
+    }
+
+    @Test fun signInWithFewerRights() {
+        // Like a bot password made without the blocking and deleting permissions.
+        fake.rights = fake.rights - setOf("block", "delete")
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        waitFor("Administrator")
+        until("the note") { rule.onAllNodesWithContentDescription("Fewer rights than usual").fetchSemanticsNodes().isNotEmpty() }
+        waitFor("Streak:")
+        shot("home-fewer-rights")
+        rule.onNodeWithText("Administrator").performClick()
+        waitFor("Missing from this sign-in")
+        waitFor("Delete pages")
+        sheetShot("rights-fewer")
+    }
+
+    @Test fun blockedAccount() {
+        fake.blockedSelf = true
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        waitFor("Blocked")
+        waitFor("Streak:")
+        // The block takes the role's place.
+        assertTrue(rule.onAllNodesWithText("Administrator").fetchSemanticsNodes().isEmpty())
+        shot("home-blocked")
+        rule.onNodeWithText("Blocked").performClick()
+        waitFor("Edit warring")
+        waitFor("Whole wiki")
+        waitFor("Block or unblock other users from editing")
+        sheetShot("rights-blocked")
+    }
+
+    @Test fun partiallyBlockedAccount() {
+        fake.blockedSelf = true
+        fake.blockPartial = true
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        waitFor("Partially blocked")
+        rule.onNodeWithText("Partially blocked").performClick()
+        waitFor("Some pages or namespaces")
+    }
+
+    @Test fun removingAnAccountSignsOut() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Settings)
+        waitFor("Accounts")
+        rule.onNodeWithContentDescription("Sign out").performScrollTo()
+        shot("settings-accounts")
+        rule.onNodeWithContentDescription("Sign out").performClick()
+        waitFor("Sign out of Mopkeeper?")
+        sheetShot("sign-out")
+        rule.onNode(hasText("Sign out") and hasClickAction()).performClick()
+        until("the sign-out") { fake.calls.any { it["action"] == "logout" } }
+        val logout = fake.calls.single { it["action"] == "logout" }
+        assertEquals("tok3n+\\", logout["token"])
+        assertTrue(m.saved.accounts.isEmpty())
+        assertEquals(null, m.saved.wikis.single().accountId)
+        assertTrue(fake.writes().isEmpty())
+    }
+
+    @Test fun switchingAccounts() {
+        val bot = Account("b1", AccountKind.BOT, "Mopkeeper", botLogin = "Mopkeeper@WikiMop", botPassword = "s3cret")
+        val dir = RuntimeEnvironment.getApplication().cacheDir.resolve("drafts-" + System.nanoTime())
+        val m = AppModel(MemoryVault(SavedJson.write(Saved(listOf(fake.account, bot), listOf(fake.wiki), "w1"))), dir, OkHttpClient())
+        show(m)
+        waitFor("Fran")
+        waitFor("Streak:")
+        waitFor("Administrator")
+        rule.onNodeWithText("Mopkeeper").performClick()
+        waitFor("Bot password WikiMop")
+        sheetShot("accounts")
+
+        rule.onNodeWithText("Bot password WikiMop").performClick()
+        until("the switch") { m.saved.wikis.single().accountId == "b1" }
+        // A bot password has the same user name, so it says which one it is, also where changes are confirmed.
+        waitFor("Mopkeeper (bot password)")
+        waitFor("Fran")
+        waitFor("Streak:")
+        waitFor("Administrator")
+        shot("home-bot-password")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        rule.onNodeWithContentDescription("Actions").performClick()
+        rule.onNodeWithText("Patrol").performClick()
+        waitFor("as Mopkeeper (bot password)")
+        m.cancelRequest()
+        assertTrue(fake.writes().isEmpty())
+    }
+
+    @Test fun confirmSheets() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        fun sheet(dest: Dest.Form, button: String, slide: String, name: String, fill: () -> Unit = {}) {
+            m.go(dest)
+            waitFor(dest.target)
+            fill()
+            rule.onNode(hasText(button) and hasClickAction()).performClick()
+            waitFor(slide)
+            sheetShot(name)
+            m.cancelRequest()
+            m.back()
+        }
+        sheet(Dest.Form(FormKind.UNDO, "Elaina", "StardustReader", 5120), "Undo edit", "Slide to undo", "confirm-undo")
+        sheet(Dest.Form(FormKind.DELETE, "Elaina"), "Delete page", "Slide to delete", "confirm-delete") {
+            rule.onAllNodesWithText("Vandalism")[0].performClick()
+        }
+        sheet(Dest.Form(FormKind.RESTORE, "Ashen Witch (old)"), "Restore page", "Slide to restore", "confirm-restore")
+        sheet(Dest.Form(FormKind.PROTECT, "Elaina"), "Protect page", "Slide to protect", "confirm-protect") {
+            rule.onAllNodesWithText("Autoconfirmed users")[0].performClick()
+            rule.onNodeWithText("1 week").performClick()
+        }
+        sheet(Dest.Form(FormKind.MOVE, "Elaina"), "Move page", "Slide to move", "confirm-move") {
+            rule.onNode(hasText("Elaina") and hasSetTextAction()).performTextReplacement("Elaina (character)")
+        }
+        sheet(Dest.Form(FormKind.UNBLOCK, "SpamBlaster99"), "Unblock user", "Slide to unblock", "confirm-unblock")
+
+        // Patrol has no form. It goes straight from the diff's actions to the sheet.
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Patrol")
+        rule.onNodeWithText("Patrol").performClick()
+        waitFor("Slide to mark as patrolled")
+        sheetShot("confirm-patrol")
+        m.cancelRequest()
         assertTrue(fake.writes().isEmpty())
     }
 
@@ -230,8 +478,8 @@ class ScreenTest {
     }
 
     @Test fun sendingLabelIsCentred() {
-        val request = Request(PendingWrite.Delete(fake.wiki, "Ash Hound (old)", "Housekeeping")) {}.apply { sending = true }
-        rule.setContent { WikiMopTheme(dynamicColor = false) { ConfirmSheet(request, "Lanternfall Wiki", "Mopkeeper", {}, {}) } }
+        val request = Request(PendingWrite.Delete(fake.wiki, "Ashen Witch (old)", "Housekeeping")) {}.apply { sending = true }
+        rule.setContent { WikiMopTheme(dynamicColor = false) { ConfirmSheet(request, "Wandering Witch Wiki", "Mopkeeper", {}, {}) } }
         waitFor("Sending")
         val label = rule.onNodeWithText("Sending").fetchSemanticsNode().boundsInRoot
         val cancel = rule.onNodeWithText("Cancel").fetchSemanticsNode().boundsInRoot
@@ -240,15 +488,17 @@ class ScreenTest {
 
     private fun readOnly(m: AppModel, name: String) {
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         shot(name)
-        m.go(Dest.Diff("Emberfall Keep", 5101, 5120, vandalism))
-        waitFor("Long Dusk")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Open page")
         assertTrue(rule.onAllNodesWithText("Rollback").fetchSemanticsNodes().isEmpty())
         assertTrue(rule.onAllNodesWithText("Undo").fetchSemanticsNodes().isEmpty())
         assertTrue(rule.onAllNodesWithText("Patrol").fetchSemanticsNodes().isEmpty())
         m.back()
-        m.openPage("Emberfall Keep")
+        m.openPage("Elaina")
         waitFor("Details")
         rule.onNodeWithText("History").performClick()
         waitFor("Created page")
@@ -262,16 +512,16 @@ class ScreenTest {
     }
 
     @Test fun accountIsChosenPerWiki() {
-        val other = fake.wiki.copy(id = "w2", base = fake.wiki.base + "/es", name = "Wiki de Lanternfall")
+        val other = fake.wiki.copy(id = "w2", base = fake.wiki.base + "/es", name = "Majo no Tabitabi Wiki")
         val saved = Saved(listOf(fake.account), listOf(fake.wiki, other), "w1", Settings())
         val m = AppModel(MemoryVault(SavedJson.write(saved)), RuntimeEnvironment.getApplication().cacheDir.resolve("drafts-" + System.nanoTime()), OkHttpClient())
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         until("the wiki's icon") { m.saved.wikis.first().icon != null }
         rule.onNodeWithContentDescription("Switch wiki").performClick()
         waitFor("Wikis")
         sheetShot("wikis")
-        rule.onNodeWithContentDescription("Account for Lanternfall Wiki").performClick()
+        rule.onNodeWithContentDescription("Account for Wandering Witch Wiki").performClick()
         waitFor("No account (read-only)")
         shot("wiki-account")
         rule.onNodeWithText("No account (read-only)").performClick()
@@ -305,6 +555,88 @@ class ScreenTest {
      * The pictures for the store listing and the README. They show saved copies of three real wikis
      * (see scripts/snapshot_wikis.py) with their own icons. The signed-in user is still made up.
      */
+    @Test fun addingAWiki() {
+        val ww = FakeWiki.saved("wandering-witch")
+        try {
+            val http = OkHttpClient.Builder().addInterceptor { chain ->
+                val url = chain.request().url
+                when (url.host) {
+                    // Fandom's own answer for an old address.
+                    "wandering-witch.wikia.com" -> Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(301).message("Moved Permanently")
+                        .header("Location", "https://wandering-witch.fandom.com${url.encodedPath}?${url.encodedQuery}").body("".toResponseBody()).build()
+                    ww.host -> chain.proceed(chain.request().newBuilder().url(url.newBuilder().scheme("http").host(ww.server.hostName).port(ww.server.port).build()).build())
+                    else -> throw UnknownHostException(url.host)
+                }
+            }.build()
+            val m = AppModel(MemoryVault(SavedJson.write(Saved())), RuntimeEnvironment.getApplication().cacheDir.resolve("drafts-" + System.nanoTime()), http)
+            show(m)
+            m.go(Dest.AddWiki)
+            waitFor("Wiki address")
+            fun look(address: String) {
+                rule.onNode(hasSetTextAction()).performTextReplacement(address)
+                rule.onNode(hasSetTextAction()).performImeAction()
+            }
+            val connectivity = shadowOf(RuntimeEnvironment.getApplication().getSystemService(ConnectivityManager::class.java))
+
+            // Offline, an address that cannot be reached is not called missing.
+            connectivity.setActiveNetworkInfo(null)
+            look("gone-wiki")
+            waitFor("No connection")
+            shot("add-wiki-offline")
+
+            // Online, the same address does not exist.
+            connectivity.setActiveNetworkInfo(ShadowNetworkInfo.newInstance(NetworkInfo.DetailedState.CONNECTED, ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED))
+            val caps = ShadowNetworkCapabilities.newInstance()
+            shadowOf(caps).addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            shadowOf(caps).addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            connectivity.setNetworkCapabilities(RuntimeEnvironment.getApplication().getSystemService(ConnectivityManager::class.java).activeNetwork, caps)
+            look("gone-wiki")
+            waitFor("Wiki not found")
+
+            // An old wikia.com address, typed with a space, finds the wiki at its current address.
+            look("wandering witch.wikia.com")
+            waitFor("Wandering Witch Wiki")
+            assertTrue(rule.onAllNodesWithText("Wiki not found").fetchSemanticsNodes().isEmpty())
+            shot("add-wiki-found")
+            assertTrue(ww.writes().isEmpty())
+        } finally {
+            ww.stop()
+        }
+    }
+
+    /** Searching by name, with a saved answer of Fandom's wiki search for "witch". Tapping a wiki looks it up. */
+    @Test fun searchingForAWiki() {
+        val ww = FakeWiki.saved("wandering-witch")
+        val search = javaClass.getResourceAsStream("/wikis/search-witch.json")!!.use { it.readBytes().decodeToString() }
+        try {
+            val http = OkHttpClient.Builder().addInterceptor { chain ->
+                val url = chain.request().url
+                when (url.host) {
+                    "services.fandom.com" -> Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200).message("OK").body(search.toResponseBody()).build()
+                    ww.host -> chain.proceed(chain.request().newBuilder().url(url.newBuilder().scheme("http").host(ww.server.hostName).port(ww.server.port).build()).build())
+                    else -> throw UnknownHostException(url.host)
+                }
+            }.build()
+            val m = AppModel(MemoryVault(SavedJson.write(Saved())), RuntimeEnvironment.getApplication().cacheDir.resolve("drafts-" + System.nanoTime()), http)
+            show(m)
+            m.go(Dest.AddWiki)
+            waitFor("Wiki address")
+            // A name typed where the address goes is searched for right away.
+            rule.onNode(hasSetTextAction()).performTextReplacement("witch")
+            rule.onNodeWithText("Search").performClick()
+            waitFor("Use full words")
+            waitFor("Witch Hat Atelier Wiki")
+            sheetShot("add-wiki-search")
+            rule.onNode(hasScrollToKeyAction()).performScrollToKey("https://wandering-witch.fandom.com")
+            rule.onNodeWithText("wandering-witch.fandom.com").performClick()
+            waitFor("Account")
+            assertEquals("wandering-witch.fandom.com", rule.onAllNodes(hasSetTextAction()).fetchSemanticsNodes().single().config[androidx.compose.ui.semantics.SemanticsProperties.EditableText].text)
+            assertTrue(ww.writes().isEmpty())
+        } finally {
+            ww.stop()
+        }
+    }
+
     private fun store(current: String, dark: Boolean = false, before: (AppModel, FakeWiki) -> Unit = { _, _ -> }, then: (AppModel, FakeWiki) -> Unit) {
         val wikis = listOf("wandering-witch", "witch-hat-atelier", "virtualyoutuber").map(FakeWiki::saved)
         try {
@@ -338,6 +670,8 @@ class ScreenTest {
     )
 
     @Test fun storeHomeAndWikis() = store("wandering-witch") { _, _ ->
+        waitFor("Streak:")
+        waitFor("Administrator")
         settle()
         shot("store-home")
         rule.onNodeWithContentDescription("Switch wiki").performClick()
@@ -348,6 +682,8 @@ class ScreenTest {
 
     @Test fun storeDiff() = store("witch-hat-atelier") { m, w ->
         m.go(Dest.Diff(w.pageTitle, w.parentRevId, w.latestRevId, Change("rc1", "edit", w.pageTitle, revId = w.latestRevId, oldRevId = w.parentRevId, user = w.latestUser)))
+        until("the diff to load") { rule.onAllNodesWithContentDescription("Actions").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithContentDescription("Actions").performClick()
         waitFor("Rollback")
         settle()
         shot("store-diff")
@@ -385,7 +721,7 @@ class ScreenTest {
         val m = model()
         m.saveDraft(draft())
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         m.go(Dest.Review("d1"))
         waitFor("Publish")
         until("the page check") { rule.onAllNodesWithText("Checking").fetchSemanticsNodes().isEmpty() }
@@ -407,7 +743,7 @@ class ScreenTest {
         val sent = fake.writes().single()
         assertEquals("edit", sent["action"])
         assertEquals(draft().text, sent["text"])
-        assertEquals("Named the war and listed a third enemy", sent["summary"])
+        assertEquals("Reworded her travels and added Sheila", sent["summary"])
         assertTrue(m.drafts.isEmpty())
     }
 
@@ -415,7 +751,7 @@ class ScreenTest {
         val m = model(Settings(changesLocked = true))
         m.saveDraft(draft())
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         m.go(Dest.Review("d1"))
         waitFor("Publish")
         until("the page check") { rule.onAllNodesWithText("Checking").fetchSemanticsNodes().isEmpty() }
@@ -427,24 +763,68 @@ class ScreenTest {
 
     @Test fun reviewStopsWhenSomeoneElseEdited() {
         fake.latestRevId = 5133
-        fake.latestUser = "Tindercap"
+        fake.latestUser = "BroomKeeper"
         val m = model()
         m.saveDraft(draft())
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         m.go(Dest.Review("d1"))
-        waitFor("Tindercap edited this page after you started")
+        waitFor("BroomKeeper edited this page after you started")
         shot("review-page-changed")
         rule.onNodeWithText("Publish").performClick()
         rule.waitForIdle()
         assertEquals(null, m.request)
     }
 
+    private fun undoWithBotDefault(rights: List<String>): PendingWrite.Undo {
+        fake.rights = rights
+        val m = model(Settings(markBot = true))
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Form(FormKind.UNDO, "Elaina", "StardustReader", 5120))
+        waitFor("Summary")
+        rule.onNode(hasText("Undo edit") and hasClickAction()).performClick()
+        until("the confirm sheet") { m.request != null }
+        return m.request!!.write as PendingWrite.Undo
+    }
+
+    @Test fun botDefaultTurnsOnTheSwitch() {
+        val undo = undoWithBotDefault(fake.rights + "bot")
+        assertTrue(undo.markBot)
+        assertTrue(undo.facts.contains("Bot edit" to "Yes"))
+    }
+
+    @Test fun botDefaultSkipsAccountsWithoutTheRight() {
+        val undo = undoWithBotDefault(fake.rights)
+        assertTrue(rule.onAllNodesWithText("Bot edit").fetchSemanticsNodes().isEmpty())
+        assertTrue(!undo.markBot)
+    }
+
+    private fun rollbackWithBotDefault(rights: List<String>): PendingWrite.Rollback {
+        fake.rights = rights
+        val m = model(Settings(markBot = true))
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Form(FormKind.ROLLBACK, "Elaina", "StardustReader"))
+        waitFor("Mark as bot edits")
+        rule.onNode(hasText("Rollback") and hasClickAction()).performClick()
+        until("the confirm sheet") { m.request != null }
+        return m.request!!.write as PendingWrite.Rollback
+    }
+
+    @Test fun botDefaultMarksRollbacksOfBotAccounts() {
+        assertTrue(rollbackWithBotDefault(fake.rights + "markbotedits" + "bot").markBot)
+    }
+
+    @Test fun botDefaultLeavesAdminRollbacksUnmarked() {
+        assertTrue(!rollbackWithBotDefault(fake.rights + "markbotedits").markBot)
+    }
+
     @Test fun summaryIsNeededBeforePublishing() {
         val m = model(Settings(requireSummary = true))
         m.saveDraft(draft(summary = ""))
         show(m)
-        waitFor("The Lamplighter")
+        waitFor("Fran")
         m.go(Dest.Review("d1"))
         waitFor("Summary required")
         rule.onNodeWithText("Publish").performClick()

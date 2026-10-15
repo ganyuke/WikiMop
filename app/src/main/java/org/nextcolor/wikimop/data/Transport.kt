@@ -21,6 +21,9 @@ open class ApiError(val code: String, val info: String) : Exception(info)
 /** The account is no longer signed in on this wiki. */
 class SignedOut : ApiError("assertuserfailed", "Signed out. Sign in again.")
 
+/** The wiki answered with a redirect to [location]. Nothing follows it on its own. */
+class Moved(host: String, val location: String) : ApiError("moved", "$host has moved to $location")
+
 /** A change was sent but no answer came back, so it may or may not have been made. */
 class UnknownOutcome(cause: IOException) : Exception("No response. Check the page history before trying again.", cause)
 
@@ -137,7 +140,7 @@ class Transport(
             }
             client.newCall(request.build()).execute().use { response ->
                 if (response.isRedirect) {
-                    throw ApiError("moved", "${wiki.host} has moved to ${response.header("Location")}")
+                    throw Moved(wiki.host, response.header("Location").orEmpty())
                 }
                 val body = response.body?.string().orEmpty()
                 val json = try {
@@ -155,7 +158,7 @@ class Transport(
         }
 
     companion object {
-        /** Everything else is treated as a change to the wiki. Signing in changes nothing on the wiki. */
-        val READ_ACTIONS = setOf("query", "parse", "compare", "login", "opensearch")
+        /** Everything else is treated as a change to the wiki. Signing in and out changes nothing on the wiki. */
+        val READ_ACTIONS = setOf("query", "parse", "compare", "login", "logout", "opensearch")
     }
 }

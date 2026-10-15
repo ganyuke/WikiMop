@@ -87,7 +87,39 @@ class WikiApi(
             anon = info.optBoolean("anon"),
             groups = info.optJSONArray("groups").strings(),
             rights = info.optJSONArray("rights").strings().toSet(),
-            blocked = info.has("blockid"),
+            block = if (!info.has("blockid")) null else Block(
+                id = info.optLong("blockid"), user = info.optString("name"), by = info.optString("blockedby"),
+                timestamp = info.optString("blockedtimestamp").instant(), expiry = info.optString("blockexpiry"),
+                reason = info.optString("blockreason"), flags = if (info.optBoolean("blockpartial")) listOf("partial") else emptyList(),
+            ),
+        )
+    }
+
+    /** The rights each group gives on this wiki. */
+    suspend fun groupRights(): Map<String, Set<String>> =
+        query("meta" to "siteinfo", "siprop" to "usergroups").getJSONObject("query").optJSONArray("usergroups").objects()
+            .associate { it.optString("name") to it.optJSONArray("rights").strings().toSet() }
+
+    /** The wiki's own wording for interface messages, in the reader's language. Messages the wiki does not have are left out. */
+    suspend fun messages(names: List<String>): Map<String, String> {
+        val out = HashMap<String, String>()
+        // The API takes fifty names at a time.
+        for (chunk in names.distinct().chunked(50)) {
+            query("meta" to "allmessages", "ammessages" to chunk.joinToString("|"), "amenableparser" to "1")
+                .getJSONObject("query").optJSONArray("allmessages").objects()
+                .filter { !it.optBoolean("missing") }.forEach { out[it.optString("name")] = it.optString("content") }
+        }
+        return out
+    }
+
+    suspend fun role(me: Me): AccountRole {
+        val rights = groupRights()
+        val groups = rankGroups(me.groups, rights)
+        val names = messages(groups.map { "group-$it-member" })
+        val expected = me.groups.flatMap { rights[it].orEmpty() }.toSet()
+        return AccountRole(
+            groups.map { id -> id to (names["group-$id-member"] ?: id).replaceFirstChar { it.uppercase() } },
+            expected - me.rights,
         )
     }
 
@@ -296,13 +328,16 @@ class WikiApi(
     }
 
     /** Renders text that has not been published. Nothing is saved by this. */
-    suspend fun preview(title: String, text: String): String = transport.read(
-        mapOf(
-            "action" to "parse", "title" to title, "text" to text, "pst" to "1", "prop" to "text",
-            "contentmodel" to "wikitext", "disableeditsection" to "1", "disablelimitreport" to "1",
-        ),
-        post = true,
-    ).getJSONObject("parse").optString("text")
+    suspend fun preview(title: String, text: String): Preview {
+        val parse = transport.read(
+            mapOf(
+                "action" to "parse", "title" to title, "text" to text, "pst" to "1", "prop" to "text|modules",
+                "contentmodel" to "wikitext", "disableeditsection" to "1", "disablelimitreport" to "1",
+            ),
+            post = true,
+        ).getJSONObject("parse")
+        return Preview(parse.optString("text"), parse.optJSONArray("modulestyles").strings())
+    }
 
     /** [from] zero compares [to] with the revision before it. */
     suspend fun diff(from: Long, to: Long): RevisionDiff {
@@ -329,6 +364,11 @@ class WikiApi(
             lines = DiffParser.parse(c.optString("body")),
         )
     }
+
+    /** The revision of the same page that came right after [revId]. */
+    suspend fun nextRevision(revId: Long): Long =
+        transport.read(mapOf("action" to "compare", "fromrev" to revId.toString(), "torelative" to "next", "prop" to "ids"))
+            .getJSONObject("compare").getLong("torevid")
 
     /** The text of one revision, for showing a page's first revision when there is nothing to compare it with. */
     suspend fun revisionText(revId: Long): String {
@@ -440,6 +480,13 @@ class WikiApi(
 
     companion object {
         /** Signs in with a bot password. Returns the account's user name. */
+        /** Ends the session on the wiki, so the cookies stop working even where a copy of them is left. */
+        suspend fun logout(transport: Transport) {
+            val token = transport.read(mapOf("action" to "query", "meta" to "tokens", "type" to "csrf"), signedIn = false)
+                .getJSONObject("query").getJSONObject("tokens").getString("csrftoken")
+            transport.read(mapOf("action" to "logout", "token" to token), post = true, signedIn = false)
+        }
+
         suspend fun botLogin(transport: Transport, login: String, password: String): String {
             val token = transport.read(mapOf("action" to "query", "meta" to "tokens", "type" to "login"), signedIn = false)
                 .getJSONObject("query").getJSONObject("tokens").getString("logintoken")
@@ -533,13 +580,32 @@ fun String.instant(): Instant? = try { if (isEmpty()) null else Instant.parse(th
 
 /** Works out a wiki's base address from whatever was typed or pasted, such as a page link. */
 fun wikiBase(input: String): String? {
-    var text = input.trim().removePrefix("https://").removePrefix("http://").trimEnd('/')
-    if (text.isEmpty() || text.contains(' ')) return null
-    val host = text.substringBefore('/').lowercase()
+    val text = input.trim().replaceFirst(Regex("^https?://", RegexOption.IGNORE_CASE), "").trimEnd('/')
+    if (text.isEmpty()) return null
+    // Fandom addresses use hyphens, so a name typed with spaces or underscores is read with hyphens.
+    val host = text.substringBefore('/').trim().lowercase().replace(Regex("[ _]+"), "-")
     val path = text.substringAfter('/', "").split('/').filter { it.isNotEmpty() }
     val full = if (host.contains('.')) host else "$host.fandom.com"
     if (!full.matches(Regex("""[a-z0-9.-]+\.[a-z]{2,}"""))) return null
     // Fandom keeps other languages of a wiki under a short path such as /es or /pt-br.
     val language = path.firstOrNull()?.takeIf { it.matches(Regex("""[a-z]{2,3}(-[a-z]{2,4})?""")) && it != "wiki" }
     return "https://$full" + if (language != null) "/$language" else ""
+}
+
+/** MediaWiki does not rank groups, so the usual ones on Fandom are put in order here. */
+private val rankedGroups = listOf("staff", "helper", "soap", "wiki-specialist", "bureaucrat", "sysop", "content-moderator", "threadmoderator", "rollback", "bot")
+
+/** Groups every account gets once it has been around a while. */
+private val everyoneGroups = listOf("autoconfirmed", "emailconfirmed", "user")
+
+/**
+ * Highest first. Groups that are not in [rankedGroups] go after them, the ones that
+ * give more rights first, and the groups every account gets come last.
+ */
+fun rankGroups(groups: List<String>, rights: Map<String, Set<String>>): List<String> = groups.filter { it != "*" }.sortedBy {
+    when (it) {
+        in rankedGroups -> rankedGroups.indexOf(it)
+        in everyoneGroups -> 100_000 + everyoneGroups.indexOf(it)
+        else -> 50_000 - (rights[it]?.size ?: 0)
+    }
 }

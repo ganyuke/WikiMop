@@ -15,7 +15,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -38,7 +37,7 @@ import org.nextcolor.wikimop.data.Block
 import org.nextcolor.wikimop.data.PageFacts
 import org.nextcolor.wikimop.data.PendingWrite
 
-class FormState(target: String) {
+class FormState(target: String, markBot: Boolean) {
     var reason by mutableStateOf("")
     var expiry by mutableStateOf("")
     var editLevel by mutableStateOf("")
@@ -49,7 +48,7 @@ class FormState(target: String) {
     var noCreate by mutableStateOf(true)
     var autoBlock by mutableStateOf(true)
     var allowTalk by mutableStateOf(true)
-    var markBot by mutableStateOf(false)
+    var markBot by mutableStateOf(markBot)
     var facts by mutableStateOf<PageFacts?>(null)
     var block by mutableStateOf<Block?>(null)
     var loaded by mutableStateOf(false)
@@ -75,8 +74,11 @@ private fun reasons(kind: FormKind) = when (kind) {
  */
 @Composable
 fun FormScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Form) {
-    val state = entry.hold("form") { FormState(dest.target) }
     val kind = dest.kind
+    // On a rollback the switch also hides the edits rolled back, so the default is only for bot accounts.
+    val state = entry.hold("form") {
+        FormState(dest.target, model.saved.settings.markBot && (kind != FormKind.ROLLBACK || session.can("bot")))
+    }
     LaunchedEffect(Unit) {
         if (state.loaded) return@LaunchedEffect
         try {
@@ -98,6 +100,13 @@ fun FormScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Form)
     }
 
     val reason = state.reason.trim()
+    // The switch is hidden without the right, and so is its default.
+    val botSwitch = when (kind) {
+        FormKind.ROLLBACK -> session.can("markbotedits")
+        FormKind.UNDO -> session.can("bot")
+        else -> false
+    }
+    val markBot = botSwitch && state.markBot
     val write: PendingWrite? = when (kind) {
         FormKind.DELETE -> PendingWrite.Delete(
             session.wiki, dest.target, reason,
@@ -113,8 +122,8 @@ fun FormScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Form)
             session.wiki, dest.target, state.expiry, reason, state.noCreate, state.autoBlock, state.allowTalk, replace = state.block != null,
         )
         FormKind.UNBLOCK -> PendingWrite.Unblock(session.wiki, dest.target, reason)
-        FormKind.ROLLBACK -> PendingWrite.Rollback(session.wiki, dest.target, dest.user, reason, state.markBot)
-        FormKind.UNDO -> PendingWrite.Undo(session.wiki, dest.target, dest.revId, dest.user, reason)
+        FormKind.ROLLBACK -> PendingWrite.Rollback(session.wiki, dest.target, dest.user, reason, markBot)
+        FormKind.UNDO -> PendingWrite.Undo(session.wiki, dest.target, dest.revId, dest.user, reason, markBot)
     }
     val title = when (kind) {
         FormKind.DELETE -> "Delete page"
@@ -191,8 +200,8 @@ fun FormScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Form)
                 if (!PendingWrite.isAddress(dest.target)) SwitchRow("Autoblock IP addresses", state.autoBlock) { state.autoBlock = it }
                 SwitchRow("Allow editing own talk page", state.allowTalk) { state.allowTalk = it }
             }
-            if (kind == FormKind.ROLLBACK && session.can("markbotedits")) {
-                SwitchRow("Mark as bot edits", state.markBot) { state.markBot = it }
+            if (botSwitch) {
+                SwitchRow(if (kind == FormKind.ROLLBACK) "Mark as bot edits" else "Bot edit", state.markBot) { state.markBot = it }
             }
 
             OutlinedTextField(
@@ -201,7 +210,7 @@ fun FormScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Form)
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
             )
             FlowRow(Modifier.padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                reasons(kind).forEach { preset -> FilterChip(state.reason == preset, { state.reason = preset }, { Text(preset) }) }
+                reasons(kind).forEach { preset -> CheckChip(state.reason == preset, { state.reason = preset }, preset) }
             }
             Spacer(Modifier.height(24.dp))
         }
@@ -227,6 +236,6 @@ private fun Info(content: @Composable () -> Unit) {
 private fun Choice(label: String, options: List<Pair<String, String>>, chosen: String, onChoose: (String) -> Unit) {
     SectionLabel(label, Modifier.padding(start = 0.dp))
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        options.forEach { (value, name) -> FilterChip(chosen == value, { onChoose(value) }, { Text(name) }) }
+        options.forEach { (value, name) -> CheckChip(chosen == value, { onChoose(value) }, name) }
     }
 }
