@@ -1,0 +1,2 @@
+- Lists keep their place when going back to them
+- Log entries show their whole summary
