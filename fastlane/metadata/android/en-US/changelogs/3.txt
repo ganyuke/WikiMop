@@ -1,0 +1,8 @@
+- View history from a diff
+- Pages show the article from the wiki without the rest of the Fandom site
+- Dark mode switch for pages and previews
+- Wiki styles for single pages and right-to-left wikis apply to pages
+- Dark logos on dark screens, and light ones on light screens, are visible
+- Wiki switcher moved next to the wiki icon
+- Edits only show as unpatrolled when the wiki marks them that way
+- Switching back to a bot password account works

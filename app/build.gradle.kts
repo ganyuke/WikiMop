@@ -13,8 +13,8 @@ android {
         applicationId = "org.nextcolor.wikimop"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
     }
 
     // The release key never lives in the repo. It comes from keystore.properties
