@@ -383,7 +383,9 @@ fun PreviewSheet(model: AppModel, session: Session, title: String, text: String,
                 error != null -> Notice(error.orEmpty())
                 else -> preview?.let {
                     val settings = model.saved.settings
-                    PreviewHtml(it.html, it.styles, session.wiki.base, settings.desktopPages, settings.blockTrackers) { title -> onClose(); model.openPage(title) }
+                    PreviewHtml(
+                        it.html, it.styles, session.wiki.base, pageFrame(session.site, title), settings.desktopPages, settings.darkPages, settings.blockTrackers,
+                    ) { page -> onClose(); model.openPage(page) }
                 } ?: Busy()
             }
         }

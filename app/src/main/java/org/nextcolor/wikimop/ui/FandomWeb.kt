@@ -1,22 +1,18 @@
 package org.nextcolor.wikimop.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.viewinterop.AndroidView
 import org.jsoup.Jsoup
+import org.nextcolor.wikimop.data.SiteInfo
 import org.nextcolor.wikimop.data.Trackers
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
@@ -26,21 +22,6 @@ fun refuseTracker(request: WebResourceRequest, block: Boolean): WebResourceRespo
     if (!block || !Trackers.blocked(request.url.host.orEmpty(), request.url.path.orEmpty())) return null
     return WebResourceResponse("text/plain", "utf-8", 204, "Blocked", emptyMap(), ByteArrayInputStream(ByteArray(0)))
 }
-
-/** The phone's own browser engine, introduced as desktop Chrome so Fandom sends its desktop layout. */
-private fun desktopAgent(context: Context): String {
-    val chrome = Regex("Chrome/[\\d.]+").find(WebSettings.getDefaultUserAgent(context))?.value ?: "Chrome/140.0.0.0"
-    return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) $chrome Safari/537.36"
-}
-
-/**
- * Fandom's desktop pages ask for the width of the screen, which squeezes the desktop
- * layout into a phone. This gives them the width of a laptop. The view does not zoom
- * out by itself when the width changes after loading, so [FandomPage] does that.
- */
-private const val WIDEN = "(function(){var m=document.querySelector('meta[name=viewport]');" +
-    "if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}" +
-    "if(m.content!='width=1280')m.content='width=1280';})()"
 
 /** Title of a page on this wiki that [url] points to, or null when it points anywhere else. */
 private fun wikiTitle(url: String, base: String): String? {
@@ -54,73 +35,45 @@ private fun openOutside(context: Context, request: WebResourceRequest) {
     try { context.startActivity(Intent(Intent.ACTION_VIEW, request.url)) } catch (e: Exception) { /* Nothing can open it. */ }
 }
 
-/**
- * The page as Fandom shows it, in its mobile or desktop layout. Pages on this wiki
- * that are tapped open in the app, and other links in the browser.
- */
-@SuppressLint("SetJavaScriptEnabled")
-@Composable
-fun FandomPage(url: String, base: String, desktop: Boolean, blockTrackers: Boolean, onPage: (String) -> Unit) {
-    // A change of layout needs a new user agent before the first request, so the view starts over.
-    key(url, desktop, blockTrackers) {
-        AndroidView(
-            factory = { context ->
-                WebView(context).apply {
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.setSupportZoom(true)
-                    settings.builtInZoomControls = true
-                    settings.displayZoomControls = false
-                    if (desktop) {
-                        settings.userAgentString = desktopAgent(context)
-                        settings.useWideViewPort = true
-                        settings.loadWithOverviewMode = true
-                    }
-                    webViewClient = object : WebViewClient() {
-                        override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest) = refuseTracker(request, blockTrackers)
+/** What the wiki's styles can tell a page by: its title, namespace, and the wiki's language and direction. */
+data class PageFrame(val title: String = "", val ns: Int = 0, val subpages: Boolean = false, val lang: String = "en", val rtl: Boolean = false)
 
-                        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                            // Only taps are sent elsewhere. Redirects and Fandom's own reloads, like its bot check, stay here.
-                            if (!request.isForMainFrame || !request.hasGesture()) return false
-                            val target = request.url.toString()
-                            if (target.substringBefore('#') == view.url?.substringBefore('#')) return false
-                            val title = wikiTitle(target, base)
-                            if (title != null) onPage(title) else openOutside(context, request)
-                            return true
-                        }
+/** The frame for [title] on a wiki, with its namespace found from the title's prefix. */
+fun pageFrame(site: SiteInfo?, title: String): PageFrame {
+    val prefix = title.substringBefore(':', "")
+    val ns = site?.namespaces?.firstOrNull { it.id != 0 && it.name.equals(prefix, ignoreCase = true) } ?: site?.namespaces?.firstOrNull { it.id == 0 }
+    return PageFrame(title, ns?.id ?: 0, ns?.subpages == true, site?.lang ?: "en", site?.rtl == true)
+}
 
-                        override fun onPageCommitVisible(view: WebView, url: String) {
-                            if (!desktop) return
-                            view.evaluateJavascript(WIDEN) {
-                                // Zooming out stops at the page's full width. The new width needs a moment to take hold first.
-                                view.postDelayed({ repeat(20) { if (!view.zoomOut()) return@postDelayed } }, 150)
-                            }
-                        }
+/** A class name as MediaWiki makes one, with spaces and punctuation turned into underscores. */
+fun escapeClass(name: String) =
+    name.replace(Regex("""(^[0-9\-])|[\x00-\x20!"#$%&'()*+,./:;<=>?@\[\\\]^`{|}~]|\u00A0"""), "_").replace(Regex("_+"), "_").trimEnd('_')
 
-                        override fun onPageFinished(view: WebView, url: String) {
-                            // Fandom's scripts can set the width back. The zoom is left as the reader has it by now.
-                            if (desktop) view.evaluateJavascript(WIDEN, null)
-                        }
-                    }
-                    loadUrl(url)
-                }
-            },
-            modifier = Modifier.fillMaxSize(),
-        )
+/** The classes MediaWiki gives a page's body for its namespace and title, which wikis use to style single pages. */
+fun pageClasses(frame: PageFrame): String {
+    val type = when {
+        frame.ns < 0 -> "ns-special"
+        frame.ns % 2 == 1 -> "ns-talk"
+        else -> "ns-subject"
     }
+    val root = if (frame.subpages) frame.title.substringBefore('/') else frame.title
+    return listOf("ns-${frame.ns}", type, escapeClass("page-${frame.title}"), escapeClass("rootpage-$root")).joinToString(" ")
 }
 
 /**
  * A whole page around [html] that loads Fandom's own styles for the mobile or desktop
  * layout. [styles] are the modules the page itself asks for, such as the infobox's.
  */
-fun previewPage(html: String, styles: List<String>, base: String, desktop: Boolean, dark: Boolean): String {
+fun previewPage(html: String, styles: List<String>, base: String, desktop: Boolean, dark: Boolean, frame: PageFrame = PageFrame()): String {
     val doc = Jsoup.parseBodyFragment(html, "$base/wiki/")
     // Fandom swaps pictures in with a script as they scroll into view. Scripts are off here, so it is done up front.
     doc.select("img[data-src]").forEach { it.attr("src", it.attr("data-src")) }
     doc.select("script, .mw-editsection").remove()
     val skin = if (desktop) "fandomdesktop" else "fandommobile"
     val theme = "theme-$skin-" + if (dark) "dark" else "light"
+    val dir = if (frame.rtl) "rtl" else "ltr"
+    val lang = frame.lang.filter { it.isLetterOrDigit() || it == '-' }.ifEmpty { "en" }
+    val text = """<div id="mw-content-text" class="mw-body-content mw-content-$dir" lang="$lang" dir="$dir">${doc.body().html()}</div>"""
     // The skin's own modules, as Fandom's real pages load them. user.styles needs a signed-in reader and noscript is for pages without scripts.
     val skinModules = if (desktop) {
         listOf("skin.fandomdesktop.styles", "ext.fandom.Thumbnails.css", "ext.fandom.photoGallery.gallery.css", "jquery.makeCollapsible.styles")
@@ -136,14 +89,13 @@ fun previewPage(html: String, styles: List<String>, base: String, desktop: Boole
     // The same elements that hold the page text on Fandom, since the skin's styles are written for them.
     val body = if (desktop) {
         """<div class="main-container"><div class="resizable-container"><div class="page"><main class="page__main">""" +
-            """<div id="content" class="page-content"><div id="mw-content-text" class="mw-body-content">${doc.body().html()}</div></div></main></div></div></div>"""
+            """<div id="content" class="page-content">$text</div></main></div></div></div>"""
     } else {
-        """<main id="fandom-mobile-wrapper"><section class="article-content"><article id="content">""" +
-            """<div id="mw-content-text" class="mw-body-content">${doc.body().html()}</div></article></section></main>"""
+        """<main id="fandom-mobile-wrapper"><section class="article-content"><article id="content">$text</article></section></main>"""
     }
     val viewport = if (desktop) "width=1280" else "width=device-width, initial-scale=1"
-    return """<!doctype html><html class="client-nojs"><head><meta name="viewport" content="$viewport">$head</head>""" +
-        """<body class="mediawiki ltr sitedir-ltr skin-$skin $theme action-view">$body</body></html>"""
+    return """<!doctype html><html class="client-nojs" lang="$lang" dir="$dir"><head><meta name="viewport" content="$viewport">$head</head>""" +
+        """<body class="mediawiki $dir sitedir-$dir mw-hide-empty-elt ${pageClasses(frame)} skin-$skin action-view $theme">$body</body></html>"""
 }
 
 /**
@@ -151,9 +103,10 @@ fun previewPage(html: String, styles: List<String>, base: String, desktop: Boole
  * Scripts are off.
  */
 @Composable
-fun PreviewHtml(html: String, styles: List<String>, base: String, desktop: Boolean, blockTrackers: Boolean, onPage: (String) -> Unit) {
-    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
-    val page = remember(html, styles, desktop, dark) { previewPage(html, styles, base, desktop, dark) }
+fun PreviewHtml(
+    html: String, styles: List<String>, base: String, frame: PageFrame, desktop: Boolean, dark: Boolean, blockTrackers: Boolean, onPage: (String) -> Unit,
+) {
+    val page = remember(html, styles, frame, desktop, dark) { previewPage(html, styles, base, desktop, dark, frame) }
     AndroidView(
         factory = { context ->
             WebView(context).apply {
@@ -166,6 +119,8 @@ fun PreviewHtml(html: String, styles: List<String>, base: String, desktop: Boole
 
                     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                         val title = wikiTitle(request.url.toString(), base)
+                        // Links to a section of the same page only scroll.
+                        if (title == "") return false
                         if (title != null) onPage(title) else openOutside(context, request)
                         return true
                     }
@@ -175,7 +130,11 @@ fun PreviewHtml(html: String, styles: List<String>, base: String, desktop: Boole
         update = {
             it.settings.useWideViewPort = desktop
             it.settings.loadWithOverviewMode = desktop
-            it.loadDataWithBaseURL("$base/wiki/", page, "text/html", "utf-8", null)
+            // Only a new page is loaded, so the reader keeps their place when the screen around it changes.
+            if (it.tag != page) {
+                it.tag = page
+                it.loadDataWithBaseURL("$base/wiki/", page, "text/html", "utf-8", null)
+            }
         },
         modifier = Modifier.fillMaxSize(),
     )

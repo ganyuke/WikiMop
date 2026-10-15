@@ -256,7 +256,7 @@ open class ScreenTest {
         waitFor("world on her broom")
         rule.onNodeWithContentDescription("Actions").performClick()
         waitFor("Open page")
-        val all = listOf("Patrol", "Rollback", "Undo", "Edit page", "Open page", "Block user", "Delete page")
+        val all = listOf("Patrol", "Rollback", "Undo", "Edit page", "View history", "Open page", "Block user", "Delete page")
         for (label in all) assertEquals(label, label in shown, rule.onAllNodesWithText(label).fetchSemanticsNodes().isNotEmpty())
         shot(name)
     }
@@ -264,15 +264,45 @@ open class ScreenTest {
     // The rights each group has on Fandom, as the wikis list them.
     private val user = listOf("read", "edit", "createpage")
 
-    @Test fun actionsForEditor() = actionsFor(user, listOf("Undo", "Edit page", "Open page"), "diff-actions-editor")
+    @Test fun actionsForEditor() = actionsFor(user, listOf("Undo", "Edit page", "View history", "Open page"), "diff-actions-editor")
 
     @Test fun actionsForRollbacker() =
-        actionsFor(user + "rollback", listOf("Rollback", "Undo", "Edit page", "Open page"), "diff-actions-rollbacker")
+        actionsFor(user + "rollback", listOf("Rollback", "Undo", "Edit page", "View history", "Open page"), "diff-actions-rollbacker")
 
     @Test fun actionsForContentModerator() = actionsFor(
         user + listOf("patrol", "rollback", "delete", "undelete", "protect"),
-        listOf("Patrol", "Rollback", "Undo", "Edit page", "Open page", "Delete page"), "diff-actions-content-moderator",
+        listOf("Patrol", "Rollback", "Undo", "Edit page", "View history", "Open page", "Delete page"), "diff-actions-content-moderator",
     )
+
+    @Test fun historyFromDiff() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("View history")
+        rule.onNodeWithText("View history").performClick()
+        waitFor("Created page")
+        assertEquals(Dest.Page("Elaina", tab = 1), m.top.dest)
+    }
+
+    @Test fun pageOpensWithTextFromTheWiki() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.openPage("Elaina")
+        waitFor("Details")
+        until("the page text") { fake.calls.any { it["action"] == "parse" && it["page"] == "Elaina" } }
+        assertEquals("text|sections|categories|revid|displaytitle|modules", fake.calls.last { it["action"] == "parse" }["prop"])
+        until("the page text is shown") {
+            rule.onAllNodes(androidx.compose.ui.test.hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo.Indeterminate)).fetchSemanticsNodes().isEmpty()
+        }
+        shot("page")
+        // Dark mode is a switch of its own, kept for the next page.
+        rule.onNodeWithContentDescription("Dark mode").performClick()
+        until("dark pages") { m.saved.settings.darkPages }
+    }
 
     @Test fun pageDetails() {
         val m = model()
@@ -537,6 +567,28 @@ open class ScreenTest {
         rule.onNodeWithText("Save").performClick()
         until("signed in again") { m.saved.wikis.first { it.id == "w1" }.accountId == "a1" }
         assertTrue(fake.writes().isEmpty())
+    }
+
+    /** A made-up logo: a black ring on a see-through square, like many wikis use. */
+    private fun blackLogo(): android.graphics.Bitmap {
+        val bitmap = android.graphics.Bitmap.createBitmap(64, 64, android.graphics.Bitmap.Config.ARGB_8888)
+        val paint = android.graphics.Paint().apply { color = android.graphics.Color.BLACK; style = android.graphics.Paint.Style.STROKE; strokeWidth = 10f; isAntiAlias = true }
+        android.graphics.Canvas(bitmap).drawCircle(32f, 32f, 22f, paint)
+        return bitmap
+    }
+
+    @Test fun darkLogosShowOnDarkScreens() {
+        val logo = blackLogo()
+        assertEquals(0f, org.nextcolor.wikimop.ui.inkLuminance(logo)!!, 0.01f)
+        // Icons that fill their square bring their own background.
+        val square = android.graphics.Bitmap.createBitmap(64, 64, android.graphics.Bitmap.Config.ARGB_8888).apply { eraseColor(android.graphics.Color.BLACK) }
+        assertNull(org.nextcolor.wikimop.ui.inkLuminance(square))
+
+        fake.iconBytes = java.io.ByteArrayOutputStream().also { logo.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }.toByteArray()
+        show(model(), dark = true)
+        waitFor("Fran")
+        rule.waitForIdle()
+        shot("home-dark-logo")
     }
 
     @Test fun iconFilesAreRead() {

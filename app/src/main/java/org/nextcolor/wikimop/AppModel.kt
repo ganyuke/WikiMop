@@ -47,7 +47,8 @@ enum class FormKind { DELETE, RESTORE, PROTECT, MOVE, BLOCK, UNBLOCK, ROLLBACK, 
 sealed interface Dest {
     data object Home : Dest
     data class Diff(val title: String, val from: Long, val to: Long, val change: Change? = null) : Dest
-    data class Page(val title: String) : Dest
+    /** [tab] is the tab it opens on: 0 page, 1 history, 2 details. */
+    data class Page(val title: String, val tab: Int = 0) : Dest
     data class Editor(val draftId: String) : Dest
     data class Review(val draftId: String) : Dest
     data class User(val name: String) : Dest
@@ -402,13 +403,13 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
         stack.add(shown)
     }
 
-    fun openPage(title: String) {
+    fun openPage(title: String, tab: Int = 0) {
         val wikiId = session?.wiki?.id ?: return
         update { s ->
             val list = listOf(title) + s.recentPages[wikiId].orEmpty().filter { it != title }
             s.copy(recentPages = s.recentPages + (wikiId to list.take(15)))
         }
-        go(Dest.Page(title))
+        go(Dest.Page(title, tab))
     }
 
     fun say(message: String, action: String? = null, onAction: () -> Unit = {}) {

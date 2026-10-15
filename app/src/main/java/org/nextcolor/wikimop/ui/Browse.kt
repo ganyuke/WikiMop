@@ -37,6 +37,7 @@ import androidx.compose.material.icons.automirrored.rounded.ListAlt
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.History
@@ -200,6 +201,7 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
                 if (session.can("delete")) add(Triple("Delete page", Icons.Rounded.Delete) { model.go(Dest.Form(FormKind.DELETE, dest.title)) })
                 // The user's name stays out of the labels, since it can be long. It is in the card above, which opens the user.
                 if (session.can("block")) add(Triple("Block user", Icons.Rounded.Block) { model.go(Dest.Form(FormKind.BLOCK, diff.to.user)) })
+                add(Triple("View history", Icons.Rounded.History) { model.openPage(dest.title, tab = 1) })
                 add(Triple("Open page", Icons.Rounded.Description) { model.openPage(dest.title) })
                 if (session.can("edit")) add(Triple("Edit page", Icons.Rounded.Edit) { model.edit(dest.title) })
                 if (diff.from != null && session.can("edit")) {
@@ -306,16 +308,16 @@ private fun SideCard(label: String, side: DiffSide, delta: Int?, shape: androidx
 
 // Page
 
-class PageState {
+class PageState(tab: Int = 0) {
     var rendered by mutableStateOf<Rendered?>(null)
     var facts by mutableStateOf<PageFacts?>(null)
     var error by mutableStateOf<String?>(null)
-    var tab by mutableStateOf(0)
+    var tab by mutableStateOf(tab)
 }
 
 @Composable
 fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page) {
-    val state = entry.hold("page") { PageState() }
+    val state = entry.hold("page") { PageState(dest.tab) }
     val history = entry.hold("history") { Feed(entry.scope) { session.api.history(dest.title, it) } }
     fun load() {
         state.error = null
@@ -342,6 +344,9 @@ fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page)
                         val desktop = model.saved.settings.desktopPages
                         IconToggleButton(desktop, { on -> model.update { it.copy(settings = it.settings.copy(desktopPages = on)) } }) {
                             Icon(Icons.Rounded.DesktopWindows, "Desktop layout")
+                        }
+                        IconToggleButton(model.saved.settings.darkPages, { on -> model.update { it.copy(settings = it.settings.copy(darkPages = on)) } }) {
+                            Icon(Icons.Rounded.DarkMode, "Dark mode")
                         }
                     }
                     IconButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(session.wiki.pageUrl(dest.title)))) }) {
@@ -381,9 +386,14 @@ fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page)
                         ToolRow(Icons.Rounded.RestoreFromTrash, "Restore", segment(1, 2)) { model.go(Dest.Form(FormKind.RESTORE, dest.title)) }
                     }
                 }
-                state.tab == 0 -> FandomPage(
-                    session.wiki.pageUrl(facts.title), session.wiki.base, model.saved.settings.desktopPages, model.saved.settings.blockTrackers, model::openPage,
-                )
+                // The page text from the wiki, without Fandom's site around it. The full site is one tap away in the browser.
+                state.tab == 0 -> state.rendered?.let {
+                    val settings = model.saved.settings
+                    PreviewHtml(
+                        it.html, it.styles, session.wiki.base, pageFrame(session.site, facts.title),
+                        settings.desktopPages, settings.darkPages, settings.blockTrackers, model::openPage,
+                    )
+                } ?: Busy()
                 state.tab == 1 -> FeedList(history, "No revisions") {
                     changeRows(history.items, { model.go(Dest.Diff(dest.title, it.oldRevId, it.revId, it)) }, showTitle = false)
                 }

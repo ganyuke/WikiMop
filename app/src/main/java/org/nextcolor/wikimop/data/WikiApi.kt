@@ -64,7 +64,7 @@ class WikiApi(
         val general = q.getJSONObject("general")
         val spaces = q.getJSONObject("namespaces")
         val list = spaces.keys().asSequence().map { spaces.getJSONObject(it) }
-            .map { Namespace(it.getInt("id"), it.optString("name").ifEmpty { "(Main)" }) }
+            .map { Namespace(it.getInt("id"), it.optString("name").ifEmpty { "(Main)" }, it.optBoolean("subpages")) }
             .filter { it.id >= 0 }.sortedBy { it.id }.toList()
         return SiteInfo(
             siteName = general.optString("sitename"),
@@ -73,6 +73,8 @@ class WikiApi(
             mainPage = general.optString("mainpage"),
             icon = q.optJSONArray("pages")?.optJSONObject(0)?.optJSONArray("imageinfo")?.optJSONObject(0)
                 ?.optString("url")?.takeIf { it.startsWith("https://") || it.startsWith("http://") },
+            lang = general.optString("lang").ifEmpty { "en" },
+            rtl = general.optBoolean("rtl"),
         )
     }
 
@@ -312,7 +314,7 @@ class WikiApi(
     suspend fun render(title: String): Rendered {
         val parse = transport.read(
             mapOf(
-                "action" to "parse", "page" to title, "prop" to "text|sections|categories|revid|displaytitle",
+                "action" to "parse", "page" to title, "prop" to "text|sections|categories|revid|displaytitle|modules",
                 "disableeditsection" to "1", "disablelimitreport" to "1", "redirects" to "1",
             ),
         ).getJSONObject("parse")
@@ -324,6 +326,7 @@ class WikiApi(
             }.filter { it.index.toIntOrNull() != null },
             categories = parse.optJSONArray("categories").objects().filter { !it.optBoolean("hidden") }.map { it.optString("category").replace('_', ' ') },
             revId = parse.optLong("revid"),
+            styles = parse.optJSONArray("modulestyles").strings(),
         )
     }
 

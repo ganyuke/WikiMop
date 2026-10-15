@@ -59,11 +59,14 @@ data class Settings(
     val blockTrackers: Boolean = true,
     /** Pages are shown with Fandom's desktop layout instead of its mobile one. */
     val desktopPages: Boolean = false,
+    /** Pages are shown with Fandom's dark theme instead of its light one. */
+    val darkPages: Boolean = false,
     /** Starts the bot edit switch turned on. Only accounts with the right to mark bot edits see that switch. */
     val markBot: Boolean = false,
 )
 
-data class Namespace(val id: Int, val name: String)
+/** [subpages] is whether a slash in a title there makes a subpage. */
+data class Namespace(val id: Int, val name: String, val subpages: Boolean = false)
 
 data class SiteInfo(
     val siteName: String,
@@ -71,6 +74,9 @@ data class SiteInfo(
     val namespaces: List<Namespace>,
     val mainPage: String,
     val icon: String? = null,
+    /** The language pages are written in, and whether it reads right to left. */
+    val lang: String = "en",
+    val rtl: Boolean = false,
 )
 
 data class Me(
@@ -156,7 +162,8 @@ data class RevisionDiff(
     val lines: List<DiffLine>,
 )
 
-data class Rendered(val title: String, val html: String, val sections: List<Section>, val categories: List<String>, val revId: Long)
+/** [styles] are the style modules the page needs on top of the skin's own, as in [Preview]. */
+data class Rendered(val title: String, val html: String, val sections: List<Section>, val categories: List<String>, val revId: Long, val styles: List<String> = emptyList())
 
 /** [styles] are the style modules the page needs on top of the skin's own, such as the infobox's. */
 data class Preview(val html: String, val styles: List<String>)

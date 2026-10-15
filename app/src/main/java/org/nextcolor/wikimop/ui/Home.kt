@@ -178,18 +178,21 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
             topBar = {
                 MediumFlexibleTopAppBar(
                     title = {
-                        // The name opens the list of wikis too, and the swap icon shows that it does.
-                        Row(
-                            Modifier.clip(MaterialTheme.shapes.medium).clickable(onClickLabel = "Switch wiki") { switcher = true },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(session.wiki.name, Modifier.weight(1f, fill = false), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Icon(Icons.Rounded.SwapHoriz, null, Modifier.padding(start = 8.dp))
-                        }
+                        // The name opens the list of wikis too.
+                        Text(
+                            session.wiki.name, Modifier.clip(MaterialTheme.shapes.medium).clickable(onClickLabel = "Switch wiki") { switcher = true },
+                            maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { switcher = true }, Modifier.padding(start = 4.dp)) {
-                            WikiIcon(model, session.wiki.name, icon, Modifier.semantics { contentDescription = "Switch wiki" }, size = 32.dp)
+                        // The swap icon beside the wiki's own shows that it opens the list of wikis.
+                        Row(
+                            Modifier.padding(start = 8.dp).clip(MaterialTheme.shapes.medium).clickable(onClickLabel = "Switch wiki") { switcher = true }
+                                .semantics(mergeDescendants = true) { contentDescription = "Switch wiki" }.padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            WikiIcon(model, session.wiki.name, icon, size = 32.dp)
+                            Icon(Icons.Rounded.SwapHoriz, null, Modifier.padding(start = 6.dp))
                         }
                     },
                     subtitle = {

@@ -103,6 +103,9 @@ class FakeWiki(
     }
     val account = Account("a1", AccountKind.FANDOM, "Mopkeeper")
 
+    /** Served in place of the wiki's own icon when set. */
+    var iconBytes: ByteArray? = null
+
     fun writes() = calls.filter { it["action"] !in setOf("query", "parse", "compare", "login", "logout") }
     fun stop() = server.shutdown()
 
@@ -110,7 +113,7 @@ class FakeWiki(
 
     override fun dispatch(request: RecordedRequest): MockResponse {
         if (request.path == "/favicon.ico") {
-            val icon = javaClass.getResourceAsStream("/wikis/$key.ico")!!.use { it.readBytes() }
+            val icon = iconBytes ?: javaClass.getResourceAsStream("/wikis/$key.ico")!!.use { it.readBytes() }
             return MockResponse().setHeader("Content-Type", "image/x-icon").setBody(okio.Buffer().write(icon))
         }
         val params = HashMap<String, String>()
@@ -127,7 +130,7 @@ class FakeWiki(
                 .put("text", if (seed == null) "<p><b>Elaina</b> is the main character of the series.</p>" else "<p><b>$pageTitle</b></p>")
                 .put("sections", seed?.getJSONObject("page")?.getJSONArray("sections")
                     ?: JSONArray("""[{"index":"1","level":"2","line":"Biography"},{"index":"2","level":"2","line":"Relationships"}]"""))
-                .put("categories", JSONArray())).toString())
+                .put("categories", JSONArray()).put("modulestyles", JSONArray(listOf("ext.fandom.PortableInfobox.styles")))).toString())
             "compare" -> json(compare(params))
             "login" -> { signedIn = true; json("""{"login":{"result":"Success","lgusername":"Mopkeeper"}}""") }
             "logout" -> { signedIn = false; json("{}") }

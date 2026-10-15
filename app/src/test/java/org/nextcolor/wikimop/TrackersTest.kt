@@ -1,9 +1,15 @@
 package org.nextcolor.wikimop
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.nextcolor.wikimop.data.Namespace
+import org.nextcolor.wikimop.data.SiteInfo
 import org.nextcolor.wikimop.data.Trackers
+import org.nextcolor.wikimop.ui.escapeClass
+import org.nextcolor.wikimop.ui.pageClasses
+import org.nextcolor.wikimop.ui.pageFrame
 import org.nextcolor.wikimop.ui.previewPage
 
 /** Ads and tracking are refused, and what the pages and sign-in need still loads. */
@@ -18,7 +24,7 @@ class TrackersTest {
         assertTrue(desktop.contains("|ext.fandom.PortableInfoboxFandomDesktop.css&amp;only=styles&amp;skin=fandomdesktop"))
         assertTrue(desktop.contains("$base/load.php?modules=site.styles&amp;only=styles&amp;skin=fandomdesktop"))
         assertTrue(desktop.contains("variant=light"))
-        assertTrue(desktop.contains("skin-fandomdesktop theme-fandomdesktop-light"))
+        assertTrue(desktop.contains("skin-fandomdesktop action-view theme-fandomdesktop-light"))
         // Styles written by the wiki's editors stay, scripts go, and so do the modules that need a signed-in reader.
         assertTrue(desktop.contains(".lamp{color:red}"))
         assertFalse(desktop.contains("<script"))
@@ -26,9 +32,28 @@ class TrackersTest {
 
         val mobile = previewPage(html, styles, base, desktop = false, dark = true)
         assertTrue(mobile.contains("$base/load.php?modules=skin.fandommobile.styles|"))
-        assertTrue(mobile.contains("skin-fandommobile theme-fandommobile-dark"))
+        assertTrue(mobile.contains("skin-fandommobile action-view theme-fandommobile-dark"))
         assertTrue(mobile.contains("variant=dark"))
         assertFalse(mobile.contains("FandomDesktop"))
+    }
+
+    @Test fun pagesCarryTheClassesAndDirectionWikisStyleBy() {
+        val base = "https://wandering-witch.fandom.com"
+        val site = SiteInfo("Wandering Witch Wiki", base, listOf(Namespace(0, "(Main)"), Namespace(1, "Talk"), Namespace(2, "User", subpages = true)), "Main Page")
+        assertEquals("ns-0 ns-subject page-Wandering_Witch_Wiki rootpage-Wandering_Witch_Wiki", pageClasses(pageFrame(site, "Wandering Witch Wiki")))
+        // Main pages have no subpages, so a slash stays part of the title.
+        assertEquals("ns-0 ns-subject page-Elaina_Light_Novel_Volume_1 rootpage-Elaina_Light_Novel_Volume_1", pageClasses(pageFrame(site, "Elaina/Light Novel: Volume 1")))
+        assertEquals("ns-1 ns-talk page-Talk_Elaina rootpage-Talk_Elaina", pageClasses(pageFrame(site, "Talk:Elaina")))
+        assertEquals("ns-2 ns-subject page-User_Mopkeeper_common_css rootpage-User_Mopkeeper", pageClasses(pageFrame(site, "User:Mopkeeper/common.css")))
+        assertEquals("page-イレイナ", escapeClass("page-イレイナ"))
+
+        val ltr = previewPage("<p>Hi</p>", emptyList(), base, desktop = false, dark = false, frame = pageFrame(site, "Talk:Elaina"))
+        assertTrue(ltr.contains("""<html class="client-nojs" lang="en" dir="ltr">"""))
+        assertTrue(ltr.contains("mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-1 ns-talk page-Talk_Elaina rootpage-Talk_Elaina"))
+        val rtl = previewPage("<p>Hi</p>", emptyList(), base, desktop = true, dark = false, frame = pageFrame(site.copy(lang = "ar", rtl = true), "Elaina"))
+        assertTrue(rtl.contains("""<html class="client-nojs" lang="ar" dir="rtl">"""))
+        assertTrue(rtl.contains("mediawiki rtl sitedir-rtl"))
+        assertTrue(rtl.contains("""class="mw-body-content mw-content-rtl" lang="ar" dir="rtl">"""))
     }
 
     @Test fun adsAndTrackingAreBlocked() {
