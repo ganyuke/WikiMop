@@ -138,7 +138,7 @@ class WikiApi(
             if (filter.hideBots) add("!bot")
             if (filter.hideMinor) add("!minor")
             if (filter.anonOnly) add("anon")
-            if (filter.unpatrolledOnly && canPatrol) add("!patrolled")
+            if (filter.unpatrolledOnly && canPatrol) add("unpatrolled")
         }
         val json = query(
             "list" to "recentchanges",
@@ -521,7 +521,9 @@ class WikiApi(
             )
         }
 
-        private fun change(o: JSONObject, key: String) = Change(
+        // "unpatrolled" is what the website's "!" marker uses. "patrolled" alone is false for every edit
+        // on wikis that only patrol new pages, which is common on Fandom.
+        internal fun change(o: JSONObject, key: String) = Change(
             key = key,
             type = o.optString("type", "edit"),
             title = o.optString("title"),
@@ -539,7 +541,7 @@ class WikiApi(
             minor = o.optBoolean("minor"),
             bot = o.optBoolean("bot"),
             isNew = o.optBoolean("new") || o.optString("type") == "new",
-            patrolled = if (o.has("patrolled") || o.has("unpatrolled")) o.optBoolean("patrolled") else null,
+            patrolled = if (o.has("unpatrolled")) !o.optBoolean("unpatrolled") else null,
             top = o.optBoolean("top"),
             tags = o.optJSONArray("tags").strings(),
             logType = o.optString("logtype"),

@@ -224,7 +224,7 @@ class FakeWiki(
     private fun rev(id: Long, parent: Long, user: String, minutes: Long, comment: String, size: Int) =
         JSONObject().put("revid", id).put("parentid", parent).put("user", user).put("timestamp", ago(minutes)).put("comment", comment).put("size", size).put("tags", JSONArray())
 
-    private fun changes() = if (seed != null) kept("changes", "timestamp").onEach { it.put("patrolled", true) } else listOf(
+    private fun changes() = if (seed != null) kept("changes", "timestamp").onEach { it.put("patrolled", true).put("unpatrolled", false) } else listOf(
         rc("edit", "Elaina", latestUser, 4, "Added her relationships", 310, 412, id = latestRevId, old = 5101),
         rc("edit", "Fran", "203.0.113.42", 11, "", 5230, 1876, anon = true, patrolled = false, tags = listOf("mobile edit", "blanking")),
         rc("new", "Saya", "BroomKeeper", 26, "Created page with her first appearance", 0, 2210, patrolled = false),
@@ -242,7 +242,7 @@ class FakeWiki(
     ) = JSONObject().put("type", type).put("ns", 0).put("title", title).put("pageid", 77).put("revid", if (type == "log") 0 else id)
         .put("old_revid", if (type == "edit") old else 0).put("rcid", id + 100000).put("user", user).put("anon", anon)
         .put("bot", false).put("new", type == "new").put("minor", minor).put("oldlen", oldLen).put("newlen", newLen).put("timestamp", ago(minutes))
-        .put("comment", comment).put("tags", JSONArray(tags)).put(if (patrolled) "patrolled" else "unpatrolled", true)
+        .put("comment", comment).put("tags", JSONArray(tags)).put("patrolled", patrolled).put("unpatrolled", !patrolled)
 
     private fun logs() = if (seed != null) kept("logs", "timestamp") else listOf(
         log("block", "block", "User:SpamBlaster99", "BroomKeeper", 40, "Spam", JSONObject().put("duration", "infinity").put("flags", JSONArray(listOf("nocreate")))),

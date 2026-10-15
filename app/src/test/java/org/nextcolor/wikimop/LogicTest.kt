@@ -16,6 +16,15 @@ import org.nextcolor.wikimop.logic.EditorOps
 import java.time.Instant
 
 class LogicTest {
+    @Test fun editsOnNewPageOnlyPatrolWikisAreNotUnpatrolled() {
+        // Wikis that only patrol new pages leave every edit with patrolled false but unpatrolled false too.
+        fun parse(json: String) = WikiApi.change(org.json.JSONObject(json), "rc1").patrolled
+        assertEquals(true, parse("""{"type":"edit","patrolled":false,"unpatrolled":false,"autopatrolled":false}"""))
+        assertEquals(false, parse("""{"type":"new","patrolled":false,"unpatrolled":true,"autopatrolled":false}"""))
+        assertEquals(true, parse("""{"type":"edit","patrolled":true,"unpatrolled":false,"autopatrolled":true}"""))
+        assertNull(parse("""{"type":"edit"}"""))
+    }
+
     @Test fun websiteDiffBecomesOneColumn() {
         val lines = DiffParser.parse(FakeWiki.DIFF)
         assertEquals(listOf(DiffKind.HEADER, DiffKind.CONTEXT, DiffKind.REMOVED, DiffKind.ADDED, DiffKind.ADDED, DiffKind.ADDED, DiffKind.ADDED, DiffKind.ADDED), lines.map { it.kind })
