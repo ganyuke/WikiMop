@@ -1,0 +1,8 @@
+- Search for wikis by name when adding one
+- Tablet layout with a navigation rail and the diff beside the list of changes
+- Ads and trackers blocked on Fandom pages and sign-in
+- Mobile or desktop layout for pages
+- New-change notifications without an account
+- Setting to mark edits, undos, and rollbacks as bot edits
+- The account's role, missing rights, and partial blocks shown on Home
+- Old wikia.com addresses work
