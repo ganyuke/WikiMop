@@ -491,6 +491,8 @@ class WikiApi(
         }
 
         suspend fun botLogin(transport: Transport, login: String, password: String): String {
+            // A wiki refuses to sign in a session that came from a bot password, even one for another wiki on the same domain.
+            transport.forgetSession()
             val token = transport.read(mapOf("action" to "query", "meta" to "tokens", "type" to "login"), signedIn = false)
                 .getJSONObject("query").getJSONObject("tokens").getString("logintoken")
             val result = transport.read(

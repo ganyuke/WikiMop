@@ -132,7 +132,13 @@ class FakeWiki(
                     ?: JSONArray("""[{"index":"1","level":"2","line":"Biography"},{"index":"2","level":"2","line":"Relationships"}]"""))
                 .put("categories", JSONArray()).put("modulestyles", JSONArray(listOf("ext.fandom.PortableInfobox.styles")))).toString())
             "compare" -> json(compare(params))
-            "login" -> { signedIn = true; json("""{"login":{"result":"Success","lgusername":"Mopkeeper"}}""") }
+            // Like MediaWiki, a bot password session can't sign in again.
+            "login" -> if (request.getHeader("Cookie").orEmpty().contains("_BPsession=")) {
+                json("""{"login":{"result":"Aborted","reason":"Cannot log in when using MediaWiki\\Session\\BotPasswordSessionProvider sessions."}}""")
+            } else {
+                signedIn = true
+                json("""{"login":{"result":"Success","lgusername":"Mopkeeper"}}""").setHeader("Set-Cookie", "wiki_BPsession=s${++counter}; Path=/; HttpOnly")
+            }
             "logout" -> { signedIn = false; json("{}") }
             else -> {
                 if (dropWrites) return MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AFTER_REQUEST)

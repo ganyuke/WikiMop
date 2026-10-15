@@ -128,6 +128,15 @@ class WriteSafetyTest {
         assertTrue(fake.writes().isEmpty())
     }
 
+    @Test fun botSignsInAgainOverAnOldSession() = runBlocking {
+        val jar = AccountJar(emptyList())
+        val transport = WikiApi(fake.wiki, null, OkHttpClient(), jar).transport
+        assertEquals("Mopkeeper", WikiApi.botLogin(transport, "Mopkeeper@phone", "secret"))
+        // Switching back to the account later signs in again with the cookies it kept.
+        assertEquals("Mopkeeper", WikiApi.botLogin(transport, "Mopkeeper@phone", "secret"))
+        assertEquals(1, jar.snapshot().size)
+    }
+
     @Test fun eachChangeSendsWhatItsSheetSays() = runBlocking {
         val block = PendingWrite.BlockUser(fake.wiki, "SpamBlaster99", "1 week", "Spam", noCreate = true, autoBlock = false, allowTalk = true)
         api.perform(block, Confirmation.bySlide(block))

@@ -59,6 +59,13 @@ class AccountJar(initial: List<StoredCookie>, private val onChange: (List<Stored
     }
 
     @Synchronized
+    fun clear() {
+        if (cookies.isEmpty()) return
+        cookies.clear()
+        onChange(snapshot())
+    }
+
+    @Synchronized
     fun snapshot(): List<StoredCookie> = cookies.map { StoredCookie("https://${it.domain}/", it.toString()) }
 }
 
@@ -77,6 +84,9 @@ class Transport(
     // The HTTP library sends a request again by itself when a connection drops. For a change that could
     // mean making it twice, so changes go through a client with that turned off.
     private val once = client.newBuilder().retryOnConnectionFailure(false).build()
+
+    /** Drops the account's cookies, so a sign-in starts a new session. */
+    internal fun forgetSession() = jar.clear()
 
     /** Signs a bot account in again. Set by [WikiApi], used when a session has run out. */
     internal var relogin: (suspend () -> Unit)? = null
