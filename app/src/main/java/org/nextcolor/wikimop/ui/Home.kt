@@ -78,6 +78,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -162,7 +163,8 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
     // On a wide screen, Changes shows the list on one side and the change opened from it on the other.
     val split = model.wide && tab == 0 && session.me != null
 
-    val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    // The app bar stays as collapsed as it was, to match the list that keeps its place.
+    val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(entry.hold("bar") { TopAppBarState(-Float.MAX_VALUE, 0f, 0f) })
     Row(Modifier.fillMaxSize()) {
         if (rail) {
             WideNavigationRail {

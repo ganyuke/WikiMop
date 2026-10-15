@@ -17,6 +17,9 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToKey
@@ -32,6 +35,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -273,6 +277,39 @@ open class ScreenTest {
         user + listOf("patrol", "rollback", "delete", "undelete", "protect"),
         listOf("Patrol", "Rollback", "Undo", "Edit page", "View history", "Open page", "Delete page"), "diff-actions-content-moderator",
     )
+
+    private fun listScroll() = rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).fetchSemanticsNodes().first()
+        .config[androidx.compose.ui.semantics.SemanticsProperties.VerticalScrollAxisRange].value()
+
+    @Test fun changesKeepTheirPlaceAfterAChange() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        // Scroll down to the oldest change and open a change.
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performScrollToIndex(10)
+        rule.waitForIdle()
+        val scrolled = listScroll()
+        assertTrue(scrolled > 0f)
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        // Back at the list, it is where it was.
+        m.back()
+        waitFor("Robetta")
+        assertEquals(scrolled, listScroll(), 1f)
+    }
+
+    @Test fun logSummariesAreShownWhole() {
+        fake.blockReason = "Spam links added to " + (1..12).joinToString(", ") { "Light Novel Volume $it" } + ", and the main page"
+        show(model())
+        waitFor("Fran")
+        rule.onNodeWithText("and the main page", substring = true).performScrollTo()
+        shot("changes-long-log")
+        val node = rule.onNodeWithText("and the main page", substring = true, useUnmergedTree = true)
+        val layouts = ArrayList<androidx.compose.ui.text.TextLayoutResult>()
+        node.performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        assertTrue(layouts.single().lineCount > 2)
+        assertFalse(layouts.single().hasVisualOverflow)
+    }
 
     @Test fun historyFromDiff() {
         val m = model()

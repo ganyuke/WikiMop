@@ -3,6 +3,7 @@ package org.nextcolor.wikimop
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -76,6 +77,8 @@ class Entry(val dest: Dest) {
 /** A list that is loaded a part at a time. */
 class Feed<T>(private val scope: CoroutineScope, private val load: suspend (String?) -> Chunk<T>) {
     val items = mutableStateListOf<T>()
+    /** Where the list is scrolled to. It lives as long as the screen, so coming back to it keeps the place. */
+    val list = LazyListState()
     var loading by mutableStateOf(false)
         private set
     var error by mutableStateOf<String?>(null)

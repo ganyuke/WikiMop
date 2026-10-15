@@ -103,6 +103,9 @@ class FakeWiki(
     }
     val account = Account("a1", AccountKind.FANDOM, "Mopkeeper")
 
+    /** The reason on the block in recent changes. */
+    var blockReason = "Spam"
+
     /** Served in place of the wiki's own icon when set. */
     var iconBytes: ByteArray? = null
 
@@ -237,7 +240,7 @@ class FakeWiki(
         rc("edit", "Elaina", latestUser, 4, "Added her relationships", 310, 412, id = latestRevId, old = 5101),
         rc("edit", "Fran", "203.0.113.42", 11, "", 5230, 1876, anon = true, patrolled = false, tags = listOf("mobile edit", "blanking")),
         rc("new", "Saya", "BroomKeeper", 26, "Created page with her first appearance", 0, 2210, patrolled = false),
-        rc("log", "User:SpamBlaster99", "BroomKeeper", 40, "Spam", 0, 0).put("logtype", "block").put("logaction", "block")
+        rc("log", "User:SpamBlaster99", "BroomKeeper", 40, blockReason, 0, 0).put("logtype", "block").put("logaction", "block")
             .put("logparams", JSONObject().put("duration", "infinity").put("flags", JSONArray(listOf("nocreate")))),
         rc("edit", "Template:Character", "StardustReader", 95, "fix title param", 904, 921, minor = true),
         rc("log", "Ashen Witch (old)", "Mopkeeper", 60 * 26, "Housekeeping", 0, 0).put("logtype", "delete").put("logaction", "delete"),

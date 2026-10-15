@@ -227,9 +227,10 @@ fun ChangeRow(
                         showTitle -> change.title
                         else -> change.user
                     }
+                    // A log entry opens its page or user, not the entry, so all of it is shown here.
                     Text(
                         headline, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall,
-                        maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        maxLines = if (change.isLog) Int.MAX_VALUE else 2, overflow = TextOverflow.Ellipsis,
                     )
                     if (!change.isLog) {
                         Spacer(Modifier.width(8.dp))
@@ -253,7 +254,7 @@ fun ChangeRow(
                 if (note.isNotEmpty()) {
                     Text(
                         note, Modifier.padding(top = 4.dp), style = MaterialTheme.typography.bodySmall, fontStyle = FontStyle.Italic,
-                        color = scheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        color = scheme.onSurfaceVariant, maxLines = if (change.isLog) Int.MAX_VALUE else 2, overflow = TextOverflow.Ellipsis,
                     )
                 }
                 if (change.tags.isNotEmpty()) {
@@ -278,7 +279,7 @@ fun <T> FeedList(
 ) {
     LaunchedEffect(feed) { feed.start() }
     PullToRefreshBox(isRefreshing = feed.loading && feed.loaded, onRefresh = feed::refresh, modifier = modifier.fillMaxSize()) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = contentPadding, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        LazyColumn(Modifier.fillMaxSize(), feed.list, contentPadding, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             content()
             when {
                 feed.error != null -> item(key = "error") {
