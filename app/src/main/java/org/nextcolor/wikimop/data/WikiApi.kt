@@ -330,6 +330,33 @@ class WikiApi(
         )
     }
 
+    /** An uploaded file with the versions it has had. [thumbWidth] is how wide the pictures of it are drawn, in pixels. */
+    suspend fun file(title: String, thumbWidth: Int = 1080): FileInfo {
+        val json = query(
+            "prop" to "imageinfo",
+            "titles" to title,
+            "iiprop" to "timestamp|user|comment|url|size|mime",
+            "iiurlwidth" to thumbWidth.toString(),
+            "iilimit" to "50",
+        )
+        val page = json.getJSONObject("query").optJSONArray("pages").objects().firstOrNull()
+        val versions = page?.optJSONArray("imageinfo").objects().map {
+            FileVersion(
+                timestamp = it.optString("timestamp").instant(),
+                user = it.optString("user"),
+                comment = it.optString("comment"),
+                url = it.optString("url"),
+                // Only pictures are drawn in the app. Other files, such as videos and PDFs, are opened from their address.
+                thumbUrl = it.optString("thumburl").ifEmpty { null }?.takeIf { _ -> it.optString("mime").startsWith("image/") },
+                width = it.optInt("width"),
+                height = it.optInt("height"),
+                size = it.optLong("size"),
+                mime = it.optString("mime"),
+            )
+        }
+        return FileInfo(page?.optString("title")?.ifEmpty { null } ?: title, versions)
+    }
+
     /** Renders text that has not been published. Nothing is saved by this. */
     suspend fun preview(title: String, text: String): Preview {
         val parse = transport.read(
@@ -431,24 +458,26 @@ class WikiApi(
     suspend fun dailyEdits(user: String, now: Instant = Instant.now(), days: Int = 30): DailyEdits {
         val today = now.atOffset(ZoneOffset.UTC).toLocalDate()
         val oldest = today.minusDays(days - 1L).atStartOfDay().toInstant(ZoneOffset.UTC)
-        val stamps = ArrayList<Instant>()
+        val edits = HashMap<Long, Instant>()
         var next: String? = null
         var complete = true
         for (round in 1..6) {
             val json = query(
                 "list" to "usercontribs",
                 "ucuser" to user,
-                "ucprop" to "timestamp",
+                "ucprop" to "ids|timestamp",
                 "ucend" to oldest.toString(),
                 "uclimit" to "500",
                 "uccontinue" to next,
             )
-            json.getJSONObject("query").optJSONArray("usercontribs").objects().mapNotNullTo(stamps) { it.optString("timestamp").instant() }
+            for (edit in json.getJSONObject("query").optJSONArray("usercontribs").objects()) {
+                edit.optString("timestamp").instant()?.let { edits[edit.optLong("revid")] = it }
+            }
             next = json.optJSONObject("continue")?.optString("uccontinue")
             if (next == null) break
             if (round == 6) complete = false
         }
-        return countDays(stamps, now, days, complete)
+        return countDays(edits, now, days, complete)
     }
 
     // Changes
@@ -505,6 +534,9 @@ class WikiApi(
             return result.optString("lgusername")
         }
 
+        fun countDays(edits: Map<Long, Instant>, now: Instant, days: Int, complete: Boolean): DailyEdits =
+            countDays(edits.values.toList(), now, days, complete).copy(edits = edits)
+
         fun countDays(stamps: List<Instant>, now: Instant, days: Int, complete: Boolean): DailyEdits {
             val today = now.atOffset(ZoneOffset.UTC).toLocalDate()
             val counts = IntArray(days)
@@ -523,6 +555,7 @@ class WikiApi(
                 streakOpen = streak > 0 && (index < 0 || !complete),
                 days = counts.toList(),
                 secondsLeft = Duration.between(now, midnight).seconds,
+                complete = complete,
             )
         }
 

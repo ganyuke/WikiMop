@@ -50,6 +50,8 @@ sealed interface Dest {
     data class Diff(val title: String, val from: Long, val to: Long, val change: Change? = null) : Dest
     /** [tab] is the tab it opens on: 0 page, 1 history, 2 details. */
     data class Page(val title: String, val tab: Int = 0) : Dest
+    /** An uploaded file. [change] is the upload it was opened from, which picks the version shown and can be patrolled. */
+    data class File(val title: String, val change: Change? = null) : Dest
     data class Editor(val draftId: String) : Dest
     data class Review(val draftId: String) : Dest
     data class User(val name: String) : Dest
@@ -69,6 +71,9 @@ class Entry(val dest: Dest) {
     val id: String = UUID.randomUUID().toString()
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val held = HashMap<String, Any>()
+    /** Set once the screen is gone back from, so the move away from it is shown as going back. */
+    var closed = false
+        internal set
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> hold(key: String, make: () -> T): T = held.getOrPut(key, make) as T
@@ -141,6 +146,8 @@ class Session(val wiki: Wiki, val account: Account?, val api: WikiApi) {
     var signedOut by mutableStateOf(false)
     var error by mutableStateOf<String?>(null)
     var daily by mutableStateOf<DailyEdits?>(null)
+    /** The account's own edits seen in lists of changes, by revision. They count for the streak even before its next check. */
+    var ownEdits: Map<Long, Instant> = emptyMap()
     var role by mutableStateOf<AccountRole?>(null)
 
     /** False for every right without a signed-in account, so nothing that changes the wiki is offered. */
@@ -253,11 +260,25 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
 
     suspend fun refreshDaily(s: Session) {
         val name = s.account?.userName ?: return
-        try { s.daily = s.api.dailyEdits(name) } catch (e: Exception) { /* The card stays as it was. */ }
+        try {
+            // Edits seen in a list while this was loading are kept.
+            s.daily = s.api.dailyEdits(name).with(s.ownEdits)
+        } catch (e: Exception) {
+            // The card stays as it was.
+        }
         if ((s.daily?.today ?: 0) > 0) {
             if (saved.marks[s.wiki.id]?.streakTold == true) update { saved -> saved.mark(s.wiki.id) { it.copy(streakTold = false) } }
             dismiss(Notice.STREAK, s.wiki.id)
         }
+    }
+
+    /** Counts the account's own edits in a list of changes that was just loaded, so the streak includes them right away. */
+    fun counted(s: Session, changes: List<Change>) {
+        val name = s.me?.name?.takeIf { s.account != null && !s.signedOut } ?: return
+        val mine = changes.filter { !it.isLog && it.revId > 0 && it.user.equals(name, ignoreCase = true) && it.revId !in s.ownEdits }
+        if (mine.isEmpty()) return
+        s.ownEdits += mine.associate { it.revId to it.timestamp }
+        s.daily = s.daily?.with(s.ownEdits)
     }
 
     fun addWiki(base: String, name: String, account: Account?, icon: String? = null) {
@@ -375,7 +396,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
 
     fun back(): Boolean {
         if (stack.size <= 1) return false
-        stack.removeAt(stack.lastIndex).scope.cancel()
+        stack.removeAt(stack.lastIndex).apply { closed = true }.scope.cancel()
         return true
     }
 
@@ -399,6 +420,14 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
         if (from === beside && dest is Dest.Diff) openBeside(dest) else go(dest)
     }
 
+    /** Whether [title] is in the File namespace, by the wiki's own name for it or by the names every wiki accepts. */
+    fun isFile(title: String): Boolean {
+        val prefix = title.substringBefore(':', "").trim().replace('_', ' ')
+        if (prefix.isEmpty()) return false
+        val name = session?.site?.namespaces?.firstOrNull { it.id == 6 }?.name
+        return listOfNotNull("File", "Image", name).any { it.equals(prefix, ignoreCase = true) }
+    }
+
     /** When the window gets too narrow for two panes, the change beside the list becomes a screen of its own, as it is. */
     fun narrow() {
         val shown = beside ?: return
@@ -412,7 +441,8 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
             val list = listOf(title) + s.recentPages[wikiId].orEmpty().filter { it != title }
             s.copy(recentPages = s.recentPages + (wikiId to list.take(15)))
         }
-        go(Dest.Page(title, tab))
+        // A file's page is only its description. The file itself is shown on a screen of its own, which links to the page.
+        go(if (tab == 0 && isFile(title)) Dest.File(title) else Dest.Page(title, tab))
     }
 
     fun say(message: String, action: String? = null, onAction: () -> Unit = {}) {

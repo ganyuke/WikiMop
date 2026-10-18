@@ -20,12 +20,17 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToKey
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
+import androidx.compose.ui.geometry.Offset
+import androidx.activity.BackEventCompat
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.github.takahirom.roborazzi.captureScreenRoboImage
@@ -322,6 +327,150 @@ open class ScreenTest {
         rule.onNodeWithText("View history").performClick()
         waitFor("Created page")
         assertEquals(Dest.Page("Elaina", tab = 1), m.top.dest)
+    }
+
+    @Test fun pullingPastTheEdgesOfADiff() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        until("the page check") { rule.onAllNodesWithText("Current").fetchSemanticsNodes().isNotEmpty() }
+        val first = m.top.dest
+
+        // A short pull puts the circle back and stays.
+        rule.onRoot().performTouchInput { swipeRight(centerX - 60f, centerX + 60f) }
+        rule.waitForIdle()
+        assertEquals(first, m.top.dest)
+        // The newest edit has nothing newer to pull for.
+        rule.onRoot().performTouchInput { swipeLeft(width * 0.9f, width * 0.1f) }
+        rule.waitForIdle()
+        assertEquals(first, m.top.dest)
+
+        // Held far enough, the circle is full and says what letting go does.
+        rule.onRoot().performTouchInput { down(Offset(width * 0.1f, centerY)); repeat(10) { moveBy(Offset(width * 0.08f, 0f)) } }
+        waitFor("Older edit")
+        shot("diff-pull-older")
+        rule.onRoot().performTouchInput { up() }
+        until("the older edit") { m.top.dest == Dest.Diff("Elaina", 0, 5101) }
+
+        waitFor("BroomKeeper")
+        until("the newer link") { rule.onAllNodesWithText("Newer edit").fetchSemanticsNodes().isNotEmpty() }
+        rule.onRoot().performTouchInput { swipeLeft(width * 0.9f, width * 0.1f) }
+        until("the newer edit") { m.top.dest == Dest.Diff("Elaina", 5101, 5120) }
+
+        // Pulling down from the top opens the page's history.
+        waitFor("world on her broom")
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performTouchInput { swipeDown(top + 10f, bottom - 10f) }
+        until("the history") { m.top.dest == Dest.Page("Elaina", tab = 1) }
+        assertTrue(fake.writes().isEmpty())
+    }
+
+    @Test fun backGestureShowsTheScreenUnderneath() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        until("the list to go") { rule.onAllNodesWithText("Watchlist").fetchSemanticsNodes().isEmpty() }
+        val back = rule.activity.onBackPressedDispatcher
+        fun drag(progress: Float) = BackEventCompat(progress * 800f, 900f, progress, BackEventCompat.EDGE_LEFT)
+
+        // While the gesture is made, the list is drawn under the diff.
+        rule.runOnUiThread { back.dispatchOnBackStarted(drag(0f)); back.dispatchOnBackProgressed(drag(0.4f)) }
+        waitFor("Watchlist")
+        shot("back-gesture")
+        assertTrue(m.top.dest is Dest.Diff)
+
+        // Pulling back in stays on the diff.
+        rule.runOnUiThread { back.dispatchOnBackCancelled() }
+        until("the list to go again") { rule.onAllNodesWithText("Watchlist").fetchSemanticsNodes().isEmpty() }
+        assertTrue(m.top.dest is Dest.Diff)
+
+        // Letting go goes back.
+        rule.runOnUiThread { back.dispatchOnBackStarted(drag(0f)); back.dispatchOnBackProgressed(drag(0.6f)); back.onBackPressed() }
+        until("the list") { m.top.dest == Dest.Home }
+        until("the diff to go") { rule.onAllNodesWithText("world on her broom", substring = true).fetchSemanticsNodes().isEmpty() }
+    }
+
+    @Test fun ownEditsInTheListCountForTheStreak() {
+        fake.editedToday = false
+        fake.ownEdit = true
+        show(model())
+        waitFor("Fixed a link")
+        waitFor("Edited today")
+    }
+
+    @Test fun pullingTheListDownChecksTheStreakAgain() {
+        fake.editedToday = false
+        show(model())
+        waitFor("Not edited today")
+        // An edit made somewhere else, such as on the website.
+        fake.editedToday = true
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performTouchInput { swipeDown(top + 10f, bottom - 10f) }
+        waitFor("Edited today")
+    }
+
+    private fun picture(): ByteArray {
+        val bitmap = android.graphics.Bitmap.createBitmap(160, 120, android.graphics.Bitmap.Config.ARGB_8888)
+        android.graphics.Canvas(bitmap).apply {
+            drawColor(0xFF5E6AD2.toInt())
+            drawCircle(80f, 60f, 36f, android.graphics.Paint().apply { color = 0xFFFFD54F.toInt() })
+        }
+        return java.io.ByteArrayOutputStream().also { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }.toByteArray()
+    }
+
+    @Test fun uploadsOpenTheFileAndCanBePatrolled() {
+        fake.upload = true
+        fake.pictureBytes = picture()
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        rule.onNodeWithText(FakeWiki.FILE, substring = true).performClick()
+        // On a tablet it opens beside the list.
+        until("the file") { (m.beside ?: m.top).dest is Dest.File }
+        waitFor("File history")
+        waitFor("1200 × 900")
+        until("the picture") { rule.onAllNodesWithContentDescription("image/png").fetchSemanticsNodes().isNotEmpty() }
+        assertTrue(rule.onAllNodesWithText("Unpatrolled").fetchSemanticsNodes().isNotEmpty())
+        shot("file")
+
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Patrol")
+        shot("file-actions")
+        rule.onNodeWithText("Patrol").performClick()
+        until("the confirm sheet") { m.request != null }
+        // An upload has no revision, so it is patrolled by its entry in recent changes.
+        assertEquals(mapOf("action" to "patrol", "rcid" to "105300"), (m.request!!.write as PendingWrite.Patrol).params())
+        waitFor("Slide to mark as patrolled")
+        sheetShot("confirm-patrol-upload")
+        m.cancelRequest()
+        assertTrue(fake.writes().isEmpty())
+
+        // An older version can be looked at too.
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onLast().performScrollToIndex(4)
+        rule.onNodeWithText("Her broom from the cover").performClick()
+        waitFor("800 × 600")
+
+        // The description page is one step further.
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Open page")
+        rule.onNodeWithText("Open page").performClick()
+        until("the page") { m.top.dest == Dest.Page(FakeWiki.FILE) }
+    }
+
+    @Test fun fileLinksOpenTheFile() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        m.openPage(FakeWiki.FILE)
+        assertEquals(Dest.File(FakeWiki.FILE), m.top.dest)
+        m.openPage("Image:Elaina on her broom.png")
+        assertTrue(m.top.dest is Dest.File)
+        m.openPage(FakeWiki.FILE, tab = 1)
+        assertEquals(Dest.Page(FakeWiki.FILE, tab = 1), m.top.dest)
+        m.openPage("Fran")
+        assertEquals(Dest.Page("Fran"), m.top.dest)
     }
 
     @Test fun pageOpensWithTextFromTheWiki() {

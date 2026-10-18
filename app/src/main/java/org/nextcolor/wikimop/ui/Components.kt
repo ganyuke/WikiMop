@@ -275,10 +275,12 @@ fun <T> FeedList(
     empty: String,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
+    /** Runs as well as loading the list again when it is pulled down. */
+    onRefresh: () -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
     LaunchedEffect(feed) { feed.start() }
-    PullToRefreshBox(isRefreshing = feed.loading && feed.loaded, onRefresh = feed::refresh, modifier = modifier.fillMaxSize()) {
+    PullToRefreshBox(isRefreshing = feed.loading && feed.loaded, onRefresh = { feed.refresh(); onRefresh() }, modifier = modifier.fillMaxSize()) {
         LazyColumn(Modifier.fillMaxSize(), feed.list, contentPadding, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             content()
             when {

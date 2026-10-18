@@ -56,6 +56,12 @@ class FakeWiki(
     var dropWrites = false
     var pageExists = true
     var editedToday = true
+    /** Puts an unpatrolled upload of [FILE] in recent changes. */
+    var upload = false
+    /** Puts an edit by the signed-in account, made a minute ago, in recent changes but not yet in its contributions. */
+    var ownEdit = false
+    /** Served for the uploaded file and its pictures. */
+    var pictureBytes: ByteArray? = null
 
     /** The address the app uses for a saved wiki. The test's HTTP client sends it to [server]. */
     val host: String? = seed?.getString("host")
@@ -115,6 +121,9 @@ class FakeWiki(
     private fun ago(minutes: Long) = now.minus(minutes, ChronoUnit.MINUTES).toString()
 
     override fun dispatch(request: RecordedRequest): MockResponse {
+        if (request.path?.startsWith("/images/") == true) {
+            return MockResponse().setHeader("Content-Type", "image/png").setBody(okio.Buffer().write(pictureBytes ?: ByteArray(0)))
+        }
         if (request.path == "/favicon.ico") {
             val icon = iconBytes ?: javaClass.getResourceAsStream("/wikis/$key.ico")!!.use { it.readBytes() }
             return MockResponse().setHeader("Content-Type", "image/x-icon").setBody(okio.Buffer().write(icon))
@@ -193,7 +202,7 @@ class FakeWiki(
                     .filter { it.getString("user") != p["${prefix}excludeuser"] }))
             }
             "logevents" -> q.put(list, JSONArray(logs().filter { p["letype"] == null || it.getString("type") == p["letype"] }))
-            "usercontribs" -> q.put(list, JSONArray(if (p["ucprop"] == "timestamp") streak() else contribs()))
+            "usercontribs" -> q.put(list, JSONArray(if (p["ucprop"] == "ids|timestamp") streak() else contribs()))
             "blocks" -> q.put(list, JSONArray(if (p["bkusers"] == "SpamBlaster99" || p["bkusers"] == null) listOf(
                 JSONObject().put("id", 31).put("user", "SpamBlaster99").put("by", "BroomKeeper").put("timestamp", ago(600))
                     .put("expiry", "infinity").put("reason", "Spam").put("nocreate", true).put("autoblock", true),
@@ -206,7 +215,15 @@ class FakeWiki(
             }))
             "prefixsearch" -> q.put(list, JSONArray(if (seed != null) kept("prefixsearch") else listOf("Fran", "Fran (anime)", "Fran (manga)").map { JSONObject().put("title", it) }))
         }
-        if (p["prop"] == "imageinfo") {
+        if (p["prop"] == "imageinfo" && p["titles"] == FILE) {
+            fun version(name: String, user: String, minutes: Long, comment: String, width: Int) = JSONObject().put("timestamp", ago(minutes)).put("user", user)
+                .put("comment", comment).put("url", server.url("/images/$name").toString()).put("thumburl", server.url("/images/thumb-$name").toString())
+                .put("width", width).put("height", width * 3 / 4).put("size", 48213).put("mime", "image/png")
+            q.put("pages", JSONArray(listOf(JSONObject().put("ns", 6).put("title", FILE).put("imageinfo", JSONArray(listOf(
+                version("new.png", "203.0.113.42", 15, "Better picture", 1200),
+                version("old.png", "BroomKeeper", 60 * 40, "Her broom from the cover", 800),
+            ))))))
+        } else if (p["prop"] == "imageinfo") {
             q.put("pages", JSONArray(listOf(JSONObject().put("title", p["titles"])
                 .put("imageinfo", JSONArray(listOf(JSONObject().put("url", if (seed == null) server.url("/favicon.ico").toString() else "https://$host/favicon.ico")))))))
         } else if (p["prop"] != null) {
@@ -236,7 +253,9 @@ class FakeWiki(
     private fun rev(id: Long, parent: Long, user: String, minutes: Long, comment: String, size: Int) =
         JSONObject().put("revid", id).put("parentid", parent).put("user", user).put("timestamp", ago(minutes)).put("comment", comment).put("size", size).put("tags", JSONArray())
 
-    private fun changes() = if (seed != null) kept("changes", "timestamp").onEach { it.put("patrolled", true).put("unpatrolled", false) } else listOf(
+    private fun changes() = if (seed != null) kept("changes", "timestamp").onEach { it.put("patrolled", true).put("unpatrolled", false) } else listOfNotNull(
+        if (ownEdit) rc("edit", "Robetta", "Mopkeeper", 1, "Fixed a link", 3340, 3342, id = 5200) else null,
+        if (upload) rc("log", FILE, "203.0.113.42", 15, "Better picture", 0, 0, patrolled = false, id = 5300).put("logtype", "upload").put("logaction", "overwrite") else null,
         rc("edit", "Elaina", latestUser, 4, "Added her relationships", 310, 412, id = latestRevId, old = 5101),
         rc("edit", "Fran", "203.0.113.42", 11, "", 5230, 1876, anon = true, patrolled = false, tags = listOf("mobile edit", "blanking")),
         rc("new", "Saya", "BroomKeeper", 26, "Created page with her first appearance", 0, 2210, patrolled = false),
@@ -274,9 +293,9 @@ class FakeWiki(
 
     /** Edits on each of the last twelve days, and on today when [editedToday] is set. */
     private fun streak() = buildList {
-        if (editedToday) repeat(3) { add(JSONObject().put("timestamp", now.minus(it * 7L, ChronoUnit.SECONDS).toString())) }
-        for (day in 1L..11L) add(JSONObject().put("timestamp", now.minus(day, ChronoUnit.DAYS).toString()))
-        add(JSONObject().put("timestamp", now.minus(14, ChronoUnit.DAYS).toString()))
+        if (editedToday) repeat(3) { add(JSONObject().put("revid", 7000 + it).put("timestamp", now.minus(it * 7L, ChronoUnit.SECONDS).toString())) }
+        for (day in 1L..11L) add(JSONObject().put("revid", 6000 + day).put("timestamp", now.minus(day, ChronoUnit.DAYS).toString()))
+        add(JSONObject().put("revid", 5990).put("timestamp", now.minus(14, ChronoUnit.DAYS).toString()))
     }
 
     /** Elaina's revisions, oldest first: the page was created, then edited twice. */
@@ -308,6 +327,9 @@ class FakeWiki(
     }
 
     companion object {
+        /** The file that [upload] puts in recent changes. */
+        const val FILE = "File:Elaina on her broom.png"
+
         /** A fake wiki that answers with what was saved from a real one. */
         fun saved(key: String) = FakeWiki(seed = JSONObject(FakeWiki::class.java.getResourceAsStream("/wikis/$key.json")!!.use { it.readBytes().decodeToString() }), key = key)
 

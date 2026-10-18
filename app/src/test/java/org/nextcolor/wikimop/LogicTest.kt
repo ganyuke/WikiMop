@@ -100,6 +100,33 @@ class LogicTest {
         assertTrue(whole.streakOpen)
     }
 
+    @Test fun daysAreCountedAgainAsTimePasses() {
+        val loaded = WikiApi.countDays(
+            mapOf(1L to Instant.parse("2026-10-13T09:00:00Z"), 2L to Instant.parse("2026-10-12T09:00:00Z")),
+            Instant.parse("2026-10-13T22:30:00Z"), 30, true,
+        )
+        assertEquals(1, loaded.today)
+        assertEquals(2, loaded.streak)
+        assertEquals(5400, loaded.secondsLeft)
+
+        // Ten minutes later, there is less time left.
+        assertEquals(4800, loaded.at(Instant.parse("2026-10-13T22:40:00Z")).secondsLeft)
+
+        // After midnight UTC it is a new day without an edit yet. The streak is still alive until that day ends.
+        val nextDay = loaded.at(Instant.parse("2026-10-14T00:05:00Z"))
+        assertEquals(0, nextDay.today)
+        assertEquals(2, nextDay.streak)
+        assertEquals(86100, nextDay.secondsLeft)
+
+        // A day with no edit at all ends it.
+        assertEquals(0, loaded.at(Instant.parse("2026-10-15T00:05:00Z")).streak)
+
+        // An edit seen in a list of changes counts, and one already counted is not counted twice.
+        val edited = nextDay.with(mapOf(3L to Instant.parse("2026-10-14T00:03:00Z"), 1L to Instant.parse("2026-10-13T09:00:00Z")), Instant.parse("2026-10-14T00:05:00Z"))
+        assertEquals(1, edited.today)
+        assertEquals(3, edited.streak)
+    }
+
     @Test fun wikiAddressesAreRead() {
         assertEquals("https://wandering-witch.fandom.com", wikiBase("wandering-witch.fandom.com"))
         assertEquals("https://wandering-witch.fandom.com", wikiBase("https://wandering-witch.fandom.com/wiki/Elaina"))

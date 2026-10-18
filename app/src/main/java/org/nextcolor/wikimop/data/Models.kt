@@ -206,6 +206,25 @@ data class PageFacts(
     val redirect: Boolean,
 )
 
+/** One version of an uploaded file. [thumbUrl] is a picture of it sized for a phone, when the wiki can draw one. */
+data class FileVersion(
+    val timestamp: Instant?,
+    val user: String,
+    val comment: String,
+    val url: String,
+    val thumbUrl: String?,
+    val width: Int,
+    val height: Int,
+    val size: Long,
+    val mime: String,
+)
+
+/** An uploaded file and its versions, newest first. A file that was deleted or never uploaded has none. */
+data class FileInfo(val title: String, val versions: List<FileVersion>) {
+    /** The version uploaded at [time], which is the one an entry in the upload log is about. */
+    fun at(time: Instant?): FileVersion? = versions.firstOrNull { it.timestamp == time } ?: versions.firstOrNull()
+}
+
 /** Edits made by the signed-in account on each of the last days, in UTC as Fandom counts them. */
 data class DailyEdits(
     val today: Int,
@@ -216,7 +235,17 @@ data class DailyEdits(
     /** Newest day last, one entry per day. */
     val days: List<Int>,
     val secondsLeft: Long,
-)
+    /** When each counted edit was made, by revision, so the days can be counted again later or with edits seen since. */
+    val edits: Map<Long, Instant> = emptyMap(),
+    /** False when the account made more edits than were looked at. */
+    val complete: Boolean = true,
+) {
+    /** The same edits counted at [now], so the card stays right as time passes and a new UTC day starts. */
+    fun at(now: Instant): DailyEdits = WikiApi.countDays(edits, now, days.size, complete)
+
+    /** Counts [more] edits as well, such as the account's own ones in a list of changes that was just loaded. */
+    fun with(more: Map<Long, Instant>, now: Instant = Instant.now()): DailyEdits = WikiApi.countDays(edits + more, now, days.size, complete)
+}
 
 /** What the checks for notifications remember about one wiki from one check to the next. */
 data class Marks(

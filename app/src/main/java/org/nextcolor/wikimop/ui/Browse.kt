@@ -190,6 +190,17 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
     var menu by remember { mutableStateOf(false) }
     // Beside the list of changes, the diff closes instead of going back, and the list's screen shows the messages.
     val beside = entry === model.beside
+    // Older and newer edits of the same page, as on the wiki's own diff page. Back returns the same way.
+    val older: (() -> Unit)? = diff?.from?.let { before -> { model.goFrom(entry, Dest.Diff(dest.title, 0, before.revId)) } }
+    val newer: (() -> Unit)? = if (diff == null || state.facts == null || latest) null else ({
+        entry.scope.launch {
+            try {
+                model.goFrom(entry, Dest.Diff(dest.title, diff.to.revId, session.api.nextRevision(diff.to.revId)))
+            } catch (e: Exception) {
+                model.say(e.say())
+            }
+        }
+    })
 
     Scaffold(
         topBar = { BackBar(dest.title, { if (beside) model.closeBeside() else model.back() }, subtitle = diff?.let { "Revision ${it.to.revId}" }, close = beside) },
@@ -216,49 +227,31 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
                     })
                 }
             }
-            BackHandler(menu) { menu = false }
-            FloatingActionButtonMenu(
-                expanded = menu,
-                button = {
-                    ToggleFloatingActionButton(menu, { menu = it }, Modifier.semantics { contentDescription = "Actions" }) {
-                        Icon(
-                            if (checkedProgress > 0.5f) Icons.Rounded.Close else Icons.Rounded.CleaningServices, null,
-                            Modifier.animateIcon({ checkedProgress }),
-                        )
-                    }
-                },
-            ) {
-                for ((label, icon, action) in actions) {
-                    FloatingActionButtonMenuItem(onClick = { menu = false; action() }, text = { Text(label) }, icon = { Icon(icon, null) })
-                }
-            }
+            ActionsMenu(actions, menu) { menu = it }
         },
     ) { padding ->
         when {
             state.error != null -> Notice(state.error.orEmpty(), Modifier.padding(padding), "Try again", ::load)
             diff == null -> Busy(Modifier.padding(padding))
-            else -> LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(bottom = 112.dp)) {
+            // Pulling sideways goes to the older or newer edit, and pulling down from the top opens the page's history.
+            else -> PullToGo(
+                start = older?.let { PullAction("Older edit", Icons.AutoMirrored.Rounded.ArrowBack, it) },
+                end = newer?.let { PullAction("Newer edit", Icons.AutoMirrored.Rounded.ArrowForward, it) },
+                top = PullAction("View history", Icons.Rounded.History) { model.openPage(dest.title, tab = 1) },
+                modifier = Modifier.fillMaxSize().padding(padding),
+            ) { LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 112.dp)) {
                 item {
                     Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        // Older and newer edits of the same page, as on the wiki's own diff page. Back returns the same way.
                         Row(Modifier.fillMaxWidth()) {
-                            diff.from?.let { before ->
-                                TextButton(onClick = { model.goFrom(entry, Dest.Diff(dest.title, 0, before.revId)) }) {
+                            if (older != null) {
+                                TextButton(onClick = older) {
                                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, Modifier.padding(end = 8.dp))
                                     Text("Older edit")
                                 }
                             }
                             Spacer(Modifier.weight(1f))
-                            if (state.facts != null && !latest) {
-                                TextButton(onClick = {
-                                    entry.scope.launch {
-                                        try {
-                                            model.goFrom(entry, Dest.Diff(dest.title, diff.to.revId, session.api.nextRevision(diff.to.revId)))
-                                        } catch (e: Exception) {
-                                            model.say(e.say())
-                                        }
-                                    }
-                                }) {
+                            if (newer != null) {
+                                TextButton(onClick = newer) {
                                     Text("Newer edit")
                                     Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, Modifier.padding(start = 8.dp))
                                 }
@@ -277,7 +270,28 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
                 }
                 if (diff.lines.isEmpty()) item { Notice("No difference", Modifier.height(160.dp)) }
                 items(diff.lines) { DiffLineRow(it) }
+            } }
+        }
+    }
+}
+
+/** The button that opens a change's actions, listed top to bottom with the ones used most last, closest to the thumb. */
+@Composable
+fun ActionsMenu(actions: List<Triple<String, ImageVector, () -> Unit>>, open: Boolean, onOpen: (Boolean) -> Unit) {
+    BackHandler(open) { onOpen(false) }
+    FloatingActionButtonMenu(
+        expanded = open,
+        button = {
+            ToggleFloatingActionButton(open, onOpen, Modifier.semantics { contentDescription = "Actions" }) {
+                Icon(
+                    if (checkedProgress > 0.5f) Icons.Rounded.Close else Icons.Rounded.CleaningServices, null,
+                    Modifier.animateIcon({ checkedProgress }),
+                )
             }
+        },
+    ) {
+        for ((label, icon, action) in actions) {
+            FloatingActionButtonMenuItem(onClick = { onOpen(false); action() }, text = { Text(label) }, icon = { Icon(icon, null) })
         }
     }
 }

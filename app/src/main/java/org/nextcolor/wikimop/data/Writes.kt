@@ -152,15 +152,16 @@ sealed class PendingWrite {
         }
     }
 
-    data class Patrol(override val wiki: Wiki, val title: String, val revId: Long, val user: String) : PendingWrite() {
+    /** An edit is patrolled by its revision. A log entry, such as an upload, has none, so it is patrolled by its entry in recent changes, [rcId]. */
+    data class Patrol(override val wiki: Wiki, val title: String, val revId: Long, val user: String, val rcId: Long = 0) : PendingWrite() {
         override val action get() = "Mark as patrolled"
         override val slide get() = "Slide to mark as patrolled"
         override val target get() = title
         override val right get() = "patrol"
         override val tokenType get() = "patrol"
         override val done get() = "Marked as patrolled"
-        override val facts get() = listOf("Revision" to revId.toString(), "By" to user)
-        override fun params() = mapOf("action" to "patrol", "revid" to revId.toString())
+        override val facts get() = listOf(if (revId > 0) "Revision" to revId.toString() else "Change" to rcId.toString(), "By" to user)
+        override fun params() = if (revId > 0) mapOf("action" to "patrol", "revid" to revId.toString()) else mapOf("action" to "patrol", "rcid" to rcId.toString())
     }
 
     data class Delete(

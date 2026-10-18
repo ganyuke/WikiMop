@@ -220,7 +220,7 @@ fun FormScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Form)
 /** Loads the screen underneath again after a change, so it does not show the state from before. */
 private fun refreshBehind(model: AppModel) {
     when (val dest = model.top.dest) {
-        is Dest.Page, is Dest.User, is Dest.Diff -> model.replaceTop(dest)
+        is Dest.Page, is Dest.User, is Dest.Diff, is Dest.File -> model.replaceTop(dest)
         else -> {}
     }
 }

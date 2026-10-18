@@ -84,6 +84,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -107,6 +108,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.nextcolor.wikimop.AppModel
 import org.nextcolor.wikimop.Dest
@@ -126,17 +128,21 @@ import org.nextcolor.wikimop.data.LocalDiff
 import org.nextcolor.wikimop.data.SearchHit
 import org.nextcolor.wikimop.say
 import java.io.IOException
+import java.time.Instant
 
 fun openChange(model: AppModel, change: Change) {
     when {
         change.isLog && change.logType in setOf("block", "rights", "newusers") -> model.go(Dest.User(change.title.substringAfter(':')))
+        // An upload opens the file that was uploaded, where it can be seen and patrolled. Its page is one tap further.
+        change.isLog && change.logType == "upload" -> showChange(model, Dest.File(change.title, change))
         change.isLog -> model.openPage(change.title)
-        else -> {
-            val diff = Dest.Diff(change.title, change.oldRevId, change.revId, change)
-            // On a wide screen, a change opened from Home is shown beside the list.
-            if (model.wide && model.stack.size == 1) model.openBeside(diff) else model.go(diff)
-        }
+        else -> showChange(model, Dest.Diff(change.title, change.oldRevId, change.revId, change))
     }
+}
+
+/** On a wide screen, a change opened from Home is shown beside the list. */
+private fun showChange(model: AppModel, dest: Dest) {
+    if (model.wide && model.stack.size == 1) model.openBeside(dest) else model.go(dest)
 }
 
 @Composable
@@ -281,8 +287,11 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
             Box(Modifier.weight(1f)) {
                 val shown = model.beside
                 val dest = shown?.dest
-                if (shown != null && dest is Dest.Diff) key(shown.id) { DiffScreen(model, shown, session, dest) }
-                else Notice("No change selected")
+                when {
+                    shown != null && dest is Dest.Diff -> key(shown.id) { DiffScreen(model, shown, session, dest) }
+                    shown != null && dest is Dest.File -> key(shown.id) { FileScreen(model, shown, session, dest) }
+                    else -> Notice("No change selected")
+                }
             }
         }
     }
@@ -300,7 +309,10 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
 private val LIST_PANE_WIDTH = 420.dp
 
 private fun recentFeed(model: AppModel, entry: Entry, session: Session) = Feed(entry.scope) { next ->
-    session.api.recentChanges(model.saved.filter, session.me, next).also { if (next == null) model.seen(session.wiki, false, it.items.firstOrNull()?.timestamp) }
+    session.api.recentChanges(model.saved.filter, session.me, next).also {
+        if (next == null) model.seen(session.wiki, false, it.items.firstOrNull()?.timestamp)
+        model.counted(session, it.items)
+    }
 }
 
 @Composable
@@ -309,13 +321,17 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session) {
     val recent = entry.hold("rc") { recentFeed(model, entry, session) }
     val watched = entry.hold("wl") {
         Feed(entry.scope) { next ->
-            session.api.watchlist(next).also { if (next == null) model.seen(session.wiki, true, it.items.firstOrNull()?.timestamp) }
+            session.api.watchlist(next).also {
+                if (next == null) model.seen(session.wiki, true, it.items.firstOrNull()?.timestamp)
+                model.counted(session, it.items)
+            }
         }
     }
     val signedIn = session.account != null && !session.signedOut
     val feed = if (watch && signedIn) watched else recent
 
-    FeedList(feed, if (watch) "No changes" else "No changes") {
+    // Pulling the list down also checks the streak again, so edits made since it was loaded count.
+    FeedList(feed, if (watch) "No changes" else "No changes", onRefresh = { if (signedIn) model.scope.launch { model.refreshDaily(session) } }) {
         if (signedIn) {
             item(key = "daily") { session.daily?.let { DailyCard(it, Modifier.padding(top = 4.dp, bottom = 12.dp)) } }
             item(key = "which") {
@@ -339,13 +355,24 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session) {
                 }
             }
         }
-        changeRows(feed.items, { openChange(model, it) }, selected = (model.beside?.dest as? Dest.Diff)?.change?.key)
+        val beside = model.beside?.dest
+        changeRows(feed.items, { openChange(model, it) }, selected = ((beside as? Dest.Diff)?.change ?: (beside as? Dest.File)?.change)?.key)
     }
 }
 
-/** Whether the account has edited during the current UTC day, which is the day Fandom counts by. */
+/**
+ * Whether the account has edited during the current UTC day, which is the day Fandom counts by.
+ * The days are counted again each minute, so the time left runs down and a new day starts at midnight.
+ */
 @Composable
-fun DailyCard(daily: DailyEdits, modifier: Modifier = Modifier) {
+fun DailyCard(loaded: DailyEdits, modifier: Modifier = Modifier) {
+    val now by produceState(Instant.now(), loaded) {
+        while (true) {
+            value = Instant.now()
+            delay(60_000 - value.toEpochMilli() % 60_000)
+        }
+    }
+    val daily = remember(loaded, now) { loaded.at(now) }
     val scheme = MaterialTheme.colorScheme
     val done = daily.today > 0
     val container = if (done) scheme.primaryContainer else scheme.tertiaryContainer

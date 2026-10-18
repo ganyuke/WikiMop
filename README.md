@@ -13,6 +13,8 @@ Watch recent changes and clean up vandalism on your Fandom wiki from your Androi
 
 - See recent changes or your watchlist at a glance, with unpatrolled edits marked in red.
 - Open any change to see its diff, then patrol, rollback, undo, block, or delete from the same screen.
+- On a diff, pull sideways to go to the older or newer edit, or pull down from the top to open the page's history.
+- Open an upload to see the file itself and its earlier versions, and patrol it from there.
 - Read pages the way Fandom shows them, in the mobile or desktop layout, with trackers blocked.
 - Search for pages, check their history, and protect or move them.
 - Edit pages in a wikitext editor with syntax highlighting, autocomplete for links and templates, find and replace, and preview.
