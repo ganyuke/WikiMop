@@ -1,0 +1,5 @@
+- View uploaded files and their previous versions
+- Swipe between newer and older edits from a diff
+- Navigate back with Android's predictive back gesture
+- Improve edit streak tracking and notifications
+- Fix patrolling files
