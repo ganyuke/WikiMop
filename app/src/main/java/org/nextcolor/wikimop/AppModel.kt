@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -150,8 +151,35 @@ class Session(val wiki: Wiki, val account: Account?, val api: WikiApi) {
     var ownEdits: Map<Long, Instant> = emptyMap()
     var role by mutableStateOf<AccountRole?>(null)
 
+    /** Edits marked as patrolled from the app, by revision. Lists loaded before that show them as patrolled too, without loading again. */
+    private val patrolledRevs = mutableStateSetOf<Long>()
+    /** The same for log entries such as uploads, which have no revision and are patrolled by their entry in recent changes. */
+    private val patrolledRcs = mutableStateSetOf<Long>()
+    /** Whether each edit seen in a list was patrolled, by revision. A diff reached by going to an older or newer edit has no change of its own, and looks here. */
+    private val listed = HashMap<Long, Boolean>()
+
     /** False for every right without a signed-in account, so nothing that changes the wiki is offered. */
     fun can(right: String) = account != null && !signedOut && me?.can(right) == true
+
+    fun markPatrolled(revId: Long, rcId: Long) {
+        if (revId > 0) patrolledRevs += revId
+        if (rcId > 0) patrolledRcs += rcId
+    }
+
+    fun noteListed(changes: List<Change>) {
+        for (c in changes) if (!c.isLog && c.revId > 0 && c.patrolled != null) listed[c.revId] = c.patrolled
+    }
+
+    /** Whether [change] is patrolled now, counting patrols made from the app since it was loaded. Null when the wiki did not say. */
+    fun patrolled(change: Change): Boolean? =
+        if ((change.revId > 0 && change.revId in patrolledRevs) || (change.rcId > 0 && change.rcId in patrolledRcs)) true else change.patrolled
+
+    /** Whether the edit with [revId] is patrolled, from [change] if it was opened from one, or else from the lists seen so far. */
+    fun patrolled(revId: Long, change: Change?): Boolean? = when {
+        revId in patrolledRevs -> true
+        change != null -> patrolled(change)
+        else -> listed[revId]
+    }
 }
 
 class Request(val write: PendingWrite, val onDone: (WriteResult) -> Unit) {
@@ -274,6 +302,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
 
     /** Counts the account's own edits in a list of changes that was just loaded, so the streak includes them right away. */
     fun counted(s: Session, changes: List<Change>) {
+        s.noteListed(changes)
         val name = s.me?.name?.takeIf { s.account != null && !s.signedOut } ?: return
         val mine = changes.filter { !it.isLog && it.revId > 0 && it.user.equals(name, ignoreCase = true) && it.revId !in s.ownEdits }
         if (mine.isEmpty()) return
@@ -415,9 +444,17 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
         beside = null
     }
 
-    /** Opens [dest] from the screen [from]. Another diff opened from the one beside the list takes its place there. */
+    /**
+     * Opens [dest] from the screen [from]. Another diff opened from a diff takes its place, beside the list
+     * or on the stack, so going through older and newer edits does not pile up screens for back to go through.
+     */
     fun goFrom(from: Entry, dest: Dest) {
-        if (from === beside && dest is Dest.Diff) openBeside(dest) else go(dest)
+        when {
+            dest !is Dest.Diff || from.dest !is Dest.Diff -> go(dest)
+            from === beside -> openBeside(dest)
+            from === top -> replaceTop(dest)
+            else -> go(dest)
+        }
     }
 
     /** Whether [title] is in the File namespace, by the wiki's own name for it or by the names every wiki accepts. */
@@ -519,6 +556,8 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
             try {
                 val result = s.api.perform(r.write, confirmation)
                 request = null
+                // Every screen showing the change, the list of changes among them, shows it as patrolled.
+                (r.write as? PendingWrite.Patrol)?.let { s.markPatrolled(it.revId, it.rcId) }
                 r.onDone(result)
                 say(result.message)
                 if (r.write is PendingWrite.Edit || r.write is PendingWrite.Undo || r.write is PendingWrite.Rollback) refreshDaily(s)

@@ -250,10 +250,35 @@ open class ScreenTest {
         until("its newer link") { rule.onAllNodesWithText("Newer edit").fetchSemanticsNodes().isNotEmpty() }
         rule.onNodeWithText("Newer edit").performClick()
         until("the newest edit") { m.top.dest == Dest.Diff("Elaina", 5101, 5120) }
-        // Back goes through the same edits again.
+        // Each edit took the place of the one before, so back goes to the list, not through the edits again.
+        assertEquals(2, m.stack.size)
         m.back()
-        assertEquals(Dest.Diff("Elaina", 5090, 5101), m.top.dest)
+        assertEquals(Dest.Home, m.top.dest)
         assertTrue(fake.writes().isEmpty())
+    }
+
+    @Test fun patrollingShowsInTheListOfChanges() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        fun unpatrolled() = rule.onAllNodesWithText("Unpatrolled", useUnmergedTree = true).fetchSemanticsNodes().size
+        val before = unpatrolled()
+        rule.onAllNodesWithText("Saya").onFirst().performClick()
+        // On a tablet it opens beside the list.
+        until("the diff") { (m.beside ?: m.top).dest is Dest.Diff }
+        until("its actions") { rule.onAllNodesWithContentDescription("Actions").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithContentDescription("Actions").performClick()
+        waitFor("Patrol")
+        rule.onNodeWithText("Patrol").performClick()
+        until("the confirm sheet") { m.request != null }
+        m.confirm(org.nextcolor.wikimop.data.Confirmation.bySlide(m.request!!.write))
+        until("the patrol") { m.request == null }
+        // The diff says so, and so does the list it was opened from, without loading it again.
+        waitFor("Patrolled")
+        if (m.beside != null) m.closeBeside() else m.back()
+        waitFor("Saya")
+        until("the list to show it") { unpatrolled() == before - 1 }
+        assertEquals("patrol", fake.writes().single()["action"])
     }
 
     private fun actionsFor(rights: List<String>, shown: List<String>, name: String) {

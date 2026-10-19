@@ -77,7 +77,6 @@ import org.nextcolor.wikimop.say
 class FileState {
     var file by mutableStateOf<FileInfo?>(null)
     var error by mutableStateOf<String?>(null)
-    var patrolled by mutableStateOf(false)
     /** The version picked from the file's history. Until one is, the upload the screen was opened from is shown. */
     var picked by mutableStateOf<FileVersion?>(null)
 }
@@ -99,6 +98,7 @@ fun FileScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.File)
     }
     LaunchedEffect(Unit) { if (state.file == null) load() }
     val change = dest.change
+    val patrolled = change?.let(session::patrolled)
     val file = state.file
     val uploaded = file?.at(change?.timestamp)
     val shown = state.picked ?: uploaded
@@ -125,9 +125,9 @@ fun FileScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.File)
                 add(Triple("View history", Icons.Rounded.History) { model.go(Dest.Page(dest.title, tab = 1)) })
                 add(Triple("Open page", Icons.Rounded.Description) { model.go(Dest.Page(dest.title)) })
                 // An upload has no revision of its own, so it is patrolled by its entry in recent changes.
-                if (change != null && change.patrolled == false && change.rcId > 0 && !state.patrolled && session.can("patrol")) {
+                if (change != null && patrolled == false && change.rcId > 0 && session.can("patrol")) {
                     add(Triple("Patrol", Icons.Rounded.Check) {
-                        model.ask(PendingWrite.Patrol(session.wiki, dest.title, 0, change.user, change.rcId)) { state.patrolled = true }
+                        model.ask(PendingWrite.Patrol(session.wiki, dest.title, 0, change.user, change.rcId))
                     })
                 }
             }
@@ -149,7 +149,7 @@ fun FileScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.File)
                     val flags = listOfNotNull(
                         if (shown === file.versions.first()) "Current" else null,
                         if (shown === uploaded && change != null) {
-                            if (state.patrolled || change.patrolled == true) "Patrolled" else if (change.patrolled == false) "Unpatrolled" else null
+                            if (patrolled == true) "Patrolled" else if (patrolled == false) "Unpatrolled" else null
                         } else null,
                     )
                     VersionCard(shown, flags, Modifier.padding(top = 12.dp)) { model.go(Dest.User(shown.user)) }

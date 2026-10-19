@@ -356,7 +356,7 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session) {
             }
         }
         val beside = model.beside?.dest
-        changeRows(feed.items, { openChange(model, it) }, selected = ((beside as? Dest.Diff)?.change ?: (beside as? Dest.File)?.change)?.key)
+        changeRows(feed.items, { openChange(model, it) }, selected = ((beside as? Dest.Diff)?.change ?: (beside as? Dest.File)?.change)?.key, patrolled = session::patrolled)
     }
 }
 

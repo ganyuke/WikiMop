@@ -157,7 +157,6 @@ class DiffState {
     var diff by mutableStateOf<RevisionDiff?>(null)
     var facts by mutableStateOf<PageFacts?>(null)
     var error by mutableStateOf<String?>(null)
-    var patrolled by mutableStateOf(false)
 }
 
 @Composable
@@ -187,6 +186,8 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
     LaunchedEffect(Unit) { if (state.diff == null) load() }
     val diff = state.diff
     val latest = diff != null && state.facts?.lastRevId == diff.to.revId
+    // Patrolled from here, from another screen, or as the list of changes says.
+    val patrolled = session.patrolled(dest.to, dest.change)
     var menu by remember { mutableStateOf(false) }
     // Beside the list of changes, the diff closes instead of going back, and the list's screen shows the messages.
     val beside = entry === model.beside
@@ -221,9 +222,9 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
                 if (latest && diff.from != null && session.can("rollback")) {
                     add(Triple("Rollback", Icons.Rounded.SettingsBackupRestore) { model.go(Dest.Form(FormKind.ROLLBACK, dest.title, diff.to.user)) })
                 }
-                if (dest.change?.patrolled == false && !state.patrolled && session.can("patrol")) {
+                if (patrolled == false && session.can("patrol")) {
                     add(Triple("Patrol", Icons.Rounded.Check) {
-                        model.ask(PendingWrite.Patrol(session.wiki, dest.title, diff.to.revId, diff.to.user)) { state.patrolled = true }
+                        model.ask(PendingWrite.Patrol(session.wiki, dest.title, diff.to.revId, diff.to.user))
                     })
                 }
             }
@@ -263,7 +264,7 @@ fun DiffScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Diff)
                             if (diff.from == null) segment(0, 1) else segment(1, 2),
                             flags = listOfNotNull(
                                 if (latest) "Current" else null,
-                                if (state.patrolled) "Patrolled" else if (dest.change?.patrolled == false) "Unpatrolled" else null,
+                                if (patrolled == false) "Unpatrolled" else if (patrolled == true && dest.change?.patrolled == false) "Patrolled" else null,
                             ),
                         ) { model.go(Dest.User(diff.to.user)) }
                     }
@@ -409,7 +410,7 @@ fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page)
                     )
                 } ?: Busy()
                 state.tab == 1 -> FeedList(history, "No revisions") {
-                    changeRows(history.items, { model.go(Dest.Diff(dest.title, it.oldRevId, it.revId, it)) }, showTitle = false)
+                    changeRows(history.items, { model.go(Dest.Diff(dest.title, it.oldRevId, it.revId, it)) }, showTitle = false, patrolled = session::patrolled)
                 }
                 else -> PageDetails(model, session, facts) { sections = true }
             }
@@ -503,7 +504,7 @@ fun UserScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.User)
                         else if (state.error != null) Text(state.error.orEmpty(), color = MaterialTheme.colorScheme.error)
                     }
                 }
-                changeRows(edits.items, { model.go(Dest.Diff(it.title, it.oldRevId, it.revId, it)) }, showUser = false)
+                changeRows(edits.items, { model.go(Dest.Diff(it.title, it.oldRevId, it.revId, it)) }, showUser = false, patrolled = session::patrolled)
             }
         }
     }
@@ -560,7 +561,7 @@ fun LogsScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Logs)
         else -> "Logs"
     }
     Scaffold(topBar = { BackBar(title, model::back, subtitle = dest.title ?: dest.user?.let { "By $it" }) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        Centered(Modifier.padding(padding)) { FeedList(feed, "No log entries") { changeRows(feed.items, { openChange(model, it) }) } }
+        Centered(Modifier.padding(padding)) { FeedList(feed, "No log entries") { changeRows(feed.items, { openChange(model, it) }, patrolled = session::patrolled) } }
     }
 }
 
@@ -570,7 +571,7 @@ fun NewPagesScreen(model: AppModel, entry: Entry, session: Session) {
         Feed(entry.scope) { session.api.recentChanges(ChangeFilter(edits = false, logs = false, hideBots = false), session.me, it) }
     }
     Scaffold(topBar = { BackBar("New pages", model::back) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        Centered(Modifier.padding(padding)) { FeedList(feed, "No new pages") { changeRows(feed.items, { openChange(model, it) }) } }
+        Centered(Modifier.padding(padding)) { FeedList(feed, "No new pages") { changeRows(feed.items, { openChange(model, it) }, patrolled = session::patrolled) } }
     }
 }
 

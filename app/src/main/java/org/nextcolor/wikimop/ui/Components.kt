@@ -201,11 +201,12 @@ fun ChangeRow(
     showTitle: Boolean = true,
     showUser: Boolean = true,
     selected: Boolean = false,
+    patrolled: Boolean? = change.patrolled,
 ) {
     val scheme = MaterialTheme.colorScheme
     Surface(color = if (selected) scheme.secondaryContainer else scheme.surfaceContainerLow, shape = shape, modifier = modifier.fillMaxWidth().clip(shape).clickable(onClick = onClick)) {
         Row(Modifier.padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)) {
-            val unpatrolled = change.patrolled == false
+            val unpatrolled = patrolled == false
             Box(
                 Modifier.size(36.dp).background(
                     if (unpatrolled) scheme.errorContainer else if (change.isLog) scheme.tertiaryContainer else scheme.secondaryContainer,
@@ -305,13 +306,14 @@ fun LazyListScope.changeRows(
     showTitle: Boolean = true,
     showUser: Boolean = true,
     selected: String? = null,
+    patrolled: (Change) -> Boolean? = { it.patrolled },
 ) {
     val days = items.groupBy { it.timestamp.dayName() }
     for ((day, rows) in days) {
         item(key = "day-$day", contentType = "day") { SectionLabel(day) }
         rows.forEachIndexed { index, change ->
             item(key = change.key, contentType = "change") {
-                ChangeRow(change, { onOpen(change) }, segment(index, rows.size), showTitle = showTitle, showUser = showUser, selected = change.key == selected)
+                ChangeRow(change, { onOpen(change) }, segment(index, rows.size), showTitle = showTitle, showUser = showUser, selected = change.key == selected, patrolled = patrolled(change))
             }
         }
     }

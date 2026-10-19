@@ -33,6 +33,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -48,8 +49,14 @@ import kotlin.math.roundToInt
 /** Something a pull past the edge of a screen does, such as going to the older edit. */
 class PullAction(val label: String, val icon: ImageVector, val run: () -> Unit)
 
-/** How far a pull goes for each bit the finger moves. Less than one, so a pull feels held back. */
-private const val RESISTANCE = 0.5f
+/** How far a pull goes for each bit the finger moves. Less than one, so a pull feels held back, but not so much that it takes a long drag. */
+private const val RESISTANCE = 0.8f
+
+/** How far a pull goes before letting go runs its action. With [RESISTANCE], the finger moves about 80dp. */
+private val REACH = 64.dp
+
+/** A sideways flick at least this fast runs the action once the pull is a third of the way, without dragging all of it. */
+private val FLICK = 1000.dp
 
 /**
  * Lets [content] be pulled past its edges: sideways from anywhere on it, and down once it is
@@ -66,7 +73,9 @@ fun PullToGo(start: PullAction?, end: PullAction?, top: PullAction?, modifier: M
     val tops by rememberUpdatedState(top)
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
-    val reach = with(LocalDensity.current) { 96.dp.toPx() }
+    val reach = with(LocalDensity.current) { REACH.toPx() }
+    val flick = with(LocalDensity.current) { FLICK.toPx() }
+    val tracker = remember { VelocityTracker() }
     // Toward the end of the line is to the left in right-to-left writing.
     val toEnd = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
     // Positive is a pull for [start], negative for [end].
@@ -77,8 +86,10 @@ fun PullToGo(start: PullAction?, end: PullAction?, top: PullAction?, modifier: M
         if (abs(before) < reach && abs(after) >= reach) haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
     }
 
-    fun letGo(amount: Float, action: PullAction?, set: (Float) -> Unit) {
-        if (abs(amount) >= reach) action?.run?.invoke()
+    fun letGo(amount: Float, action: PullAction?, speed: Float = 0f, set: (Float) -> Unit) {
+        // A flick counts when it is fast and in the same direction as the pull.
+        val flicked = abs(amount) >= reach / 3 && speed * amount > 0f && abs(speed) >= flick
+        if (abs(amount) >= reach || flicked) action?.run?.invoke()
         scope.launch { animate(amount, 0f) { value, _ -> set(value) } }
     }
 
@@ -114,9 +125,11 @@ fun PullToGo(start: PullAction?, end: PullAction?, top: PullAction?, modifier: M
             .nestedScroll(scroll)
             .pointerInput(toEnd) {
                 detectHorizontalDragGestures(
-                    onDragEnd = { letGo(side, if (side > 0) starts else ends) { side = it } },
+                    onDragStart = { tracker.resetTracking() },
+                    onDragEnd = { letGo(side, if (side > 0) starts else ends, tracker.calculateVelocity().x * toEnd) { side = it } },
                     onDragCancel = { letGo(0f, null) { side = it } },
                 ) { change, amount ->
+                    tracker.addPosition(change.uptimeMillis, change.position)
                     val low = if (ends == null) 0f else -reach * 1.25f
                     val high = if (starts == null) 0f else reach * 1.25f
                     if (low == high) return@detectHorizontalDragGestures
