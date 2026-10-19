@@ -275,7 +275,7 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
                     session.error != null && session.me == null ->
                         Notice(session.error.orEmpty(), action = "Try again") { model.scope.launch { model.connect(session) } }
                     session.me == null -> Busy()
-                    tab == 0 -> ChangesTab(model, entry, session)
+                    tab == 0 -> ChangesTab(model, entry, session, behavior.state)
                     tab == 1 -> PagesTab(model, entry, session)
                     tab == 2 -> DraftsTab(model)
                     else -> ToolsTab(model, session)
@@ -305,6 +305,9 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
     }
 }
 
+/** The streak card and the buttons that pick the list, above the changes when signed in. */
+private const val HEADER = 2
+
 /** The list of changes beside an open change. About as wide as a phone, so rows read the same as on one. */
 private val LIST_PANE_WIDTH = 420.dp
 
@@ -316,8 +319,10 @@ private fun recentFeed(model: AppModel, entry: Entry, session: Session) = Feed(e
 }
 
 @Composable
-private fun ChangesTab(model: AppModel, entry: Entry, session: Session) {
+private fun ChangesTab(model: AppModel, entry: Entry, session: Session, bar: TopAppBarState) {
     val watch = model.homeWatch
+    // Where each list stood when it was last shown, read before loading moves it. It stays put until the app or the wiki is opened again.
+    val since = entry.hold("since") { model.saved.marks[session.wiki.id].let { it?.looked to it?.lookedWatchlist } }
     val recent = entry.hold("rc") { recentFeed(model, entry, session) }
     val watched = entry.hold("wl") {
         Feed(entry.scope) { next ->
@@ -330,16 +335,25 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session) {
     val signedIn = session.account != null && !session.signedOut
     val feed = if (watch && signedIn) watched else recent
 
+    // Switching lists keeps the streak card and these buttons where they are on the screen, instead of each list's own place.
+    fun switch(toWatch: Boolean) {
+        if (toWatch == watch) return
+        val from = feed.list
+        val to = (if (toWatch) watched else recent).list
+        if (from.firstVisibleItemIndex < HEADER) to.requestScrollToItem(from.firstVisibleItemIndex, from.firstVisibleItemScrollOffset)
+        model.homeWatch = toWatch
+    }
+
     // Pulling the list down also checks the streak again, so edits made since it was loaded count.
-    FeedList(feed, if (watch) "No changes" else "No changes", onRefresh = { if (signedIn) model.scope.launch { model.refreshDaily(session) } }) {
+    FeedList(feed, if (watch) "No changes" else "No changes", bar = bar, onRefresh = { if (signedIn) model.scope.launch { model.refreshDaily(session) } }) {
         if (signedIn) {
             item(key = "daily") { session.daily?.let { DailyCard(it, Modifier.padding(top = 4.dp, bottom = 12.dp)) } }
             item(key = "which") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
-                    ToggleButton(!watch, { model.homeWatch = false }, Modifier.weight(1f).semantics { role = Role.RadioButton }, shapes = ButtonGroupDefaults.connectedLeadingButtonShapes()) {
+                    ToggleButton(!watch, { switch(false) }, Modifier.weight(1f).semantics { role = Role.RadioButton }, shapes = ButtonGroupDefaults.connectedLeadingButtonShapes()) {
                         Text("Recent changes")
                     }
-                    ToggleButton(watch, { model.homeWatch = true }, Modifier.weight(1f).semantics { role = Role.RadioButton }, shapes = ButtonGroupDefaults.connectedTrailingButtonShapes()) {
+                    ToggleButton(watch, { switch(true) }, Modifier.weight(1f).semantics { role = Role.RadioButton }, shapes = ButtonGroupDefaults.connectedTrailingButtonShapes()) {
                         Text("Watchlist")
                     }
                 }
@@ -356,7 +370,10 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session) {
             }
         }
         val beside = model.beside?.dest
-        changeRows(feed.items, { openChange(model, it) }, selected = ((beside as? Dest.Diff)?.change ?: (beside as? Dest.File)?.change)?.key, patrolled = session::patrolled)
+        changeRows(
+            feed.items, { openChange(model, it) }, selected = ((beside as? Dest.Diff)?.change ?: (beside as? Dest.File)?.change)?.key,
+            patrolled = session::patrolled, since = if (feed === watched) since.second else since.first,
+        )
     }
 }
 

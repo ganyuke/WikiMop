@@ -398,6 +398,15 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
     /** Notes that a list of changes has been shown up to [newest], so only later changes are counted. */
     fun seen(wiki: Wiki, watchlist: Boolean, newest: Instant?) {
         val on = saved.wikis.firstOrNull { it.id == wiki.id }?.notify ?: return
+        // A filter can leave out the newest changes, so the point only moves forward.
+        if (newest != null) {
+            update { s ->
+                s.mark(wiki.id) {
+                    if (watchlist) it.copy(lookedWatchlist = maxOf(newest, it.lookedWatchlist ?: newest))
+                    else it.copy(looked = maxOf(newest, it.looked ?: newest))
+                }
+            }
+        }
         if (watchlist) {
             if (on.watchlist && newest != null) update { s -> s.mark(wiki.id) { it.copy(watchlist = newest, watchlistTold = 0) } }
             dismiss(Notice.WATCHLIST, wiki.id)

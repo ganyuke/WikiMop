@@ -58,6 +58,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.runtime.remember
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.TopAppBarState
+import java.time.Instant
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -278,11 +286,14 @@ fun <T> FeedList(
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
     /** Runs as well as loading the list again when it is pulled down. */
     onRefresh: () -> Unit = {},
+    /** The collapsing app bar above the list, if any. Pulling down at the top opens it before the list is loaded again. */
+    bar: TopAppBarState? = null,
     content: LazyListScope.() -> Unit,
 ) {
     LaunchedEffect(feed) { feed.start() }
+    val first = remember(bar) { bar?.let(::BarFirst) }
     PullToRefreshBox(isRefreshing = feed.loading && feed.loaded, onRefresh = { feed.refresh(); onRefresh() }, modifier = modifier.fillMaxSize()) {
-        LazyColumn(Modifier.fillMaxSize(), feed.list, contentPadding, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        LazyColumn(if (first != null) Modifier.fillMaxSize().nestedScroll(first) else Modifier.fillMaxSize(), feed.list, contentPadding, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             content()
             when {
                 feed.error != null -> item(key = "error") {
@@ -299,7 +310,23 @@ fun <T> FeedList(
     }
 }
 
-/** Rows of changes under a heading for each day. */
+/**
+ * Opens the app bar all the way before the list under it gets a pull. The pull to load again
+ * comes after it, so a pull from the top of the list does one thing at a time.
+ */
+private class BarFirst(private val bar: TopAppBarState) : NestedScrollConnection {
+    override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+        if (source != NestedScrollSource.UserInput || available.y <= 0f || bar.heightOffset >= 0f) return Offset.Zero
+        val before = bar.heightOffset
+        bar.heightOffset = minOf(0f, before + available.y)
+        return Offset(0f, bar.heightOffset - before)
+    }
+}
+
+/**
+ * Rows of changes under a heading for each day. With [since], the changes after it are marked
+ * off from the rest by a line, once there is something on both sides of it.
+ */
 fun LazyListScope.changeRows(
     items: List<Change>,
     onOpen: (Change) -> Unit,
@@ -307,15 +334,35 @@ fun LazyListScope.changeRows(
     showUser: Boolean = true,
     selected: String? = null,
     patrolled: (Change) -> Boolean? = { it.patrolled },
+    since: Instant? = null,
 ) {
+    val firstSeen = since?.let { s -> items.indexOfFirst { it.timestamp <= s } }?.takeIf { it > 0 }?.let { items[it].key }
     val days = items.groupBy { it.timestamp.dayName() }
     for ((day, rows) in days) {
+        // A day that starts with a change already seen has the line above its heading.
+        if (rows.first().key == firstSeen) item(key = "seen-line", contentType = "seen") { SeenLine() }
         item(key = "day-$day", contentType = "day") { SectionLabel(day) }
+        // The line splits the day's rows in two, and each part keeps its rounded ends.
+        val split = rows.indexOfFirst { it.key == firstSeen }.takeIf { it > 0 } ?: 0
         rows.forEachIndexed { index, change ->
+            if (change.key == firstSeen && index > 0) item(key = "seen-line", contentType = "seen") { SeenLine() }
+            val (at, of) = if (index < split) index to split else index - split to rows.size - split
             item(key = change.key, contentType = "change") {
-                ChangeRow(change, { onOpen(change) }, segment(index, rows.size), showTitle = showTitle, showUser = showUser, selected = change.key == selected, patrolled = patrolled(change))
+                ChangeRow(change, { onOpen(change) }, segment(at, of), showTitle = showTitle, showUser = showUser, selected = change.key == selected, patrolled = patrolled(change))
             }
         }
+    }
+}
+
+/** Marks where the list stood the last time it was shown. What is above it came in since. */
+@Composable
+private fun SeenLine() {
+    val scheme = MaterialTheme.colorScheme
+    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        HorizontalDivider(Modifier.weight(1f), color = scheme.primary)
+        Icon(Icons.Rounded.ArrowUpward, null, Modifier.padding(start = 8.dp).size(16.dp), tint = scheme.primary)
+        Text("New since you last looked", Modifier.padding(start = 4.dp, end = 8.dp), style = MaterialTheme.typography.labelMedium, color = scheme.primary)
+        HorizontalDivider(Modifier.weight(1f), color = scheme.primary)
     }
 }
 

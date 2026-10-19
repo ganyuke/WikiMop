@@ -133,7 +133,8 @@ object SavedJson {
             s.marks.forEach { (wiki, m) ->
                 put(wiki, JSONObject().put("changes", m.changes?.toString() ?: JSONObject.NULL).put("changesTold", m.changesTold)
                     .put("watchlist", m.watchlist?.toString() ?: JSONObject.NULL).put("watchlistTold", m.watchlistTold).put("streakDay", m.streakDay)
-                    .put("streakTold", m.streakTold))
+                    .put("streakTold", m.streakTold).put("looked", m.looked?.toString() ?: JSONObject.NULL)
+                    .put("lookedWatchlist", m.lookedWatchlist?.toString() ?: JSONObject.NULL))
             }
         })
         put("signedOutTold", JSONArray(s.signedOutTold.toList()))
@@ -178,6 +179,8 @@ object SavedJson {
                     if (m.isNull("changes")) null else m.optString("changes").instant(), m.optInt("changesTold"),
                     if (m.isNull("watchlist")) null else m.optString("watchlist").instant(), m.optInt("watchlistTold"), m.optString("streakDay"),
                     m.optBoolean("streakTold"),
+                    if (m.isNull("looked")) null else m.optString("looked").instant(),
+                    if (m.isNull("lookedWatchlist")) null else m.optString("lookedWatchlist").instant(),
                 )
             },
             signedOutTold = o.optJSONArray("signedOutTold").strings().toSet(),

@@ -270,7 +270,7 @@ class FakeWiki(
     private fun rc(
         type: String, title: String, user: String, minutes: Long, comment: String, oldLen: Int, newLen: Int, anon: Boolean = false,
         patrolled: Boolean = true, minor: Boolean = false, tags: List<String> = emptyList(), id: Long = ++counter, old: Long = id - 1,
-    ) = JSONObject().put("type", type).put("ns", 0).put("title", title).put("pageid", 77).put("revid", if (type == "log") 0 else id)
+    ) = JSONObject().put("type", type).put("ns", 0).put("title", title).put("pageid", 77).put("revid", if (type == "log") 0 else id).put("logid", if (type == "log") id else 0)
         .put("old_revid", if (type == "edit") old else 0).put("rcid", id + 100000).put("user", user).put("anon", anon)
         .put("bot", false).put("new", type == "new").put("minor", minor).put("oldlen", oldLen).put("newlen", newLen).put("timestamp", ago(minutes))
         .put("comment", comment).put("tags", JSONArray(tags)).put("patrolled", patrolled).put("unpatrolled", !patrolled)

@@ -27,6 +27,7 @@ import androidx.compose.ui.test.performScrollToKey
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.geometry.Offset
@@ -326,6 +327,74 @@ open class ScreenTest {
         m.back()
         waitFor("Robetta")
         assertEquals(scrolled, listScroll(), 1f)
+    }
+
+    @Test fun changesSinceLastLookedAreMarked() {
+        val m = model()
+        m.update { s -> s.mark("w1") { it.copy(looked = fake.now.minusSeconds(20 * 60)) } }
+        show(m)
+        waitFor("Fran")
+        // Elaina and Fran came in since. Saya was there before.
+        waitFor("New since you last looked")
+        shot("changes-since-looked")
+        // The list has been seen up to its newest change, but the line stays until the app is opened again.
+        until("the point to move") { m.saved.marks["w1"]?.looked == fake.now.minusSeconds(4 * 60) }
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performTouchInput { swipeDown(top + 10f, bottom - 10f) }
+        rule.waitForIdle()
+        waitFor("New since you last looked")
+        m.open(m.saved.wikis.single())
+        waitFor("Fran")
+        assertTrue(rule.onAllNodesWithText("New since you last looked").fetchSemanticsNodes().isEmpty())
+    }
+
+    @Test fun switchingListsKeepsTheButtonsInPlace() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        val home = m.stack.first()
+        fun list(key: String) = home.hold<Feed<Change>>(key) { error("no $key") }.list
+        // Both lists loaded once, as after looking at each.
+        rule.onNodeWithText("Watchlist").performClick()
+        until("the watchlist to load") { home.hold<Feed<Change>>("wl") { error("") }.loaded }
+        rule.onNodeWithText("Recent changes").performClick()
+        rule.waitForIdle()
+        // Scrolled so the streak card is gone and the buttons are at the top.
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performScrollToIndex(1)
+        rule.waitForIdle()
+        val at = list("rc").firstVisibleItemIndex to list("rc").firstVisibleItemScrollOffset
+        assertTrue(at != 0 to 0)
+        rule.onNodeWithText("Watchlist").performClick()
+        until("the watchlist") { m.homeWatch }
+        rule.waitForIdle()
+        assertEquals(at, list("wl").firstVisibleItemIndex to list("wl").firstVisibleItemScrollOffset)
+        shot("watchlist-switched")
+        // Back the other way, after the watchlist was moved a little.
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performScrollToIndex(0)
+        rule.waitForIdle()
+        rule.onNodeWithText("Recent changes").performClick()
+        until("recent changes") { !m.homeWatch }
+        rule.waitForIdle()
+        assertEquals(0 to 0, list("rc").firstVisibleItemIndex to list("rc").firstVisibleItemScrollOffset)
+    }
+
+    @Test fun pullingDownOpensTheBarBeforeLoadingAgain() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        val bar = m.stack.first().hold<androidx.compose.material3.TopAppBarState>("bar") { error("no bar") }
+        val list = rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst()
+        // Collapse the bar, then go back to the top without opening it.
+        list.performTouchInput { swipeUp(bottom - 10f, top + 10f) }
+        list.performScrollToIndex(0)
+        rule.waitForIdle()
+        assertTrue(bar.collapsedFraction > 0.99f)
+        val loads = fake.calls.count { it["list"] == "recentchanges" }
+
+        // A short pull opens the bar, and the list is not loaded again.
+        list.performTouchInput { swipeDown(top + 10f, top + 160f) }
+        rule.waitForIdle()
+        assertEquals(0f, bar.collapsedFraction, 0.01f)
+        assertEquals(loads, fake.calls.count { it["list"] == "recentchanges" })
     }
 
     @Test fun logSummariesAreShownWhole() {

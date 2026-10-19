@@ -259,6 +259,12 @@ data class Marks(
     val streakDay: String = "",
     /** True while a streak reminder is up, so it can be taken down once the account has edited. */
     val streakTold: Boolean = false,
+    /**
+     * The newest change in the list the last time it was shown, kept whether notifications are on or not.
+     * The list marks where it was, so what came after is easy to tell apart.
+     */
+    val looked: Instant? = null,
+    val lookedWatchlist: Instant? = null,
 )
 
 /** An edit that is being written and has not been published. Kept on the phone only. */
