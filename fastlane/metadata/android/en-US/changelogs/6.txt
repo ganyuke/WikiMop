@@ -1,0 +1,5 @@
+- Notifications describe changes in sentences, grouped by wiki
+- See which changes are new since you last looked
+- Patrol status stays in sync across screens
+- Smoother motion when moving between edits, tabs and the tablet side pane
+- Slide to confirm gives clearer feedback when a change goes through or fails
