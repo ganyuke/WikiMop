@@ -16,7 +16,9 @@ import org.nextcolor.wikimop.data.Saved
 import org.nextcolor.wikimop.data.SavedJson
 import org.nextcolor.wikimop.data.SavedStore
 import org.nextcolor.wikimop.data.WikiNotify
+import org.nextcolor.wikimop.data.Change
 import org.nextcolor.wikimop.notify.Checker
+import org.nextcolor.wikimop.notify.sentence
 import org.nextcolor.wikimop.notify.Notice
 import org.nextcolor.wikimop.notify.Notifier
 import org.nextcolor.wikimop.notify.Post
@@ -55,6 +57,15 @@ class NotifyTest {
         assertEquals(Notice.CHANGES, post.notice)
         assertEquals("Wandering Witch Wiki", post.title)
         assertEquals("3 new changes", post.text)
+        // Newest first, each told as a sentence.
+        assertEquals(
+            listOf(
+                "StardustReader edited Elaina (+102): \"Added her relationships\"",
+                "203.0.113.42 edited Fran (−3,354)",
+                "BroomKeeper created Saya (+2,210): \"Created page with her first appearance\"",
+            ),
+            post.lines,
+        )
 
         // The same count is not sent a second time.
         assertTrue(checker.run().isEmpty())
@@ -78,6 +89,19 @@ class NotifyTest {
         assertEquals("7 new changes", post.text)
         // Only recent changes are read, and nothing asks for a signed-in user.
         assertTrue(fake.calls.all { it["assert"] == null && it["list"] == "recentchanges" })
+    }
+
+    @Test fun changesAreToldAsSentences() {
+        fun edit(tags: List<String> = emptyList(), comment: String = "", delta: Int? = -40) =
+            Change("rc", "edit", "Fran", user = "203.0.113.42", tags = tags, comment = comment, sizeDiff = delta).sentence()
+        assertEquals("203.0.113.42 edited Fran (−40)", edit())
+        assertEquals("203.0.113.42 edited Fran (0): \"typo\"", edit(comment = "typo", delta = 0))
+        assertEquals("203.0.113.42 edited Fran", edit(delta = null))
+        assertEquals("203.0.113.42 blanked Fran (−40): \"lol\"", edit(listOf("mobile edit", "mw-blank"), "lol"))
+        assertEquals("203.0.113.42 rolled back edits on Fran (−40)", edit(listOf("mw-blank", "mw-rollback")))
+        assertEquals("203.0.113.42 turned Fran (−40) into a redirect", edit(listOf("mw-new-redirect")))
+        val block = Change("rc", "log", "User:SpamBlaster99", user = "BroomKeeper", comment = "Spam", logType = "block", logAction = "block")
+        assertEquals("BroomKeeper blocked SpamBlaster99", block.sentence())
     }
 
     @Test fun onlyNewChangesCountWithoutAnAccount() {
@@ -163,11 +187,24 @@ class NotifyTest {
         Notifier.show(app, post)
         Notifier.show(app, post.copy(text = "5 new changes"))
         Notifier.show(app, post.copy(notice = Notice.WATCHLIST, text = "1 new change on your watchlist"))
-        assertEquals(2, shade.size())
+        // Both sit under a header for the wiki.
+        assertEquals(3, shade.size())
+        assertTrue(shade.allNotifications.all { it.group == "wiki:w1" })
+        assertEquals(1, shade.allNotifications.count { it.flags and android.app.Notification.FLAG_GROUP_SUMMARY != 0 })
         assertEquals("5 new changes", shadowOf(shade.getNotification("w1", 1)).contentText)
+        // One change is said in full instead of counted.
+        Notifier.show(app, post.copy(text = "1 new change", lines = listOf("BroomKeeper created Saya (+2,210)")))
+        assertEquals("BroomKeeper created Saya (+2,210)", shadowOf(shade.getNotification("w1", 1)).contentText)
 
         Notifier.show(app, post.copy(text = null))
         Notifier.dismiss(app, Notice.WATCHLIST, "w1")
+        // The header goes with the last one under it.
         assertEquals(0, shade.size())
+
+        // The streak reminder is kept apart, with a flame.
+        Notifier.show(app, post.copy(notice = Notice.STREAK, title = "Not edited today", text = "Streak: 11 days", wikiName = "Wandering Witch Wiki"))
+        val streak = shade.allNotifications.single()
+        assertNull(streak.group)
+        assertEquals(R.drawable.ic_streak, streak.smallIcon.resId)
     }
 }

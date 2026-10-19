@@ -46,6 +46,7 @@ object Notifier {
         val text = post.text
         if (text == null) {
             manager.cancel(post.tag, post.notice.id)
+            if (post.notice.grouped) tidy(manager, post.wikiId)
             return
         }
         if (!allowed(context)) return
@@ -58,23 +59,67 @@ object Notifier {
         val tap = PendingIntent.getActivity(
             context, (post.tag + post.notice.name).hashCode(), open, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
+        // A single change is said in full. Several are counted, and listed once the notification is opened up.
+        val single = post.lines.singleOrNull()
         val built = Notification.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(post.title)
-            .setContentText(text)
+            .setContentText(single ?: text)
             .setSubText(post.wikiName)
             .setContentIntent(tap)
             .setAutoCancel(true)
             // A count that goes up while the notification is still there changes quietly.
             .setOnlyAlertOnce(true)
+        when {
+            single != null -> built.setStyle(Notification.BigTextStyle().bigText(single))
+            // The count stays in the header once the lines take its place.
+            post.lines.isNotEmpty() -> built.setStyle(Notification.InboxStyle().setSummaryText(text).also { style -> post.lines.forEach(style::addLine) })
+        }
+        // The streak reminder is about the person, not news from the wiki, so it looks different and stays out of the wiki's group.
+        if (post.notice == Notice.STREAK) built.setSmallIcon(R.drawable.ic_streak).setColor(STREAK_COLOR)
+        if (post.notice.grouped) built.setGroup(group(post.wikiId))
         post.until?.let { built.setTimeoutAfter(maxOf(1, it.toEpochMilli() - System.currentTimeMillis())) }
         manager.notify(post.tag, post.notice.id, built.build())
+        if (post.notice.grouped) summary(context, manager, channel, post, tap)
     }
 
-    fun dismiss(context: Context, notice: Notice, tag: String) =
-        context.getSystemService(NotificationManager::class.java).cancel(tag, notice.id)
+    /**
+     * The header that holds a wiki's changes and watchlist together, so each wiki is a stack of its own.
+     * It does not alert by itself. The notifications in it do.
+     */
+    private fun summary(context: Context, manager: NotificationManager, channel: String, post: Post, tap: PendingIntent) {
+        val name = post.wikiName ?: post.title
+        val built = Notification.Builder(context, channel)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(name)
+            .setSubText(name)
+            .setContentIntent(tap)
+            .setAutoCancel(true)
+            .setGroup(group(post.wikiId))
+            .setGroupSummary(true)
+            .setGroupAlertBehavior(Notification.GROUP_ALERT_CHILDREN)
+        manager.notify(post.wikiId, SUMMARY_ID, built.build())
+    }
+
+    /** Takes a wiki's header down once nothing is left under it. */
+    private fun tidy(manager: NotificationManager, wikiId: String) {
+        val left = manager.activeNotifications.any { it.notification.group == group(wikiId) && it.id != SUMMARY_ID }
+        if (!left) manager.cancel(wikiId, SUMMARY_ID)
+    }
+
+    fun dismiss(context: Context, notice: Notice, tag: String) {
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.cancel(tag, notice.id)
+        if (notice.grouped) tidy(manager, tag)
+    }
 
     private val Notice.id get() = ordinal + 1
+    /** Changes and the watchlist are news from a wiki, and are kept together by wiki. */
+    private val Notice.grouped get() = this == Notice.CHANGES || this == Notice.WATCHLIST
+    private fun group(wikiId: String) = "wiki:$wikiId"
+    private const val SUMMARY_ID = 100
+    /** Warm, like a flame, and unlike the app's teal. */
+    private const val STREAK_COLOR = 0xFFE8710A.toInt()
 }
 
 /** Runs the checks every so often while any wiki has notifications on, also after the phone restarts. */

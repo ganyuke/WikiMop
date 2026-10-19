@@ -32,6 +32,8 @@ data class Post(
     val wikiName: String? = null,
     /** When the notification stops being true and goes away by itself. */
     val until: Instant? = null,
+    /** The newest changes told as sentences, shown when the notification is opened up. */
+    val lines: List<String> = emptyList(),
 )
 
 /**
@@ -88,6 +90,7 @@ class Checker(private val store: SavedStore, private val http: OkHttpClient, pri
                 posts += Post(
                     Notice.WATCHLIST, wiki.id, wiki.id, wiki.name,
                     counted(count, chunk.next != null, "new change on your watchlist", "new changes on your watchlist"),
+                    lines = chunk.items.take(SHOWN).map { it.sentence() },
                 )
             }
         }
@@ -131,7 +134,12 @@ class Checker(private val store: SavedStore, private val http: OkHttpClient, pri
         } else if (chunk.items.size != marks.changesTold) {
             val count = chunk.items.size
             store.update { s -> s.mark(wiki.id) { it.copy(changesTold = count) } }
-            return listOf(Post(Notice.CHANGES, wiki.id, wiki.id, wiki.name, counted(count, chunk.next != null, "new change", "new changes")))
+            return listOf(
+                Post(
+                    Notice.CHANGES, wiki.id, wiki.id, wiki.name, counted(count, chunk.next != null, "new change", "new changes"),
+                    lines = chunk.items.take(SHOWN).map { it.sentence() },
+                ),
+            )
         }
         return emptyList()
     }
@@ -146,5 +154,7 @@ class Checker(private val store: SavedStore, private val http: OkHttpClient, pri
 
     companion object {
         val REMIND_BEFORE: Duration = Duration.ofHours(4)
+        /** How many of the newest changes a notification lists. About as many as fit when it is opened up. */
+        const val SHOWN = 5
     }
 }
