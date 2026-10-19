@@ -13,6 +13,7 @@ import org.nextcolor.wikimop.data.rankGroups
 import org.nextcolor.wikimop.data.wikiBase
 import org.nextcolor.wikimop.logic.Edited
 import org.nextcolor.wikimop.logic.EditorOps
+import org.nextcolor.wikimop.ui.diffStep
 import java.time.Instant
 
 class LogicTest {
@@ -23,6 +24,14 @@ class LogicTest {
         assertEquals(false, parse("""{"type":"new","patrolled":false,"unpatrolled":true,"autopatrolled":false}"""))
         assertEquals(true, parse("""{"type":"edit","patrolled":true,"unpatrolled":false,"autopatrolled":true}"""))
         assertNull(parse("""{"type":"edit"}"""))
+    }
+
+    @Test fun olderAndNewerEditsComeFromTheirSides() {
+        val at = Dest.Diff("Elaina", 5101, 5120)
+        assertEquals(-1, diffStep(at, Dest.Diff("Elaina", 0, 5101)))
+        assertEquals(1, diffStep(at, Dest.Diff("Elaina", 5120, 5133)))
+        assertEquals(0, diffStep(at, Dest.Diff("Saya", 0, 5101)))
+        assertEquals(0, diffStep(at, Dest.Home))
     }
 
     @Test fun websiteDiffBecomesOneColumn() {

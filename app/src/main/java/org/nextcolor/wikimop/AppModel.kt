@@ -184,6 +184,8 @@ class Session(val wiki: Wiki, val account: Account?, val api: WikiApi) {
 
 class Request(val write: PendingWrite, val onDone: (WriteResult) -> Unit) {
     var sending by mutableStateOf(false)
+    /** Whether the change went through. The sheet shows that for a moment, then closes itself. */
+    var done by mutableStateOf(false)
     var error by mutableStateOf<String?>(null)
 }
 
@@ -555,6 +557,9 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
 
     fun cancelRequest() { if (request?.sending != true) request = null }
 
+    /** Closes the sheet for [r] once it has shown that the change went through. */
+    fun closeRequest(r: Request) { if (request === r) request = null }
+
     fun confirm(confirmation: Confirmation) {
         val r = request ?: return
         val s = session ?: return
@@ -564,7 +569,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
         scope.launch {
             try {
                 val result = s.api.perform(r.write, confirmation)
-                request = null
+                r.done = true
                 // Every screen showing the change, the list of changes among them, shows it as patrolled.
                 (r.write as? PendingWrite.Patrol)?.let { s.markPatrolled(it.revId, it.rcId) }
                 r.onDone(result)

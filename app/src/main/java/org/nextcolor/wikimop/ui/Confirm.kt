@@ -1,6 +1,15 @@
 package org.nextcolor.wikimop.ui
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -54,16 +63,37 @@ import kotlin.math.roundToInt
  * The last step before anything is changed on a wiki. The control has to be
  * dragged from one end to the other, which a stray tap or a phone in a pocket
  * does not do. Let go early and it goes back to the start.
+ *
+ * A tick says when letting go will send. Let go then, and the thumb stays at the end while [busy],
+ * then shows a check once [done]. If it ends without being done, the thumb goes back to try again.
  */
 @Composable
-fun SlideToConfirm(label: String, onConfirmed: () -> Unit, modifier: Modifier = Modifier, severe: Boolean = false, busy: Boolean = false) {
+fun SlideToConfirm(
+    label: String, onConfirmed: () -> Unit, modifier: Modifier = Modifier,
+    severe: Boolean = false, busy: Boolean = false, done: Boolean = false,
+) {
     val scheme = MaterialTheme.colorScheme
     val thumbColor = if (severe) scheme.error else scheme.primary
     val onThumb = if (severe) scheme.onError else scheme.onPrimary
     val track = if (severe) scheme.errorContainer else scheme.primaryContainer
     val onTrack = if (severe) scheme.onErrorContainer else scheme.onPrimaryContainer
     val scope = rememberCoroutineScope()
+    val haptics = LocalHapticFeedback.current
     val offset = remember { Animatable(0f) }
+    val pop = remember { Animatable(1f) }
+
+    LaunchedEffect(done) {
+        if (!done) return@LaunchedEffect
+        haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+        pop.animateTo(1.15f, spring(stiffness = Spring.StiffnessHigh))
+        pop.animateTo(1f, spring(Spring.DampingRatioMediumBouncy))
+    }
+    // Sending ended without going through, so the thumb goes back for another try.
+    LaunchedEffect(busy) {
+        if (busy || done || offset.value == 0f) return@LaunchedEffect
+        haptics.performHapticFeedback(HapticFeedbackType.Reject)
+        offset.animateTo(0f)
+    }
 
     BoxWithConstraints(
         modifier
@@ -75,19 +105,23 @@ fun SlideToConfirm(label: String, onConfirmed: () -> Unit, modifier: Modifier = 
                 role = Role.Button
                 contentDescription = label
                 // A screen reader has no drag, and its double tap is already a deliberate act.
-                if (!busy) onClick(label.removePrefix("Slide to ").replaceFirstChar { it.uppercase() }) { onConfirmed(); true }
+                if (!busy && !done) onClick(label.removePrefix("Slide to ").replaceFirstChar { it.uppercase() }) { onConfirmed(); true }
             },
     ) {
         val thumb = 56.dp
         val inset = 4.dp
         val travel = with(LocalDensity.current) { (maxWidth - thumb - inset * 2).toPx() }
+        val enough = travel * 0.92f
         val drag = rememberDraggableState { delta ->
-            scope.launch { offset.snapTo((offset.value + delta).coerceIn(0f, travel)) }
+            val before = offset.value
+            val after = (before + delta).coerceIn(0f, travel)
+            if (before < enough && after >= enough) haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+            scope.launch { offset.snapTo(after) }
         }
         Text(
-            if (busy) "Sending" else label,
+            when { done -> "Done"; busy -> "Sending"; else -> label },
             Modifier.align(Alignment.Center).padding(horizontal = 64.dp),
-            color = onTrack.copy(alpha = if (busy) 1f else 1f - 0.7f * (offset.value / travel.coerceAtLeast(1f))),
+            color = onTrack.copy(alpha = if (busy || done) 1f else 1f - 0.7f * (offset.value / travel.coerceAtLeast(1f))),
             style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center,
         )
         Box(
@@ -95,16 +129,17 @@ fun SlideToConfirm(label: String, onConfirmed: () -> Unit, modifier: Modifier = 
                 .padding(inset)
                 .offset { IntOffset(offset.value.roundToInt(), 0) }
                 .size(thumb)
+                .graphicsLayer { scaleX = pop.value; scaleY = pop.value }
                 .clip(CircleShape)
                 .background(thumbColor)
                 .draggable(
                     state = drag,
                     orientation = Orientation.Horizontal,
-                    enabled = !busy,
+                    enabled = !busy && !done,
                     onDragStopped = {
-                        if (offset.value >= travel * 0.92f) {
+                        if (offset.value >= enough) {
                             onConfirmed()
-                            offset.animateTo(0f)
+                            offset.animateTo(travel)
                         } else {
                             offset.animateTo(0f)
                         }
@@ -112,18 +147,35 @@ fun SlideToConfirm(label: String, onConfirmed: () -> Unit, modifier: Modifier = 
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            if (busy) LoadingIndicator(Modifier.size(36.dp), color = onThumb)
-            else Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, tint = onThumb)
+            Crossfade(when { done -> 2; busy -> 1; else -> 0 }, label = "thumb") {
+                when (it) {
+                    2 -> Icon(Icons.Rounded.Check, null, tint = onThumb)
+                    1 -> LoadingIndicator(Modifier.size(36.dp), color = onThumb)
+                    else -> Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, tint = onThumb)
+                }
+            }
         }
     }
 }
 
 /** Says exactly what is about to be changed, where and as whom, above the slide control. */
 @Composable
-fun ConfirmSheet(request: Request, wikiName: String, userName: String, onConfirm: (Confirmation) -> Unit, onCancel: () -> Unit) {
+fun ConfirmSheet(
+    request: Request, wikiName: String, userName: String, onConfirm: (Confirmation) -> Unit, onCancel: () -> Unit, onClosed: () -> Unit = {},
+) {
     val write = request.write
     val scheme = MaterialTheme.colorScheme
     val sheet = rememberModalBottomSheetState(skipPartiallyExpanded = true, confirmValueChange = { !request.sending })
+    // Once it went through, the check stays a moment before the sheet goes.
+    LaunchedEffect(request.done) {
+        if (!request.done) return@LaunchedEffect
+        try {
+            delay(DONE_MS)
+            sheet.hide()
+        } finally {
+            onClosed()
+        }
+    }
     ModalBottomSheet(onDismissRequest = onCancel, sheetState = sheet) {
         Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding().verticalScroll(rememberScrollState())) {
             Text(write.action, style = MaterialTheme.typography.headlineSmall, color = if (write.severe) scheme.error else scheme.onSurface)
@@ -147,10 +199,13 @@ fun ConfirmSheet(request: Request, wikiName: String, userName: String, onConfirm
                 Alert(it)
             }
             Spacer(Modifier.height(20.dp))
-            SlideToConfirm(write.slide, { onConfirm(Confirmation.bySlide(write)) }, severe = write.severe, busy = request.sending)
-            TextButton(onClick = onCancel, enabled = !request.sending, modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 8.dp)) {
+            SlideToConfirm(write.slide, { onConfirm(Confirmation.bySlide(write)) }, severe = write.severe, busy = request.sending, done = request.done)
+            TextButton(onClick = onCancel, enabled = !request.sending && !request.done, modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 8.dp)) {
                 Text("Cancel")
             }
         }
     }
 }
+
+/** How long the check shows before the sheet closes. */
+private const val DONE_MS = 400L

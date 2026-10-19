@@ -1,7 +1,6 @@
 package org.nextcolor.wikimop.ui
 
 import androidx.activity.BackEventCompat
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -20,6 +19,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -36,6 +36,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.animation.ContentTransform
 import org.nextcolor.wikimop.AppModel
 import org.nextcolor.wikimop.Dest
 import org.nextcolor.wikimop.Entry
@@ -55,6 +58,7 @@ fun App(model: AppModel) {
     val scope = rememberCoroutineScope()
     // The edge the back gesture is made from while it is made and until its screen has gone, or null.
     var gesture by remember { mutableStateOf<Int?>(null) }
+    val toEnd = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
     LaunchedEffect(entry) {
         screens.animateTo(entry)
         gesture = null
@@ -79,7 +83,6 @@ fun App(model: AppModel) {
             throw e
         }
     }
-    BackHandler(enabled = model.stack.size == 1 && model.beside != null) { model.closeBeside() }
 
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
         rememberTransition(screens, label = "screen").AnimatedContent(
@@ -101,7 +104,10 @@ fun App(model: AppModel) {
                         )).apply { targetContentZIndex = -1f }
                 } else if (goesBack(model, initialState, targetState)) {
                     // Back from the arrow or a button: the way forward, the other way round.
-                    (fadeIn() + slideInHorizontally { -it / 8 }) togetherWith (fadeOut() + slideOutHorizontally { it / 8 })
+                    sideways(-1)
+                } else if (diffStep(initialState.dest, targetState.dest) != 0) {
+                    // An older or newer edit comes in from the side it was pulled from.
+                    sideways(diffStep(initialState.dest, targetState.dest) * toEnd)
                 } else {
                     (fadeIn() + slideInHorizontally { it / 8 }) togetherWith fadeOut()
                 }.using(SizeTransform(clip = false))
@@ -122,7 +128,7 @@ fun App(model: AppModel) {
 
     val request = model.request
     if (request != null && session != null) {
-        ConfirmSheet(request, session.wiki.name, accountName(session.account), model::confirm, model::cancelRequest)
+        ConfirmSheet(request, session.wiki.name, accountName(session.account), model::confirm, model::cancelRequest) { model.closeRequest(request) }
     }
 }
 
@@ -155,6 +161,23 @@ private fun goesBack(model: AppModel, from: Entry, to: Entry): Boolean {
     val below = model.stack.indexOf(to)
     return below >= 0 && below < model.stack.indexOf(from)
 }
+
+/**
+ * Whether [to] is the newer edit of the page in [from], 1, or the older one, -1. Anything else is 0.
+ * Pulling toward the end of the line goes to the older edit, so it comes in from the start.
+ */
+fun diffStep(from: Dest?, to: Dest?): Int {
+    if (from !is Dest.Diff || to !is Dest.Diff || from.title != to.title || from.to == to.to) return 0
+    return if (to.to > from.to) 1 else -1
+}
+
+/** The new screen comes in from the right when [from] is 1, from the left when it is -1, and the old one leaves the other way. */
+fun sideways(from: Int): ContentTransform =
+    (fadeIn() + slideInHorizontally { from * it / 8 }) togetherWith (fadeOut() + slideOutHorizontally { -from * it / 8 })
+
+/** Material's fade through, for going between things that are side by side rather than one on top of another. */
+fun fadeThrough(): ContentTransform =
+    (fadeIn(tween(210, delayMillis = 90)) + scaleIn(tween(210, delayMillis = 90), initialScale = 0.92f)) togetherWith fadeOut(tween(90))
 
 /** How long going back with the gesture takes from start to end, and how much of that the gesture itself makes before letting go. */
 private const val BACK_MS = 400

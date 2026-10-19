@@ -1,5 +1,13 @@
 package org.nextcolor.wikimop.ui
 
+import androidx.activity.compose.PredictiveBackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animate
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import kotlin.coroutines.cancellation.CancellationException
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -95,7 +103,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.runtime.key
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.material3.WideNavigationRail
@@ -140,6 +147,52 @@ fun openChange(model: AppModel, change: Change) {
     }
 }
 
+/**
+ * The change opened beside the list. Another change fades in its place, and an older or newer edit comes
+ * in from the side it was pulled from. The back gesture shrinks it while it is made, and letting go closes it.
+ */
+@Composable
+private fun BesidePane(model: AppModel, session: Session, toEnd: Int, modifier: Modifier = Modifier) {
+    val scope = rememberCoroutineScope()
+    // The change the back gesture is closing and how far the gesture has gone, or null.
+    var closing by remember { mutableStateOf<Pair<Entry, Float>?>(null) }
+    PredictiveBackHandler(enabled = model.beside != null && model.stack.size == 1) { progress ->
+        val shown = model.beside ?: return@PredictiveBackHandler
+        try {
+            progress.collect { closing = shown to it.progress }
+            model.closeBeside()
+        } catch (e: CancellationException) {
+            val from = closing?.second ?: 0f
+            scope.launch { animate(from, 0f) { value, _ -> closing = shown to value }; closing = null }
+            throw e
+        }
+    }
+    AnimatedContent(
+        model.beside, modifier, contentKey = { it?.id },
+        transitionSpec = {
+            val step = diffStep(initialState?.dest, targetState?.dest)
+            if (step != 0) sideways(step * toEnd)
+            else fadeThrough()
+        },
+        label = "beside",
+    ) { shown ->
+        val dest = shown?.dest
+        val pulled = closing?.takeIf { it.first === shown }?.second ?: 0f
+        Box(Modifier.fillMaxSize().graphicsLayer {
+            scaleX = 1f - 0.08f * pulled
+            scaleY = scaleX
+            shape = RoundedCornerShape(32.dp * pulled)
+            clip = pulled > 0f
+        }) {
+            when {
+                shown != null && dest is Dest.Diff -> DiffScreen(model, shown, session, dest)
+                shown != null && dest is Dest.File -> FileScreen(model, shown, session, dest)
+                else -> Notice("No change selected")
+            }
+        }
+    }
+}
+
 /** On a wide screen, a change opened from Home is shown beside the list. */
 private fun showChange(model: AppModel, dest: Dest) {
     if (model.wide && model.stack.size == 1) model.openBeside(dest) else model.go(dest)
@@ -168,6 +221,7 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
     val rail = LocalConfiguration.current.screenWidthDp >= MEDIUM_WIDTH
     // On a wide screen, Changes shows the list on one side and the change opened from it on the other.
     val split = model.wide && tab == 0 && session.me != null
+    val toEnd = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
 
     // The app bar stays as collapsed as it was, to match the list that keeps its place.
     val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(entry.hold("bar") { TopAppBarState(-Float.MAX_VALUE, 0f, 0f) })
@@ -275,24 +329,21 @@ fun HomeScreen(model: AppModel, entry: Entry, session: Session) {
                     session.error != null && session.me == null ->
                         Notice(session.error.orEmpty(), action = "Try again") { model.scope.launch { model.connect(session) } }
                     session.me == null -> Busy()
-                    tab == 0 -> ChangesTab(model, entry, session, behavior.state)
-                    tab == 1 -> PagesTab(model, entry, session)
-                    tab == 2 -> DraftsTab(model)
-                    else -> ToolsTab(model, session)
+                    // Switching tabs fades through, as Material's navigation bar does: one goes, then the other comes.
+                    else -> AnimatedContent(tab, Modifier.fillMaxSize(), transitionSpec = { fadeThrough() }, label = "tab") { shown ->
+                        when (shown) {
+                            0 -> ChangesTab(model, entry, session, behavior.state)
+                            1 -> PagesTab(model, entry, session)
+                            2 -> DraftsTab(model)
+                            else -> ToolsTab(model, session)
+                        }
+                    }
                 }
             }
         }
         if (split) {
             VerticalDivider()
-            Box(Modifier.weight(1f)) {
-                val shown = model.beside
-                val dest = shown?.dest
-                when {
-                    shown != null && dest is Dest.Diff -> key(shown.id) { DiffScreen(model, shown, session, dest) }
-                    shown != null && dest is Dest.File -> key(shown.id) { FileScreen(model, shown, session, dest) }
-                    else -> Notice("No change selected")
-                }
-            }
+            BesidePane(model, session, toEnd, Modifier.weight(1f))
         }
     }
 

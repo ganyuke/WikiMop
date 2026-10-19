@@ -273,7 +273,10 @@ open class ScreenTest {
         rule.onNodeWithText("Patrol").performClick()
         until("the confirm sheet") { m.request != null }
         m.confirm(org.nextcolor.wikimop.data.Confirmation.bySlide(m.request!!.write))
-        until("the patrol") { m.request == null }
+        // The sheet shows the check for a moment, then closes itself.
+        until("the patrol") { m.request?.done == true }
+        rule.mainClock.advanceTimeBy(1000)
+        until("the sheet to close") { m.request == null }
         // The diff says so, and so does the list it was opened from, without loading it again.
         waitFor("Patrolled")
         if (m.beside != null) m.closeBeside() else m.back()
@@ -794,6 +797,19 @@ open class ScreenTest {
         val label = rule.onNodeWithText("Sending").fetchSemanticsNode().boundsInRoot
         val cancel = rule.onNodeWithText("Cancel").fetchSemanticsNode().boundsInRoot
         assertEquals(cancel.center.x, label.center.x, 1f)
+    }
+
+    @Test fun aChangeThatWentThroughShowsDoneThenCloses() {
+        val request = Request(PendingWrite.Delete(fake.wiki, "Ashen Witch (old)", "Housekeeping")) {}.apply { done = true }
+        var closed = false
+        rule.mainClock.autoAdvance = false
+        rule.setContent { WikiMopTheme(dynamicColor = false) { ConfirmSheet(request, "Wandering Witch Wiki", "Mopkeeper", {}, {}) { closed = true } } }
+        rule.mainClock.advanceTimeBy(100)
+        rule.onNodeWithText("Done").assertExists()
+        assertFalse(closed)
+        rule.mainClock.autoAdvance = true
+        rule.mainClock.advanceTimeBy(1000)
+        until("the sheet to close") { closed }
     }
 
     private fun readOnly(m: AppModel, name: String) {
