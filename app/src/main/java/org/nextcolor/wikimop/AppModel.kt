@@ -80,8 +80,8 @@ class Entry(val dest: Dest) {
     fun <T : Any> hold(key: String, make: () -> T): T = held.getOrPut(key, make) as T
 }
 
-/** A list that is loaded a part at a time. */
-class Feed<T>(private val scope: CoroutineScope, private val load: suspend (String?) -> Chunk<T>) {
+/** A list that is loaded a part at a time. [key] tells its rows apart, so loading it again keeps the ones further down. */
+class Feed<T>(private val scope: CoroutineScope, private val key: (T) -> Any, private val load: suspend (String?) -> Chunk<T>) {
     val items = mutableStateListOf<T>()
     /** Where the list is scrolled to. It lives as long as the screen, so coming back to it keeps the place. */
     val list = LazyListState()
@@ -93,13 +93,25 @@ class Feed<T>(private val scope: CoroutineScope, private val load: suspend (Stri
         private set
     var next by mutableStateOf<String?>(null)
         private set
+    /** More changes came in than the newest part holds, so the list was left as it was and offers to start over at the top. */
+    var behind by mutableStateOf(false)
+        private set
     private var round = 0
+    /** The count of [AppModel.written] this list has caught up with. Null until it is first shown. */
+    private var caughtUp: Int? = null
 
     fun refresh() = fetch(null)
     fun more() { if (!loading && next != null) fetch(next) }
     fun start() { if (!loaded && !loading) refresh() }
 
-    private fun fetch(from: String?) {
+    /** Loads the newest part again once a change has been made from the app since the list was last shown, so it shows the change. */
+    fun catchUp(written: Int) {
+        val was = caughtUp
+        caughtUp = written
+        if (was != null && was != written && loaded) fetch(null, keep = true)
+    }
+
+    private fun fetch(from: String?, keep: Boolean = false) {
         val mine = ++round
         loading = true
         error = null
@@ -107,9 +119,23 @@ class Feed<T>(private val scope: CoroutineScope, private val load: suspend (Stri
             try {
                 val chunk = load(from)
                 if (mine != round) return@launch
+                val fresh = chunk.items.map(key).toSet()
+                // The lowest row of the list as shown that the newest part has too. Rows can drop out of the newest part,
+                // such as one just patrolled while only unpatrolled changes are shown, so any row in both will do.
+                val at = if (keep) items.indexOfLast { key(it) in fresh } else -1
+                // When the newest part has none of the rows shown and there is more after it, there would be a gap between them.
+                // The list stays as it is instead, so its place is kept, and offers to start over.
+                if (keep && at < 0 && items.isNotEmpty() && chunk.next?.ifEmpty { null } != null) {
+                    behind = true
+                    return@launch
+                }
+                // Parts further down that were loaded already stay, so the list keeps its place however far it was scrolled.
+                val older = if (at >= 0) items.drop(at + 1).filter { key(it) !in fresh } else emptyList()
                 if (from == null) items.clear()
                 items.addAll(chunk.items)
-                next = chunk.next?.ifEmpty { null }
+                items.addAll(older)
+                if (older.isEmpty()) next = chunk.next?.ifEmpty { null }
+                if (from == null) behind = false
                 loaded = true
             } catch (e: Exception) {
                 if (mine == round) error = e.say()
@@ -215,7 +241,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
     /** The change waiting on the confirm sheet, if any. Nothing is sent while it only waits. */
     var request by mutableStateOf<Request?>(null)
         private set
-    /** Counts the changes made from the app other than patrols. The lists of changes load again when it moves, so the change shows in them. */
+    /** Counts the changes made from the app. Every list loads again when it moves, so the change shows in it. */
     var written by mutableStateOf(0)
         private set
     val snackbar = SnackbarHostState()
@@ -575,8 +601,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
                 r.done = true
                 // Every screen showing the change, the list of changes among them, shows it as patrolled.
                 (r.write as? PendingWrite.Patrol)?.let { s.markPatrolled(it.revId, it.rcId) }
-                // A patrol is shown without loading the lists again, which would also lose their place.
-                if (r.write !is PendingWrite.Patrol) written++
+                written++
                 r.onDone(result)
                 say(result.message)
                 if (r.write is PendingWrite.Edit || r.write is PendingWrite.Undo || r.write is PendingWrite.Rollback) refreshDaily(s)

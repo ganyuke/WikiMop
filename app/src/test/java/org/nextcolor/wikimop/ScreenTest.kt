@@ -264,6 +264,8 @@ open class ScreenTest {
         waitFor("Fran")
         fun unpatrolled() = rule.onAllNodesWithText("Unpatrolled", useUnmergedTree = true).fetchSemanticsNodes().size
         val before = unpatrolled()
+        fun loads() = fake.calls.count { "recentchanges" in it["list"].orEmpty().split('|') }
+        val loaded = loads()
         rule.onAllNodesWithText("Saya").onFirst().performClick()
         // On a tablet it opens beside the list.
         until("the diff") { (m.beside ?: m.top).dest is Dest.Diff }
@@ -277,11 +279,12 @@ open class ScreenTest {
         until("the patrol") { m.request?.done == true }
         rule.mainClock.advanceTimeBy(1000)
         until("the sheet to close") { m.request == null }
-        // The diff says so, and so does the list it was opened from, without loading it again.
+        // The diff says so, and so does the list it was opened from, which loads again as well.
         waitFor("Patrolled")
         if (m.beside != null) m.closeBeside() else m.back()
         waitFor("Saya")
         until("the list to show it") { unpatrolled() == before - 1 }
+        until("the list to load again") { loads() == loaded + 1 }
         assertEquals("patrol", fake.writes().single()["action"])
     }
 
@@ -329,6 +332,26 @@ open class ScreenTest {
         // Back at the list, it is where it was.
         m.back()
         waitFor("Robetta")
+        assertEquals(scrolled, listScroll(), 1f)
+    }
+
+    @Test fun changesKeepTheirPlaceWhenTheyLoadAgain() {
+        val m = model()
+        show(m)
+        waitFor("Fran")
+        rule.onAllNodes(androidx.compose.ui.test.hasScrollToIndexAction()).onFirst().performScrollToIndex(10)
+        rule.waitForIdle()
+        val scrolled = listScroll()
+        fun loads() = fake.calls.count { "recentchanges" in it["list"].orEmpty().split('|') }
+        val loaded = loads()
+        m.go(Dest.Diff("Elaina", 5101, 5120, vandalism))
+        waitFor("world on her broom")
+        m.ask(PendingWrite.Patrol(fake.wiki, "Elaina", 5120, "StardustReader"))
+        m.confirm(org.nextcolor.wikimop.data.Confirmation.bySlide(m.request!!.write))
+        until("the patrol") { m.request?.done == true }
+        m.back()
+        until("the list to load again") { loads() == loaded + 1 }
+        rule.waitForIdle()
         assertEquals(scrolled, listScroll(), 1f)
     }
 

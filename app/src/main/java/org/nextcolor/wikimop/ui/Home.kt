@@ -362,7 +362,7 @@ private const val HEADER = 2
 /** The list of changes beside an open change. About as wide as a phone, so rows read the same as on one. */
 private val LIST_PANE_WIDTH = 420.dp
 
-private fun recentFeed(model: AppModel, entry: Entry, session: Session) = Feed(entry.scope) { next ->
+private fun recentFeed(model: AppModel, entry: Entry, session: Session) = Feed(entry.scope, Change::key) { next ->
     session.api.recentChanges(model.saved.filter, session.me, next).also {
         if (next == null) model.seen(session.wiki, false, it.items.firstOrNull()?.timestamp)
         model.counted(session, it.items)
@@ -376,7 +376,7 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session, bar: Top
     val since = entry.hold("since") { model.saved.marks[session.wiki.id].let { it?.looked to it?.lookedWatchlist } }
     val recent = entry.hold("rc") { recentFeed(model, entry, session) }
     val watched = entry.hold("wl") {
-        Feed(entry.scope) { next ->
+        Feed(entry.scope, Change::key) { next ->
             session.api.watchlist(next).also {
                 if (next == null) model.seen(session.wiki, true, it.items.firstOrNull()?.timestamp)
                 model.counted(session, it.items)
@@ -385,15 +385,6 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session, bar: Top
     }
     val signedIn = session.account != null && !session.signedOut
     val feed = if (watch && signedIn) watched else recent
-
-    // An edit or other change made from the app since the lists were loaded is in them once they load again.
-    val written = entry.hold("written") { intArrayOf(model.written) }
-    LaunchedEffect(model.written) {
-        if (model.written == written[0]) return@LaunchedEffect
-        written[0] = model.written
-        if (recent.loaded) recent.refresh()
-        if (watched.loaded) watched.refresh()
-    }
 
     // Switching lists keeps the streak card and these buttons where they are on the screen, instead of each list's own place.
     fun switch(toWatch: Boolean) {
@@ -405,7 +396,7 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session, bar: Top
     }
 
     // Pulling the list down also checks the streak again, so edits made since it was loaded count.
-    FeedList(feed, if (watch) "No changes" else "No changes", bar = bar, onRefresh = { if (signedIn) model.scope.launch { model.refreshDaily(session) } }) {
+    FeedList(feed, model.written, if (watch) "No changes" else "No changes", bar = bar, onRefresh = { if (signedIn) model.scope.launch { model.refreshDaily(session) } }) {
         if (signedIn) {
             item(key = "daily") { session.daily?.let { DailyCard(it, Modifier.padding(top = 4.dp, bottom = 12.dp)) } }
             item(key = "which") {

@@ -253,7 +253,13 @@ class FakeWiki(
     private fun rev(id: Long, parent: Long, user: String, minutes: Long, comment: String, size: Int) =
         JSONObject().put("revid", id).put("parentid", parent).put("user", user).put("timestamp", ago(minutes)).put("comment", comment).put("size", size).put("tags", JSONArray())
 
-    private fun changes() = if (seed != null) kept("changes", "timestamp").onEach { it.put("patrolled", true).put("unpatrolled", false) } else listOfNotNull(
+    /** The same changes get the same ids each time the list is asked for, as on a real wiki, so loading it again finds them. */
+    private fun changes(): List<JSONObject> {
+        counter = 9000L
+        return listed()
+    }
+
+    private fun listed() = if (seed != null) kept("changes", "timestamp").onEach { it.put("patrolled", true).put("unpatrolled", false) } else listOfNotNull(
         if (ownEdit) rc("edit", "Robetta", "Mopkeeper", 1, "Fixed a link", 3340, 3342, id = 5200) else null,
         if (upload) rc("log", FILE, "203.0.113.42", 15, "Better picture", 0, 0, patrolled = false, id = 5300).put("logtype", "upload").put("logaction", "overwrite") else null,
         rc("edit", "Elaina", latestUser, 4, "Added her relationships", 310, 412, id = latestRevId, old = 5101),

@@ -59,6 +59,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.geometry.Offset
@@ -281,6 +283,8 @@ fun ChangeRow(
 @Composable
 fun <T> FeedList(
     feed: Feed<T>,
+    /** [AppModel.written], so the list loads again after a change made from the app. */
+    written: Int,
     empty: String,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
@@ -291,6 +295,7 @@ fun <T> FeedList(
     content: LazyListScope.() -> Unit,
 ) {
     LaunchedEffect(feed) { feed.start() }
+    LaunchedEffect(feed, written) { feed.catchUp(written) }
     val first = remember(bar) { bar?.let(::BarFirst) }
     PullToRefreshBox(isRefreshing = feed.loading && feed.loaded, onRefresh = { feed.refresh(); onRefresh() }, modifier = modifier.fillMaxSize()) {
         LazyColumn(if (first != null) Modifier.fillMaxSize().nestedScroll(first) else Modifier.fillMaxSize(), feed.list, contentPadding, verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -305,6 +310,17 @@ fun <T> FeedList(
                     LaunchedEffect(feed.next) { feed.more() }
                     Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) { LoadingIndicator() }
                 }
+            }
+        }
+        // Too much came in to fit above the list as shown, so it waits for the person to start over at the top.
+        if (feed.behind) {
+            val scope = rememberCoroutineScope()
+            Button(
+                onClick = { feed.refresh(); onRefresh(); scope.launch { feed.list.scrollToItem(0) } },
+                Modifier.align(Alignment.TopCenter).padding(top = 8.dp),
+            ) {
+                Icon(Icons.Rounded.ArrowUpward, null, Modifier.size(18.dp))
+                Text("Show newest", Modifier.padding(start = 8.dp))
             }
         }
     }

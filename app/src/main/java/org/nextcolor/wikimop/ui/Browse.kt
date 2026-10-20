@@ -98,6 +98,7 @@ import org.nextcolor.wikimop.Feed
 import org.nextcolor.wikimop.FormKind
 import org.nextcolor.wikimop.Session
 import org.nextcolor.wikimop.data.Block
+import org.nextcolor.wikimop.data.Change
 import org.nextcolor.wikimop.data.ChangeFilter
 import org.nextcolor.wikimop.data.DiffKind
 import org.nextcolor.wikimop.data.DiffLine
@@ -333,7 +334,7 @@ class PageState(tab: Int = 0) {
 @Composable
 fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page) {
     val state = entry.hold("page") { PageState(dest.tab) }
-    val history = entry.hold("history") { Feed(entry.scope) { session.api.history(dest.title, it) } }
+    val history = entry.hold("history") { Feed(entry.scope, Change::key) { session.api.history(dest.title, it) } }
     fun load() {
         state.error = null
         entry.scope.launch {
@@ -409,7 +410,7 @@ fun PageScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Page)
                         settings.desktopPages, settings.darkPages, settings.blockTrackers, model::openPage,
                     )
                 } ?: Busy()
-                state.tab == 1 -> FeedList(history, "No revisions") {
+                state.tab == 1 -> FeedList(history, model.written, "No revisions") {
                     changeRows(history.items, { model.go(Dest.Diff(dest.title, it.oldRevId, it.revId, it)) }, showTitle = false, patrolled = session::patrolled)
                 }
                 else -> PageDetails(model, session, facts) { sections = true }
@@ -487,7 +488,7 @@ class UserState {
 @Composable
 fun UserScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.User) {
     val state = entry.hold("user") { UserState() }
-    val edits = entry.hold("edits") { Feed(entry.scope) { session.api.contributions(dest.name, it) } }
+    val edits = entry.hold("edits") { Feed(entry.scope, Change::key) { session.api.contributions(dest.name, it) } }
     fun load() {
         entry.scope.launch {
             try { state.details = session.api.user(dest.name) } catch (e: Exception) { state.error = e.say() }
@@ -497,7 +498,7 @@ fun UserScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.User)
     val details = state.details
     Scaffold(topBar = { BackBar(details?.name ?: dest.name, model::back, subtitle = "User") }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
         Centered(Modifier.padding(padding)) {
-            FeedList(edits, "No edits") {
+            FeedList(edits, model.written, "No edits") {
                 item(key = "head") {
                     Column {
                         if (details != null) UserHeader(model, session, details)
@@ -550,7 +551,7 @@ private fun UserHeader(model: AppModel, session: Session, user: UserDetails) {
 
 @Composable
 fun LogsScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Logs) {
-    val feed = entry.hold("logs") { Feed(entry.scope) { session.api.logs(dest.type, dest.title, dest.user, it) } }
+    val feed = entry.hold("logs") { Feed(entry.scope, Change::key) { session.api.logs(dest.type, dest.title, dest.user, it) } }
     val title = when (dest.type) {
         "block" -> "Block log"
         "delete" -> "Deletion log"
@@ -561,26 +562,26 @@ fun LogsScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Logs)
         else -> "Logs"
     }
     Scaffold(topBar = { BackBar(title, model::back, subtitle = dest.title ?: dest.user?.let { "By $it" }) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        Centered(Modifier.padding(padding)) { FeedList(feed, "No log entries") { changeRows(feed.items, { openChange(model, it) }, patrolled = session::patrolled) } }
+        Centered(Modifier.padding(padding)) { FeedList(feed, model.written, "No log entries") { changeRows(feed.items, { openChange(model, it) }, patrolled = session::patrolled) } }
     }
 }
 
 @Composable
 fun NewPagesScreen(model: AppModel, entry: Entry, session: Session) {
     val feed = entry.hold("new") {
-        Feed(entry.scope) { session.api.recentChanges(ChangeFilter(edits = false, logs = false, hideBots = false), session.me, it) }
+        Feed(entry.scope, Change::key) { session.api.recentChanges(ChangeFilter(edits = false, logs = false, hideBots = false), session.me, it) }
     }
     Scaffold(topBar = { BackBar("New pages", model::back) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
-        Centered(Modifier.padding(padding)) { FeedList(feed, "No new pages") { changeRows(feed.items, { openChange(model, it) }, patrolled = session::patrolled) } }
+        Centered(Modifier.padding(padding)) { FeedList(feed, model.written, "No new pages") { changeRows(feed.items, { openChange(model, it) }, patrolled = session::patrolled) } }
     }
 }
 
 @Composable
 fun BlocksScreen(model: AppModel, entry: Entry, session: Session) {
-    val feed = entry.hold("blocks") { Feed<Block>(entry.scope) { session.api.blocks(it) } }
+    val feed = entry.hold("blocks") { Feed<Block>(entry.scope, Block::id) { session.api.blocks(it) } }
     Scaffold(topBar = { BackBar("Blocked users", model::back) }, snackbarHost = { SnackbarHost(model.snackbar) }) { padding ->
         Centered(Modifier.padding(padding)) {
-            FeedList(feed, "No blocks", contentPadding = PaddingValues(16.dp)) {
+            FeedList(feed, model.written, "No blocks", contentPadding = PaddingValues(16.dp)) {
                 itemsIndexed(feed.items, key = { _, b -> b.id }) { index, block ->
                     ToolRow(
                         Icons.Rounded.Block, block.user.ifEmpty { "Autoblock #${block.id}" }, segment(index, feed.items.size),
