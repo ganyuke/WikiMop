@@ -1,0 +1,4 @@
+- Option to mark edits as minor by default
+- Every list shows changes made from the app, patrols included, and keeps its place
+- A "Show newest" button appears when more came in than fit above the list
+- Long-pressing in the editor no longer drags the selection onto text further down
