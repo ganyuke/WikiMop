@@ -525,6 +525,9 @@ fun SettingsScreen(model: AppModel) {
                 on -> model.update { it.copy(settings = it.settings.copy(changesLocked = on)) }
             }
             SwitchRow("Require edit summary", settings.requireSummary) { on -> model.update { it.copy(settings = it.settings.copy(requireSummary = on)) } }
+            SwitchRow("Mark all edits as minor by default", settings.markMinor) {
+                on -> model.update { it.copy(settings = it.settings.copy(markMinor = on)) }
+            }
             SwitchRow("Mark all edits as bot edits by default", settings.markBot, note = "Bot accounts only") {
                 on -> model.update { it.copy(settings = it.settings.copy(markBot = on)) }
             }

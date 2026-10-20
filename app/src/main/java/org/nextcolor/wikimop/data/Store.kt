@@ -123,7 +123,7 @@ object SavedJson {
         put("currentWiki", s.currentWiki ?: JSONObject.NULL)
         put("settings", JSONObject().put("changesLocked", s.settings.changesLocked).put("requireSummary", s.settings.requireSummary).put("dynamicColor", s.settings.dynamicColor)
             .put("checkMinutes", s.settings.checkMinutes).put("blockTrackers", s.settings.blockTrackers).put("desktopPages", s.settings.desktopPages)
-            .put("darkPages", s.settings.darkPages).put("markBot", s.settings.markBot))
+            .put("darkPages", s.settings.darkPages).put("markBot", s.settings.markBot).put("markMinor", s.settings.markMinor))
         val f = s.filter
         put("filter", JSONObject().put("edits", f.edits).put("newPages", f.newPages).put("logs", f.logs).put("hideBots", f.hideBots)
             .put("hideMinor", f.hideMinor).put("hideOwn", f.hideOwn).put("unpatrolledOnly", f.unpatrolledOnly).put("anonOnly", f.anonOnly)
@@ -166,6 +166,7 @@ object SavedJson {
             settings = Settings(
                 set.optBoolean("changesLocked"), set.optBoolean("requireSummary"), set.optBoolean("dynamicColor", true), set.optInt("checkMinutes", 30),
                 set.optBoolean("blockTrackers", true), set.optBoolean("desktopPages"), set.optBoolean("darkPages"), set.optBoolean("markBot"),
+                set.optBoolean("markMinor"),
             ),
             filter = ChangeFilter(
                 f.optBoolean("edits", true), f.optBoolean("newPages", true), f.optBoolean("logs", true), f.optBoolean("hideBots", true),

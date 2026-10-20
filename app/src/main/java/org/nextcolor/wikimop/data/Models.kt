@@ -63,6 +63,8 @@ data class Settings(
     val darkPages: Boolean = false,
     /** Starts the bot edit switch turned on. Only accounts with the right to mark bot edits see that switch. */
     val markBot: Boolean = false,
+    /** New drafts start with the minor edit switch turned on. A draft that was already started keeps its own. */
+    val markMinor: Boolean = false,
 )
 
 /** [subpages] is whether a slash in a title there makes a subpage. */

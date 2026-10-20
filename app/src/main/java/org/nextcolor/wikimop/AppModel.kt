@@ -531,7 +531,7 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
                     id = UUID.randomUUID().toString(), wikiId = s.wiki.id, title = page.title, section = section,
                     sectionHeading = sectionHeading, isNew = !page.exists, baseText = page.text, text = page.text,
                     baseRevId = page.revId, baseTimestamp = page.revTimestamp, startTimestamp = page.serverTime,
-                    updated = System.currentTimeMillis(),
+                    minor = saved.settings.markMinor, updated = System.currentTimeMillis(),
                 )
                 saveDraft(made)
                 go(Dest.Editor(made.id))

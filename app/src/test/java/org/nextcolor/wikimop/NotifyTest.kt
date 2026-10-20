@@ -168,7 +168,7 @@ class NotifyTest {
 
     @Test fun settingsSurviveBeingSaved() {
         val store = store(WikiNotify(changes = true, streak = true))
-        store.update { s -> s.copy(settings = s.settings.copy(checkMinutes = 60, blockTrackers = false, desktopPages = true, darkPages = true), signedOutTold = setOf("a1")).mark("w1") { it.copy(changes = evening, changesTold = 4, streakDay = "2026-10-13", streakTold = true) } }
+        store.update { s -> s.copy(settings = s.settings.copy(checkMinutes = 60, blockTrackers = false, desktopPages = true, darkPages = true, markMinor = true), signedOutTold = setOf("a1")).mark("w1") { it.copy(changes = evening, changesTold = 4, streakDay = "2026-10-13", streakTold = true) } }
         assertEquals(store.saved, SavedJson.read(SavedJson.write(store.saved)))
         // Trackers are blocked unless that was turned off.
         assertTrue(SavedJson.read("{}").settings.blockTrackers)

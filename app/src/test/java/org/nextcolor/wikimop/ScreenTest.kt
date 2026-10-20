@@ -611,6 +611,18 @@ open class ScreenTest {
         shot("editor-dark")
     }
 
+    @Test fun minorDefaultStartsNewDraftsAsMinor() {
+        val m = model(Settings(markMinor = true))
+        show(m)
+        waitFor("Fran")
+        m.edit("Elaina")
+        until("the editor") { m.top.dest is Dest.Editor }
+        assertTrue(m.drafts.single().minor)
+        m.go(Dest.Review(m.drafts.single().id))
+        waitFor("Minor edit")
+        assertTrue(rule.onAllNodes(isToggleable()).onFirst().fetchSemanticsNode().config[androidx.compose.ui.semantics.SemanticsProperties.ToggleableState] == androidx.compose.ui.state.ToggleableState.On)
+    }
+
     @Test fun toolbarChangesCanBeUndone() {
         val m = model()
         m.saveDraft(draft())
