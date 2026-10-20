@@ -611,6 +611,21 @@ open class ScreenTest {
         shot("editor-dark")
     }
 
+    @Test fun toolbarChangesCanBeUndone() {
+        val m = model()
+        m.saveDraft(draft())
+        show(m)
+        waitFor("Fran")
+        m.go(Dest.Editor("d1"))
+        waitFor("{{Character")
+        rule.onNodeWithContentDescription("Bold").performClick()
+        waitFor("'''bold text'''")
+        rule.onNodeWithContentDescription("Undo typing").performClick()
+        until("the bold text to go") { rule.onAllNodesWithText("'''bold text'''", substring = true).fetchSemanticsNodes().isEmpty() }
+        rule.onNodeWithContentDescription("Redo typing").performClick()
+        waitFor("'''bold text'''")
+    }
+
     @Test fun userAndBlock() {
         val m = model()
         show(m)
@@ -1093,6 +1108,25 @@ open class ScreenTest {
         assertEquals(draft().text, sent["text"])
         assertEquals("Reworded her travels and added Sheila", sent["summary"])
         assertTrue(m.drafts.isEmpty())
+    }
+
+    @Test fun publishingLoadsTheChangesAgain() {
+        val m = model()
+        m.saveDraft(draft())
+        show(m)
+        waitFor("Fran")
+        fun loads() = fake.calls.count { "recentchanges" in it["list"].orEmpty().split('|') }
+        val before = loads()
+        m.go(Dest.Review("d1"))
+        waitFor("Publish")
+        until("the page check") { rule.onAllNodesWithText("Checking").fetchSemanticsNodes().isEmpty() }
+        rule.onNodeWithText("Publish").performClick()
+        until("the confirm sheet") { m.request != null }
+        m.confirm(org.nextcolor.wikimop.data.Confirmation.bySlide(m.request!!.write))
+        until("the edit to be sent") { fake.writes().isNotEmpty() }
+        rule.mainClock.advanceTimeBy(1000)
+        until("back home") { m.top.dest == Dest.Home }
+        until("the list to load again") { loads() == before + 1 }
     }
 
     @Test fun lockedAppOpensNoConfirmSheet() {

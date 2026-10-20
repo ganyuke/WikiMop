@@ -215,6 +215,9 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
     /** The change waiting on the confirm sheet, if any. Nothing is sent while it only waits. */
     var request by mutableStateOf<Request?>(null)
         private set
+    /** Counts the changes made from the app other than patrols. The lists of changes load again when it moves, so the change shows in them. */
+    var written by mutableStateOf(0)
+        private set
     val snackbar = SnackbarHostState()
 
     /** Takes down a notification once what it was about has been seen. Set by the app, and does nothing in tests. */
@@ -572,6 +575,8 @@ class AppModel(private val store: SavedStore, draftDir: File, val http: OkHttpCl
                 r.done = true
                 // Every screen showing the change, the list of changes among them, shows it as patrolled.
                 (r.write as? PendingWrite.Patrol)?.let { s.markPatrolled(it.revId, it.rcId) }
+                // A patrol is shown without loading the lists again, which would also lose their place.
+                if (r.write !is PendingWrite.Patrol) written++
                 r.onDone(result)
                 say(result.message)
                 if (r.write is PendingWrite.Edit || r.write is PendingWrite.Undo || r.write is PendingWrite.Rollback) refreshDaily(s)

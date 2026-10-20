@@ -386,6 +386,15 @@ private fun ChangesTab(model: AppModel, entry: Entry, session: Session, bar: Top
     val signedIn = session.account != null && !session.signedOut
     val feed = if (watch && signedIn) watched else recent
 
+    // An edit or other change made from the app since the lists were loaded is in them once they load again.
+    val written = entry.hold("written") { intArrayOf(model.written) }
+    LaunchedEffect(model.written) {
+        if (model.written == written[0]) return@LaunchedEffect
+        written[0] = model.written
+        if (recent.loaded) recent.refresh()
+        if (watched.loaded) watched.refresh()
+    }
+
     // Switching lists keeps the streak card and these buttons where they are on the screen, instead of each list's own place.
     fun switch(toWatch: Boolean) {
         if (toWatch == watch) return

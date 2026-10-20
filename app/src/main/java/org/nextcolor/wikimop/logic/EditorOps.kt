@@ -1,7 +1,6 @@
 package org.nextcolor.wikimop.logic
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -112,13 +111,13 @@ object Wikitext {
         RegexOption.MULTILINE,
     )
 
-    fun highlight(text: String, colors: SyntaxColors): AnnotatedString {
-        if (text.length > LIMIT) return AnnotatedString(text)
-        val builder = AnnotatedString.Builder(text)
+    /** Hands each colored stretch of [text] to [add], as the style and where it starts and ends. */
+    fun spans(text: CharSequence, colors: SyntaxColors, add: (SpanStyle, Int, Int) -> Unit) {
+        if (text.length > LIMIT) return
         for (match in pattern.findAll(text)) {
             val groups = match.groups
             val range = match.range
-            fun style(style: SpanStyle, from: Int = range.first, to: Int = range.last + 1) = builder.addStyle(style, from, to)
+            fun style(style: SpanStyle, from: Int = range.first, to: Int = range.last + 1) = add(style, from, to)
             when {
                 groups["comment"] != null -> style(SpanStyle(color = colors.comment, fontStyle = FontStyle.Italic))
                 groups["heading"] != null -> style(SpanStyle(color = colors.heading, fontWeight = FontWeight.Bold))
@@ -132,6 +131,5 @@ object Wikitext {
                 groups["list"] != null -> style(SpanStyle(color = colors.mark, fontWeight = FontWeight.Bold))
             }
         }
-        return builder.toAnnotatedString()
     }
 }

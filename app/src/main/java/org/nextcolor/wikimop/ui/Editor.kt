@@ -21,6 +21,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.OutputTransformation
+import androidx.compose.foundation.text.input.TextFieldBuffer
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.automirrored.rounded.Redo
@@ -61,6 +65,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -73,10 +78,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -104,8 +105,14 @@ import org.nextcolor.wikimop.say
 class EditorState(private val model: AppModel, private val session: Session, initial: Draft, private val scope: CoroutineScope) {
     var draft by mutableStateOf(initial)
         private set
-    var value by mutableStateOf(TextFieldValue(initial.text))
-        private set
+    /**
+     * What the text field shows and edits. Typing changes it directly, and the toolbar, undo and find change it
+     * through [set]. This kind of field keeps a selection on the text it was made on when the keyboard opening
+     * scrolls the text under a finger that is still down, where the older kind picked up text from much further on.
+     */
+    val content = TextFieldState(initial.text)
+    val text: String get() = content.text.toString()
+    private var lastText = initial.text
     var saved by mutableStateOf(true)
         private set
     private val undone = ArrayDeque<Edited>()
@@ -127,19 +134,33 @@ class EditorState(private val model: AppModel, private val session: Session, ini
     var query by mutableStateOf("")
     var replacement by mutableStateOf("")
     var matchCase by mutableStateOf(false)
-    val matches get() = EditorOps.matches(value.text, query, matchCase)
+    val matches get() = EditorOps.matches(text, query, matchCase)
 
-    private fun snapshot() = Edited(value.text, value.selection.min, value.selection.max)
+    private fun snapshot() = Edited(text, content.selection.min, content.selection.max)
 
-    fun type(new: TextFieldValue) {
-        if (new.text != value.text) {
-            remember()
-            value = new
-            changed()
-        } else {
-            value = new
+    /** Keeps an undo step from before each change that is typed. Changes made through [set] keep their own. */
+    val typing = object : InputTransformation {
+        override fun TextFieldBuffer.transformInput() {
+            if (!asCharSequence().contentEquals(originalText)) remember(Edited(originalText.toString(), originalSelection.min, originalSelection.max))
         }
-        complete()
+    }
+
+    init {
+        // However the text changed, it is saved, and a moved cursor may be in a link that page names can be offered for.
+        scope.launch {
+            snapshotFlow { content.text.toString() to content.selection }.collect { (now, _) ->
+                if (now != lastText) {
+                    lastText = now
+                    changed()
+                }
+                complete()
+            }
+        }
+    }
+
+    private fun set(e: Edited) = content.edit {
+        if (!asCharSequence().contentEquals(e.text)) replace(0, length, e.text)
+        selection = TextRange(e.start, e.end)
     }
 
     /** Applies one of the toolbar's changes to the text as a single undo step. */
@@ -147,17 +168,14 @@ class EditorState(private val model: AppModel, private val session: Session, ini
         lastStep = 0
         remember()
         lastStep = 0
-        val result = change(snapshot())
-        value = TextFieldValue(result.text, TextRange(result.start, result.end))
-        changed()
-        complete()
+        set(change(snapshot()))
     }
 
-    private fun remember() {
+    private fun remember(before: Edited = snapshot()) {
         val now = System.currentTimeMillis()
         // Typing within a second of the last key is one undo step, not one per letter.
         if (now - lastStep > 1000 || past.isEmpty()) {
-            past.addLast(snapshot())
+            past.addLast(before)
             if (past.size > 200) past.removeFirst()
         }
         lastStep = now
@@ -179,11 +197,10 @@ class EditorState(private val model: AppModel, private val session: Session, ini
     }
 
     private fun restore(step: Edited) {
-        value = TextFieldValue(step.text, TextRange(step.start, step.end))
+        set(step)
         lastStep = 0
         canUndo = past.isNotEmpty()
         canRedo = undone.isNotEmpty()
-        changed()
     }
 
     private fun changed() {
@@ -197,13 +214,13 @@ class EditorState(private val model: AppModel, private val session: Session, ini
 
     fun flush() {
         if (saved) return
-        draft = draft.copy(text = value.text, updated = System.currentTimeMillis())
+        draft = draft.copy(text = text, updated = System.currentTimeMillis())
         model.saveDraft(draft)
         saved = true
     }
 
     private fun complete() {
-        val found = if (value.selection.collapsed) EditorOps.completion(value.text, value.selection.start) else null
+        val found = if (content.selection.collapsed) EditorOps.completion(text, content.selection.start) else null
         if (found == completion) return
         completion = found
         asking?.cancel()
@@ -227,7 +244,7 @@ class EditorState(private val model: AppModel, private val session: Session, ini
     }
 
     fun select(match: Int) {
-        value = value.copy(selection = TextRange(match, match + query.length))
+        content.edit { selection = TextRange(match, match + query.length) }
     }
 }
 
@@ -259,11 +276,9 @@ fun EditorScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Edi
     var discard by remember { mutableStateOf(false) }
     var preview by remember { mutableStateOf(false) }
     val colors = syntaxColors()
-    val highlight = remember(colors) {
-        VisualTransformation { TransformedText(Wikitext.highlight(it.text, colors), OffsetMapping.Identity) }
-    }
+    val highlight = remember(colors) { OutputTransformation { Wikitext.spans(asCharSequence(), colors, this::addStyle) } }
     val focus = remember { FocusRequester() }
-    val changed = state.value.text != draft.baseText
+    val changed = state.text != draft.baseText
 
     Scaffold(
         modifier = Modifier.imePadding(),
@@ -314,12 +329,12 @@ fun EditorScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Edi
         snackbarHost = { SnackbarHost(model.snackbar) },
     ) { padding ->
         BasicTextField(
-            value = state.value,
-            onValueChange = state::type,
+            state.content,
+            inputTransformation = state.typing,
             modifier = Modifier.padding(padding).fillMaxSize().padding(horizontal = 16.dp).focusRequester(focus),
             textStyle = TextStyle(fontFamily = FontFamily.Monospace, fontSize = 15.sp, lineHeight = 22.sp, color = MaterialTheme.colorScheme.onSurface),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-            visualTransformation = highlight,
+            outputTransformation = highlight,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false),
         )
     }
@@ -333,7 +348,7 @@ fun EditorScreen(model: AppModel, entry: Entry, session: Session, dest: Dest.Edi
             dismissButton = { TextButton(onClick = { discard = false }) { Text("Keep") } },
         )
     }
-    if (preview) PreviewSheet(model, session, draft.title, state.value.text) { preview = false }
+    if (preview) PreviewSheet(model, session, draft.title, state.text) { preview = false }
 }
 
 @Composable
